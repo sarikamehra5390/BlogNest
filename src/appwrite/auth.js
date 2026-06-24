@@ -1,7 +1,7 @@
 import conf from "../conf.js";
 import { Client, Account, ID } from "appwrite";
 
-// This code snippet can be used in any appwrite work as it is used everywhere 
+// This code snippet can be used in any appwrite work as it is used everywhere
 
 export class AuthService {
   client = new Client();
@@ -25,41 +25,38 @@ export class AuthService {
       if (userAccount) {
         // call another method
 
-        return this.login({email, password});
-        
-      }else{
+        return this.login({ email, password });
+      } else {
         return userAccount;
       }
-
     } catch (error) {
       throw error;
     }
   }
 
-  async login({email, password}){
-    try { 
-        return await this.account.createEmailSession(email, password);
-        
+  async login({ email, password }) {
+    try {
+      return await this.account. createEmailPasswordSession(email, password);
     } catch (error) {
-        throw error;
+      throw error;
     }
   }
 
-  async getCurrentUser(){
+  async getCurrentUser() {
     try {
-       return await this.account.get(); 
+      return await this.account.get();
     } catch (error) {
-       console.log("Appwrite service :: getCurrentUser :: error", error);
+      console.log("Appwrite service :: getCurrentUser :: error", error);
     }
 
     return null;
   }
 
-  async logout(){
+  async logout() {
     try {
-        return await this.account.deleteSessions();
+      return await this.account.deleteSessions();
     } catch (error) {
-        console.log("Appwrite service :: getCurrentUser :: error", error);
+      console.log("Appwrite service :: getCurrentUser :: error", error);
     }
   }
 }
