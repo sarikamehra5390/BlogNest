@@ -24,10 +24,10 @@ export default function Post() {
     },[slug, navigate])
 
     const deletePost = async () => {
-        appwriteService.deletePost(post.$id).then((status) =>{
+        await appwriteService.deletePost(post.$id).then((status) =>{
             if(status){
                 // as deleteFile() is asynchronous
-                await appwriteService.deleteFile(post.featuredImage)
+                appwriteService.deleteFile(post.featuredImage)
                 navigate('/')
             }
         })

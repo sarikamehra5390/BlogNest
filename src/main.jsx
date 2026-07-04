@@ -5,18 +5,19 @@ import App from './App.jsx'
 import { Provider } from 'react-redux'
 import store from './store/store.js'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { Edit, Home } from 'lucide-react'
-import Signup from './components/Signup.jsx'
-import AllPost from './pages/AllPost.jsx'
-import AddPost from './pages/AddPost.jsx'
-import EditPost from './pages/EditPost.jsx'
-import Post from './pages/Post.jsx'
+import { Edit, Home } from "./pages/Home.jsx"
+import Signup from './pages/Signup'
+
+import AllPost from './pages/AllPost'
+import AddPost from './pages/AddPost'
+import EditPost from './pages/EditPost'
+import Post from './pages/Post'
 
 const router = createBrowserRouter([
   {
     path:'/',
     element:<App />,
-    children=[
+    children:[
       {
         path:"/",
         element:<Home />,
