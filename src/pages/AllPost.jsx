@@ -6,12 +6,14 @@ import { Container, PostCard } from '../components'
 function AllPost() {
 
     const [posts, setPosts] = useState([])
-    useEffect(() => {}, [])
-    appwriteService.getPosts([]).then((posts) => {
-        if(posts){
-            setPosts(posts.documents)
+   
+    useEffect(() => {
+     appwriteService.getPosts([]).then((response) => {
+        if (response) {
+            setPosts(response.rows); // correct for TableDB
         }
-    })
+    });
+}, []);
 
   return (
     <div className='w-full py-8'>
@@ -22,7 +24,7 @@ function AllPost() {
                     // as we are using appwrite it has to be a $id , if we are using some other database like mongobd something else will we used 
 
                     <div key={post.$id} className='p-2 w-1/4'>
-                        <PostCard post={post}/>
+                        <PostCard {...post}/>
                     </div>
                 ))}
             </div>

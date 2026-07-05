@@ -28,6 +28,12 @@ import {useNavigate} from 'react-router-dom'
 
     }, [authStatus, navigate, authentication])
 
-  return loader ? <h1>Loading....</h1> : <>{children}</>
+  return loader ? (
+  <div className='flex justify-center items-center h-screen'>
+    <h1>Loading....</h1>
+    </div>
+    ) :
+    (  <>{children}</>
+    )
 }
 

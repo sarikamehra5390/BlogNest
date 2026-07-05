@@ -3,8 +3,7 @@ import {Container , Logo , LogoutBtn} from '../index'
 import {Link} from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { Home } from 'lucide-react'
-import { li } from 'framer-motion/client'
+
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status)
@@ -53,9 +52,9 @@ function Header() {
    
    
           <ul className='flex ml-auto'>
-            {navItems,map((item) => 
+            {navItems.map((item) => 
             item.active ?  (
-            <li key={item.name}>
+            <li key={item.slug}>
               <button
                onClick={() => navigate(item.slug)}
                className='inline-block px-6 py-2 duration-200 hover:bg-blue-100 rounded-full'

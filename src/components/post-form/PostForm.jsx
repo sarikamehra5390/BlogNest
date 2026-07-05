@@ -6,7 +6,7 @@ import { Button, Input, Select, RTE } from "../index";
 import appwriteService from "../../appwrite/config";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { title } from "framer-motion/client";
+
 
 
 // post will be available while editing.
@@ -38,11 +38,14 @@ function PostForm({ post }) {
 
   // if the user has submited the form
   const submit = async (data) => {
+     console.log("FORM DATA:", data);
+     console.log("CONTENT:", data.content);
+    console.log("TYPE:", typeof data.content);
 
     if (post) {
 
       // Upload new image only if user selected one.
-      const file = data.image[0]
+      const file = data.image?.[0]
         ? await appwriteService.uploadFile(data.image[0])
         : null;
 
@@ -109,7 +112,7 @@ function PostForm({ post }) {
   },[watch, slugTransForm, setValue])
 
 
-  return 
+  return (
   <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
     <div className="w-2/3 px-2">
     <Input 
@@ -123,6 +126,7 @@ function PostForm({ post }) {
        label = "slug: "
        placeholder = "slug"
        className= "mb-4"
+       readOnly
        {...register("slug", {required : true})}
        onInput = {(e) => {
         setValue("slug", slugTransForm(e.currentTarget.value), {shouldValidate: true})
@@ -138,7 +142,7 @@ function PostForm({ post }) {
         label= "Featured Image: "
         type= "file"
         className= "mb-4"
-        accept= "image/png image/jpg image/jpeg image/gif"
+        accept="image/png,image/jpeg,image/jpg,image/gif"
         {...register("image", {required:!post})}
 
       />
@@ -165,6 +169,7 @@ function PostForm({ post }) {
         </Button>
     </div>
   </form>
+  )
 }
 
 export default PostForm;
