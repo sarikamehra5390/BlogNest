@@ -1,25 +1,15 @@
-import React from 'react'
 
-function Logo({width = '100px'}) {
+import React from "react";
+import logo from "../assets/BLOGNEST_logo.png";
+
+function Logo({ width = "100px" }) {
   return (
-    <div>Logo</div>
-  )
+    <img
+      src={logo}
+      alt="BlogNest Logo"
+      style={{ width }}
+    />
+  );
 }
 
-export default Logo
-
-// to add the logo the below is the format
-
-// import React from "react";
-
-// function Logo({ width = "100px" }) {
-//   return (
-//     <img
-//       src="/logo.png"
-//       alt="Logo"
-//       style={{ width }}
-//     />
-//   );
-// }
-
-// export default Logo;
+export default Logo;

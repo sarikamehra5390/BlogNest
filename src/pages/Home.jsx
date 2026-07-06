@@ -42,14 +42,20 @@ function Home() {
 
   if (posts.length === 0) {
     return (
-      <div className="w-full py-8 mt-4 text-center">
+      <div className="min-h-[80vh] flex items-center justify-center bg-slate-100">
         <Container>
-          <div className="flex flex-wrap">
-            <div className="p-2 w-full">
-              <h1 className="text-2xl font-bold hover:text-gray-500">
-                Login to read posts
-              </h1>
-            </div>
+          <div className="text-center">
+
+            <h1 className="text-4xl font-bold text-slate-800 mb-4">
+              Welcome to BlogNest
+            </h1>
+
+            <p className="text-slate-500 text-lg mb-8">
+              Sign in to discover amazing articles written by our community.
+            </p>
+
+            <div className="text-7xl mb-6">📚</div>
+
           </div>
         </Container>
       </div>
@@ -57,15 +63,32 @@ function Home() {
   }
 
   return (
-    <div className="w-full py-8">
+   <div className="min-h-screen bg-slate-100 dark:bg-slate-950 py-12 transition-colors">
       <Container>
-        <div className="flex flex-wrap">
+
+        {/* Heading */}
+        <div className="mb-10 text-center">
+
+          <h1 className="text-5xl font-bold text-slate-800 dark:text-white">
+            Latest Posts
+          </h1>
+
+          <p className="text-slate-500 dark:text-slate-400 mt-3 text-lg">
+            Explore articles shared by the community.
+          </p>
+
+        </div>
+
+        {/* Posts Grid */}
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {posts.map((post) => (
-            <div key={post.$id || post.$sequence} className="p-2 w-1/4">
-              <PostCard {...post} />
-            </div>
+            <PostCard
+              key={post.$id || post.$sequence}
+              {...post}
+            />
           ))}
         </div>
+
       </Container>
     </div>
   );

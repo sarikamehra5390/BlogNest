@@ -3,7 +3,7 @@ import { Container,PostForm } from '../components'
 
 function AddPost() {
   return (
-    <div className='py-8'>
+    <div className="min-h-screen bg-slate-100 py-12">
         <Container>
             <PostForm />
         </Container>

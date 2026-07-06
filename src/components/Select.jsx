@@ -9,13 +9,36 @@ function Select({
     const id = useId()
   return (
     <div className='w-full '>
-        {label && <label htmlFor={id} className=''>
+        {label && <label htmlFor={id}
+className="block mb-2 text-sm font-semibold text-slate-700"
+>
             {label}</label>}
         <select
         {...props}
         id={id}
         ref={ref}
-        className= {`px-3 py-2 rounded-lg bg-white text-black outline-none focus:bg-gray-50 duration-200 border-gray-200 w-full ${className}`}
+        className={`
+w-full
+px-4
+py-3
+mt-1
+rounded-xl
+border
+border-slate-300
+dark:border-slate-600
+bg-white
+dark:bg-slate-800
+text-slate-700
+dark:text-white
+shadow-sm
+transition-all
+duration-300
+focus:border-blue-500
+focus:ring-4
+focus:ring-blue-100
+focus:shadow-md
+${className}
+`}
         >
             {options?.map((option) => (
                 <option key={option} value={option}>

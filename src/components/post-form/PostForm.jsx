@@ -23,7 +23,7 @@ function PostForm({ post }) {
     useForm({
       defaultValues: {
         title: post?.title || "",
-        slug: post?.slug || "",
+        slug: post?.$id|| "",
         content: post?.content || "",
         status: post?.status || "active",
       },
@@ -113,8 +113,29 @@ function PostForm({ post }) {
 
 
   return (
-  <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-    <div className="w-2/3 px-2">
+    <>
+    <div className="mb-8">
+    <h1 className="text-4xl font-bold text-slate-800">
+      {post ? "Edit Article" : "Create New Article"}
+    </h1>
+
+    <p className="text-slate-500 mt-2">
+      Share your knowledge with the BlogNest community.
+    </p>
+  </div>
+  <form onSubmit={handleSubmit(submit)} className="
+bg-white
+dark:bg-slate-900
+rounded-3xl
+shadow-xl
+border
+border-slate-200
+dark:border-slate-700
+p-8
+flex
+flex-wrap
+gap-8">
+    <div className="w-full lg:w-2/3 space-y-8">
     <Input 
        label = "Title: "
        placeholder = "Title"
@@ -125,7 +146,7 @@ function PostForm({ post }) {
      <Input 
        label = "slug: "
        placeholder = "slug"
-       className= "mb-4"
+       className= "mb-6"
        readOnly
        {...register("slug", {required : true})}
        onInput = {(e) => {
@@ -133,29 +154,43 @@ function PostForm({ post }) {
        }}
     />
 
-    <RTE label= "content: " name="content" control={control} defaultValue={getValues("content")}/>
-
-    </div>
-
-    <div className="w-1/3 px-2">
+    <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+    <RTE
+        label="Content:"
+        name="content"
+        control={control}
+        defaultValue={getValues("content")}
+    />
+</div>
       <Input
         label= "Featured Image: "
         type= "file"
-        className= "mb-4"
+        className= "mb-6"
         accept="image/png,image/jpeg,image/jpg,image/gif"
         {...register("image", {required:!post})}
 
       />
 
       {post && (
+        <>
         <div className="w-full mb-4">
           <img
              src={appwriteService.getFilePreview(post.featuredImage)}
              alt={post.title}
-             className="rounded-lg"
+             className="w-full
+rounded-2xl
+shadow-md
+object-cover
+max-h-64"
           />
         </div>
+           <hr className="border-slate-200" />
+  </>
       )}
+      
+      <h3 className="text-lg font-semibold text-slate-700">
+    Publish Settings
+</h3>
 
       <Select
         options={["active" , "inactive"]}
@@ -164,11 +199,17 @@ function PostForm({ post }) {
         {...register("status", {required: true})}
         />
 
-        <Button type="submit" bgColor= {post ? "bg-green-500" : undefined} className="w-full">
+        <Button 
+        type="submit" 
+        bgColor= {post ? "bg-green-500" : undefined} className="w-full
+py-4
+text-lg
+font-semibold">
           {post ? "Update" : "Submit"}
         </Button>
     </div>
   </form>
+  </>
   )
 }
 

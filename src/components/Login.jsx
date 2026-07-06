@@ -40,31 +40,62 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center w-full">
-      <div className="mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10">
+   <div className="min-h-[90vh] flex items-center justify-center bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300 px-4">
+      <div className=" mx-auto
+    w-full
+    max-w-md
+    bg-white/90
+     dark:bg-slate-900/90
+    backdrop-blur-md
+    rounded-3xl
+    shadow-2xl
+    border
+   border-slate-200 dark:border-slate-700
+    p-10">
         <div className="mb-2 flex justify-center">
-          <span className="inline-block w-full max-w-25">
+        <span className="inline-block w-full max-w-[80px] mb-4">
             <Logo width="100%" />
           </span>
         </div>
-        <h2 className="text-center text-2xl font-bold leading-tight">
+        <h2 className="text-center text-3xl font-bold text-slate-800 dark:text-white mt-4 transition-colors">
           Sign in to your account
         </h2>
-        <p className="mt-2 text-center text-base text-black/60">
+        <p className="text-center text-slate-500 dark:text-slate-400 mt-2 mb-6">
+  Welcome back! Continue writing and exploring amazing blogs.
+</p>
+        <p className="mt-3 text-center text-slate-500 dark:text-slate-400 leading-6 transition-colors">
           Don&apos;t have an account ?&nbsp;
-          <Link
-            to="/signup"
-            className="font-medium text-primary transition-all duration-200 hover:underline"
-          >
-            Sign Up
-          </Link>
+         <Link
+  to="/signup"
+ className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-300"
+>
+  Sign Up
+</Link>
         </p>
-        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
+        {error && (
+  <div
+    className="
+      mt-6
+      rounded-xl
+      border
+      border-red-300
+      bg-red-50
+      dark:bg-red-900/30
+      dark:border-red-700
+      p-3
+      text-center
+      text-red-600
+      dark:text-red-300
+    "
+  >
+    {error}
+  </div>
+)}
 
         {/*Handle submit is an event.Whenever the form is submit it is through handleSubmit() method  */}
 
-        <form onSubmit={handleSubmit(login)} className="mt-8">
-          <div className="space-y-5">
+        <form onSubmit={handleSubmit(login)} className="mt-10">
+          <div className="space-y-6">
             <Input
               label="Email: "
               placeholder="Enter your email"
@@ -89,7 +120,7 @@ function Login() {
                 required: true,
               })}
             />
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600">
               Sign in
             </Button>
           </div>

@@ -20,8 +20,11 @@ export default function RTE({ name, control, label, defaultValue = "" }) {
             initialValue={defaultValue}
             init={{
               initialValue: defaultValue,
-              height: 500,
-              menubar: true,
+              height: 650,
+              menubar: false,
+              branding:false,
+              statusbar:false,
+              resize:false,
               plugins: [
                 "advlist",
                 "autolink",
@@ -42,10 +45,24 @@ export default function RTE({ name, control, label, defaultValue = "" }) {
                 "wordcount",
               ],
               toolbar:
-                "undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help",
+                "undo redo | blocks | bold italic underline | forecolor backcolor | alignleft aligncenter alignright | bullist numlist | blockquote | link image | removeformat | code",
 
-              content_style:
-                "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+              content_style: `
+body{
+    font-family: Inter, sans-serif;
+    font-size:18px;
+    line-height:1.8;
+    padding:30px;
+    color:#334155;
+    background:#ffffff;
+}
+h1,h2,h3{
+    color:#0f172a;
+}
+img{
+    max-width:100%;
+}
+`,
             }}
             onEditorChange={(content) => {
               console.log("Editor Content:", content);

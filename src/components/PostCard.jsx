@@ -1,6 +1,7 @@
 import React from "react";
 import appwriteService from "../appwrite/config";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 function PostCard({
   $id,
@@ -14,24 +15,87 @@ function PostCard({
   console.log("Image URL:", imageUrl);
 
   return (
-    <Link to={`/post/${$id}`}>
-      <div className="w-full bg-gray-100 rounded-xl p-4">
-        <div className="w-full flex justify-center mb-4">
+    <Link to={`/post/${$id}`} className="group">
+      <motion.div
+         initial={{ opacity: 0, y: 30 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ duration: 0.5 }}
+         whileHover={{
+      y: -10,
+      scale: 1.02,
+    }}
+        className="
+          w-full
+          bg-white dark:bg-slate-900
+          rounded-2xl
+          overflow-hidden
+          shadow-md
+          hover:shadow-2xl
+          hover:-translate-y-2
+          transition-all
+          duration-300
+        "
+      >
+        {/* Image */}
+        <div className="overflow-hidden h-56">
           <img
             src={imageUrl}
             alt={title}
-            className="rounded-xl"
             loading="lazy"
             onLoad={() => console.log("Image Loaded")}
             onError={(e) => {
               console.log("Image Failed");
               console.log(e);
             }}
+            className="
+              w-full
+              h-full
+              object-cover
+              transition-transform
+              duration-500
+              group-hover:scale-110
+            "
           />
         </div>
 
-        <h2 className="text-xl font-bold">{title}</h2>
-      </div>
+        {/* Content */}
+        <div className="p-5">
+
+          {/* Title */}
+          <h2
+            className="
+              text-xl
+              font-bold
+              text-slate-800 dark:text-white
+              mb-3
+              line-clamp-2
+            "
+          >
+            {title}
+          </h2>
+
+          {/* Description */}
+          <p className="text-slate-500 dark:text-slate-400 text-sm leading-6">
+            Click here to read the complete article.
+          </p>
+
+          {/* Read More */}
+          <div className="mt-5 flex justify-end">
+            <span
+              className="
+                text-blue-600
+                font-semibold
+                group-hover:translate-x-1
+                transition-all
+                duration-300
+              "
+            >
+              Read More →
+            </span>
+          </div>
+
+        </div>
+      </motion.div>
     </Link>
   );
 }

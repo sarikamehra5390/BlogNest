@@ -1,20 +1,23 @@
-import React from 'react'
-import {Container , Logo , LogoutBtn} from '../index'
-import {Link} from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-
+import React from "react";
+import { Container, Logo, LogoutBtn } from "../index";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import ThemeContext from "../../context/ThemeContext";
+import { Moon, Sun } from "lucide-react";
 
 function Header() {
-  const authStatus = useSelector((state) => state.auth.status)
-  const navigate = useNavigate()
+  const authStatus = useSelector((state) => state.auth.status);
+  const navigate = useNavigate();
+  const { dark, setDark } = useContext(ThemeContext);
 
   const navItems = [
     {
-      name: 'Home',
-      slug: '/',
+      name: "Home",
+      slug: "/",
       active: true,
-    }, 
+    },
     {
       name: "Login",
       slug: "/login",
@@ -35,34 +38,69 @@ function Header() {
       slug: "/add-post",
       active: authStatus,
     },
-    
-    
-  ]
-// the html element which is getting repeated we have to apply the key in that 
+  ];
+  // the html element which is getting repeated we have to apply the key in that
   return (
-     
-    <header className='py-3 shadow bg-gray-500'>
+    <header
+  className="
+    sticky
+    top-0
+    z-50
+    bg-white/90
+    dark:bg-slate-900/90
+    backdrop-blur-md
+    border-b
+    border-slate-200
+    dark:border-slate-700
+    shadow-sm
+    transition-colors
+    duration-300
+  "
+>
       <Container>
-        <nav className='flex'>
-          <div className='mr-4'>
-            <Link to='/'>
-             <Logo width='70px' />
+        <nav className="flex items-center justify-between h-16">
+          <div className="flex items-center gap-3">
+            <Link to="/">
+              <Logo width="55px" />
             </Link>
+
+            <h1 className=" text-2xl
+    font-bold
+    text-slate-800
+    dark:text-white
+    tracking-tight
+    transition-colors">
+              BlogNest
+            </h1>
           </div>
-   
-   
-          <ul className='flex ml-auto'>
-            {navItems.map((item) => 
-            item.active ?  (
-            <li key={item.slug}>
-              <button
-               onClick={() => navigate(item.slug)}
-               className='inline-block px-6 py-2 duration-200 hover:bg-blue-100 rounded-full'
-              >{item.name}</button>
-            </li>
-             ) : null
+
+          <ul className="flex items-center gap-2">
+            {navItems.map((item) =>
+              item.active ? (
+                <li key={item.slug}>
+                  <button
+                    onClick={() => navigate(item.slug)}
+                    className="
+px-4
+py-2
+rounded-lg
+font-medium
+text-slate-700
+dark:text-slate-200
+hover:bg-blue-100
+dark:hover:bg-slate-800
+hover:text-blue-700
+dark:hover:text-blue-400
+transition-all
+duration-300
+"
+                  >
+                    {item.name}
+                  </button>
+                </li>
+              ) : null,
             )}
- 
+
             {/* if you are authenticated then only show the logoutbtn */}
 
             {authStatus && (
@@ -70,12 +108,34 @@ function Header() {
                 <LogoutBtn />
               </li>
             )}
-
+            <li>
+  <button
+    onClick={() => setDark(!dark)}
+    className="
+      ml-2
+      w-10
+      h-10
+      rounded-full
+      flex
+      items-center
+      justify-center
+      bg-slate-100
+      dark:bg-slate-800
+      hover:bg-blue-100
+      dark:hover:bg-slate-700
+      transition-all
+      duration-300
+      text-xl
+    "
+  >
+    {dark ? <Sun size={20} /> : <Moon size={20} />}
+  </button>
+</li>
           </ul>
         </nav>
       </Container>
     </header>
-  )
+  );
 }
 
-export default Header
+export default Header;
