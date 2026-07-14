@@ -14,6 +14,7 @@ import EditPost from './pages/EditPost'
 import Post from './pages/Post'
 import { AuthLayout , Login} from './components/index.js'
 import ThemeProvider from "./context/ThemeProvider";
+import { Toaster } from "react-hot-toast";
 
 
 const router = createBrowserRouter([
@@ -82,6 +83,35 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <ThemeProvider>
       <RouterProvider router={router}/>
+
+      {/*In React, a toast is a small, non-blocking notification pop-up that provides brief feedback about actions, errors, or events without interrupting the user's workflow.  These messages typically disappear automatically after a set duration or can be dismissed manually, often appearing at the bottom or corner of the screen with various animation effects*/}
+
+        <Toaster
+      position="top-right"
+      reverseOrder={false}
+      toastOptions={{
+        style: {
+      borderRadius: "12px",
+      background: "#1e293b",
+      color: "#fff",
+      padding: "16px",
+    },
+    success: {
+      iconTheme: {
+        primary: "#22c55e",
+        secondary: "#fff",
+      },
+    },
+    error: {
+      iconTheme: {
+        primary: "#ef4444",
+        secondary: "#fff",
+      },
+    },
+        duration: 3000,
+      }}
+    />
+
     </ThemeProvider>
   </Provider>
 </React.StrictMode>,

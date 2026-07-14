@@ -68,3 +68,41 @@ textarea:focus,
 select:focus {
     outline: none;
 }
+
+
+/* ============================= */
+/* Shimmer Loading Animation */
+/* ============================= */
+
+@keyframes shimmer {
+  0% {
+    background-position: -800px 0;
+  }
+
+  100% {
+    background-position: 800px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 25%,
+    #f8fafc 50%,
+    #e2e8f0 75%
+  );
+
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.dark .shimmer {
+  background: linear-gradient(
+    90deg,
+    #334155 25%,
+    #475569 50%,
+    #334155 75%
+  );
+
+  background-size: 800px 100%;
+}

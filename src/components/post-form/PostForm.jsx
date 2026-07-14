@@ -6,6 +6,7 @@ import { Button, Input, Select, RTE } from "../index";
 import appwriteService from "../../appwrite/config";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 
 
@@ -40,7 +41,7 @@ function PostForm({ post }) {
   const submit = async (data) => {
      console.log("FORM DATA:", data);
      console.log("CONTENT:", data.content);
-    console.log("TYPE:", typeof data.content);
+     console.log("TYPE:", typeof data.content);
 
     if (post) {
 
@@ -60,6 +61,7 @@ function PostForm({ post }) {
         featuredImage: file ? file.$id : undefined
       })
         if(dbPost) {
+          toast.success("Post published successfully ✍️");
           navigate(`/post/${dbPost.$id}`)
         }
 

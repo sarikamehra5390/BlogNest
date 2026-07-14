@@ -5,6 +5,7 @@ import {login} from '../store/authSlice'
 import {Button, Input, Logo} from './index'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
+import toast from "react-hot-toast";
 
 
 function Signup() {
@@ -23,11 +24,15 @@ function Signup() {
        const userData =  await authService.createAccount(data)
        if (userData) {
             const userData = await authService.getCurrentUser()
-            if(userData) dispatch(login(userData))
+            if(userData) 
+              dispatch(login(userData))
+              toast.success("Account created successfully! 🎉");
+
               navigate("/")
        }
       } catch (error) {
         setError(error.message)
+        toast.error(error.message);
       }
     }
 

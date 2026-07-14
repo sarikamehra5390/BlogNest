@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import appwriteService from "../appwrite/config";
-import { Container, PostCard } from "../components";
+import { Container, PostCard, SkeletonCard } from "../components";
 
 function Home() {
-  const [posts, setPosts] = useState([]);
+ const [posts, setPosts] = useState([]);
+ const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+
+        
         const response = await appwriteService.getPosts();
 
         console.log(response.rows);
@@ -15,30 +18,55 @@ function Home() {
         // TablesDB
         if (response?.rows) {
           setPosts(response.rows);
+          
         }
 
         // Old Databases API
         else if (response?.documents) {
           setPosts(response.documents);
+         
         }
 
         // Already an array
         else if (Array.isArray(response)) {
           setPosts(response);
+          
         }
 
         // Fallback
         else {
           setPosts([]);
+         
         }
+
+         setLoading(false);
+
       } catch (error) {
         console.error("Error fetching posts:", error);
         setPosts([]);
+        setLoading(false);
       }
     };
 
     fetchPosts();
   }, []);
+
+  
+
+
+  if (loading) {
+  return (
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 py-12">
+      <Container>
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[...Array(8)].map((_, index) => (
+            <SkeletonCard key={index} />
+          ))}
+        </div>
+      </Container>
+    </div>
+  );
+}
 
   if (posts.length === 0) {
     return (

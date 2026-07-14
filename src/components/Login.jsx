@@ -6,6 +6,7 @@ import { Button, Input, Logo } from "./index";
 import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 function Login() {
   const navigate = useNavigate();
@@ -27,15 +28,21 @@ function Login() {
         // userdata is always pull from the await function
 
         const userData = await authService.getCurrentUser();
-        if (userData) dispatch(authLogin(userData));
+        if (userData)
+           dispatch(authLogin(userData));
 
         // link is not used here has link doesnot work automatically we have to click the link to go to some other page .
         // navigate is used here as navigate programmtically move to the page after the login for eg : home page
 
+         toast.success(`Welcome back, ${userData.name}! 👋`, {
+          duration: 3000,
+        });
+
         navigate("/");
       }
     } catch (error) {
-      setError(error.message);
+       setError(error.message);
+       toast.error(error.message || "Login Failed");
     }
   };
 
