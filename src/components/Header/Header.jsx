@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import ThemeContext from "../../context/ThemeContext";
 import { Moon, Sun } from "lucide-react";
+import {SearchBar} from "../index"
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
@@ -65,14 +66,19 @@ function Header() {
             </Link>
 
             <h1 className=" text-2xl
-    font-bold
-    text-slate-800
-    dark:text-white
-    tracking-tight
-    transition-colors">
+             font-bold
+           text-slate-800
+           dark:text-white
+             tracking-tight
+             transition-colors"
+             >
               BlogNest
             </h1>
           </div>
+
+           <div className="hidden lg:flex flex-1 justify-center px-8">
+               <SearchBar />
+            </div>
 
           <ul className="flex items-center gap-2">
             {navItems.map((item) =>

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import appwriteService from "../appwrite/config";
 import { Container, PostCard, SkeletonCard } from "../components";
+import { useContext } from "react";
+import SearchContext from "../context/SearchContext";
 
 function Home() {
  const [posts, setPosts] = useState([]);
  const [loading, setLoading] = useState(true);
+ const { search } = useContext(SearchContext);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -50,6 +53,30 @@ function Home() {
 
     fetchPosts();
   }, []);
+
+
+  const filteredPosts = posts.filter((post) => {
+  const query = search.trim().toLowerCase();
+
+  if (!query) return true;
+
+  const title = (post.title || "").toLowerCase();
+
+  const content = (post.content || "")
+    .replace(/<[^>]*>/g, "")
+    .toLowerCase();
+
+  const category = (post.category || "").toLowerCase();
+
+  const tags = (post.tags || "").toLowerCase();
+
+  return (
+    title.includes(query) ||
+    content.includes(query) ||
+    category.includes(query) ||
+    tags.includes(query)
+  );
+});
 
   
 
@@ -107,15 +134,34 @@ function Home() {
 
         </div>
 
+        {filteredPosts.length === 0 && search !== "" && (
+  <div className="text-center py-16">
+
+    <div className="text-6xl mb-4">🔍</div>
+
+    <h2 className="text-3xl font-bold text-slate-700 dark:text-white">
+      No Posts Found
+    </h2>
+
+    <p className="mt-3 text-slate-500">
+      No articles match "
+      <span className="font-semibold">{search}</span>"
+    </p>
+
+  </div>
+)}
+
         {/* Posts Grid */}
+        {filteredPosts.length > 0 && (
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {posts.map((post) => (
+         {filteredPosts.map((post) => (
             <PostCard
               key={post.$id || post.$sequence}
               {...post}
             />
           ))}
         </div>
+        )}
 
       </Container>
     </div>

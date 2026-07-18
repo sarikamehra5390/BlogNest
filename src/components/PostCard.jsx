@@ -7,6 +7,8 @@ function PostCard({
   $id,
   title,
   featuredImage,
+  category,
+  tags,
 }) {
 
   const imageUrl = appwriteService.getFilePreview(featuredImage);
@@ -61,6 +63,26 @@ function PostCard({
         {/* Content */}
         <div className="p-5">
 
+          {category && (
+  <span
+    className="
+      inline-block
+      mb-3
+      px-3
+      py-1
+      rounded-full
+      bg-blue-100
+      text-blue-700
+      dark:bg-blue-900/40
+      dark:text-blue-300
+      text-xs
+      font-semibold
+    "
+  >
+    {category}
+  </span>
+)}
+
           {/* Title */}
           <h2
             className="
@@ -78,6 +100,28 @@ function PostCard({
           <p className="text-slate-500 dark:text-slate-400 text-sm leading-6">
             Click here to read the complete article.
           </p>
+
+          {tags && (
+  <div className="flex flex-wrap gap-2 mt-4">
+    {tags.split(",").map((tag) => (
+      <span
+        key={tag.trim()}
+        className="
+          px-2
+          py-1
+          text-xs
+          rounded-full
+          bg-slate-100
+          dark:bg-slate-800
+          text-slate-600
+          dark:text-slate-300
+        "
+      >
+        #{tag.trim()}
+      </span>
+    ))}
+  </div>
+)}
 
           {/* Read More */}
           <div className="mt-5 flex justify-end">

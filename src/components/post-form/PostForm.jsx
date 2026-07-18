@@ -26,6 +26,8 @@ function PostForm({ post }) {
         title: post?.title || "",
         slug: post?.$id|| "",
         content: post?.content || "",
+        category:post?.category || "General",
+        tags: post?.tags || "",
         status: post?.status || "active",
       },
     });
@@ -144,6 +146,28 @@ gap-8">
        className= "mb-4"
        {...register("title", {required : true})}
     />
+
+    <Select
+    label="Category"
+    options={[
+        "General",
+        "Java",
+        "React",
+        "DSA",
+        "AI",
+        "Web Development",
+    ]}
+    className="mb-4"
+    {...register("category", { required: true })}
+/>
+    <Input
+   label="Tags"
+   placeholder="java, collections, backend"
+   className="mb-4"
+   {...register("tags")}
+/>
+
+
 
      <Input 
        label = "slug: "

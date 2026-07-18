@@ -17,7 +17,7 @@ export class Service{
 
     // all the post related services are defined here 
 
-    async createPost({title, slug, content, featuredImage, status, userId}){
+    async createPost({title, slug, content,category, tags, featuredImage, status, userId}){
         try {
            return await this.databases.createRow({
              databaseId : conf.appwriteDatabaseId,
@@ -26,6 +26,8 @@ export class Service{
              data: {
                 title,
                 content, 
+                category,
+                tags,
                 featuredImage,
                 status,
                 userId,
@@ -39,7 +41,7 @@ export class Service{
         }
     }
 
-    async updatePost(slug, {title, content, featuredImage, status}){
+    async updatePost(slug, {title, content,category,tags, featuredImage, status}){
          try {
             return await this.databases.updateRow({
                 databaseId: conf.appwriteDatabaseId,
@@ -48,6 +50,8 @@ export class Service{
                 data: {
                     title,
                     content,
+                    category,
+                    tags,
                     featuredImage,
                     status,
                 }
