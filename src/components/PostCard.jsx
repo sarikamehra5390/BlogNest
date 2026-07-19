@@ -2,10 +2,12 @@ import React from "react";
 import appwriteService from "../appwrite/config";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { calculateReadingTime } from "../utils/readingTime";
 
 function PostCard({
   $id,
   title,
+  content,
   featuredImage,
   category,
   tags,
@@ -13,8 +15,7 @@ function PostCard({
 
   const imageUrl = appwriteService.getFilePreview(featuredImage);
 
-  console.log("File ID:", featuredImage);
-  console.log("Image URL:", imageUrl);
+  const readingTime = calculateReadingTime(content);
 
   return (
     <Link to={`/post/${$id}`} className="group">
@@ -95,6 +96,29 @@ function PostCard({
           >
             {title}
           </h2>
+
+          {/*Reading time*/}
+           
+        <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 mb-3">
+
+          <span>📖 {readingTime} min read</span>
+
+             {category && (
+              <>
+                   <span>•</span>
+
+                     <span className="
+                           font-medium
+                         text-blue-600
+                         dark:text-blue-400
+                 ">
+                       📂 {category}
+                    </span>
+                 </>
+               )}
+
+            </div>
+
 
           {/* Description */}
           <p className="text-slate-500 dark:text-slate-400 text-sm leading-6">

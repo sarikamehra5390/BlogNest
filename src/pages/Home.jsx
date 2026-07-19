@@ -8,6 +8,7 @@ function Home() {
  const [posts, setPosts] = useState([]);
  const [loading, setLoading] = useState(true);
  const { search } = useContext(SearchContext);
+ const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -54,30 +55,35 @@ function Home() {
     fetchPosts();
   }, []);
 
+   const categories = [
+  "All",
+  "General",
+  "Java",
+  "React",
+  "DSA",
+  "AI",
+  "Web Development",
+];
+
 
   const filteredPosts = posts.filter((post) => {
   const query = search.trim().toLowerCase();
 
-  if (!query) return true;
+  const matchesSearch =
+    !query ||
+    (post.title || "").toLowerCase().includes(query) ||
+    (post.content || "")
+      .replace(/<[^>]*>/g, "")
+      .toLowerCase()
+      .includes(query) ||
+    (post.tags || "").toLowerCase().includes(query);
 
-  const title = (post.title || "").toLowerCase();
+  const matchesCategory =
+    selectedCategory === "All" ||
+    post.category === selectedCategory;
 
-  const content = (post.content || "")
-    .replace(/<[^>]*>/g, "")
-    .toLowerCase();
-
-  const category = (post.category || "").toLowerCase();
-
-  const tags = (post.tags || "").toLowerCase();
-
-  return (
-    title.includes(query) ||
-    content.includes(query) ||
-    category.includes(query) ||
-    tags.includes(query)
-  );
+  return matchesSearch && matchesCategory;
 });
-
   
 
 
@@ -117,6 +123,8 @@ function Home() {
     );
   }
 
+ 
+
   return (
    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 py-12 transition-colors">
       <Container>
@@ -131,6 +139,25 @@ function Home() {
           <p className="text-slate-500 dark:text-slate-400 mt-3 text-lg">
             Explore articles shared by the community.
           </p>
+
+          <div className="flex flex-wrap justify-center gap-3 mt-8">
+
+  {categories.map((category) => (
+    <button
+      key={category}
+      onClick={() => setSelectedCategory(category)}
+      className={`px-5 py-2 rounded-full font-medium transition-all duration-300
+      ${
+        selectedCategory === category
+          ? "bg-blue-600 text-white shadow-lg"
+          : "bg-white dark:bg-slate-800 text-slate-700 dark:text-white hover:bg-blue-100 dark:hover:bg-slate-700"
+      }`}
+    >
+      {category}
+    </button>
+  ))}
+
+</div>
 
         </div>
 

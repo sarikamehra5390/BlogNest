@@ -22,9 +22,10 @@ export class Service{
            return await this.databases.createRow({
              databaseId : conf.appwriteDatabaseId,
              tableId : conf.appwriteCollectionId,
-             rowId: slug,
+             rowId: ID.unique(),
              data: {
                 title,
+                slug,
                 content, 
                 category,
                 tags,
@@ -46,7 +47,7 @@ export class Service{
             return await this.databases.updateRow({
                 databaseId: conf.appwriteDatabaseId,
                 tableId: conf.appwriteCollectionId,
-                rowId: slug,
+                rowId: id,
                 data: {
                     title,
                     content,
