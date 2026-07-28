@@ -39,6 +39,11 @@ function Header() {
       slug: "/add-post",
       active: authStatus,
     },
+    {
+    name: "Saved Posts",
+    slug: "/saved-posts",
+    active: authStatus,
+}
   ];
   // the html element which is getting repeated we have to apply the key in that
   return (

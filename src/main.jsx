@@ -16,6 +16,7 @@ import { AuthLayout , Login} from './components/index.js'
 import ThemeProvider from "./context/ThemeProvider";
 import { Toaster } from "react-hot-toast";
 import SearchProvider from "./context/SearchProvider";
+import SavedPosts from './pages/SavedPosts.jsx';
 
 
 const router = createBrowserRouter([
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
         path:'/post/:slug',
         element: <Post />
       },
+      {
+        path: '/saved-posts',
+        element: <SavedPosts />
+      }
     ]
   }
 ])

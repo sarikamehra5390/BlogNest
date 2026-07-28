@@ -16,6 +16,10 @@ const conf = {
 appwriteBookmarksTableId: String(
     import.meta.env.VITE_APPWRITE_BOOKMARKS_TABLE_ID
 ),
+
+appwriteProfilesTableId: String(
+    import.meta.env.VITE_APPWRITE_PROFILES_TABLE_ID
+),
     appwriteBucketId: String(import.meta.env.VITE_APPWRITE_BUCKET_ID),
 }
 
