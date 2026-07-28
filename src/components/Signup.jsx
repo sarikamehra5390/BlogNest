@@ -6,7 +6,7 @@ import {Button, Input, Logo} from './index'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import toast from "react-hot-toast";
-
+import profileService from "../appwrite/profileService";
 
 function Signup() {
     const navigate = useNavigate()
@@ -17,24 +17,39 @@ function Signup() {
        handleSubmit,
       } = useForm()
 
-    const create = async(data) => {
-      setError("")
+    const create = async (data) => {
+    setError("");
 
-      try {
-       const userData =  await authService.createAccount(data)
-       if (userData) {
-            const userData = await authService.getCurrentUser()
-            if(userData) 
-              dispatch(login(userData))
-              toast.success("Account created successfully! 🎉");
+    try {
+        const account = await authService.createAccount(data);
 
-              navigate("/")
-       }
-      } catch (error) {
-        setError(error.message)
+        if (account) {
+            const currentUser = await authService.getCurrentUser();
+
+            if (currentUser) {
+
+                // Check if profile already exists
+                const existingProfile = await profileService.getProfile(currentUser.$id);
+
+                if (!existingProfile) {
+                    await profileService.createProfile({
+                        userId: currentUser.$id,
+                        name: currentUser.name,
+                        bio: "",
+                        avatar: "",
+                    });
+                }
+
+                dispatch(login(currentUser));
+                toast.success("Account created successfully! 🎉");
+                navigate("/");
+            }
+        }
+    } catch (error) {
+        setError(error.message);
         toast.error(error.message);
-      }
     }
+};
 
   return (
   <div className="min-h-[90vh] flex items-center justify-center bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300 px-4">

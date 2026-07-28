@@ -17,6 +17,8 @@ import ThemeProvider from "./context/ThemeProvider";
 import { Toaster } from "react-hot-toast";
 import SearchProvider from "./context/SearchProvider";
 import SavedPosts from './pages/SavedPosts.jsx';
+import Profile from './pages/Profile.jsx';
+import EditProfile from './pages/EditProfile.jsx';
 
 
 const router = createBrowserRouter([
@@ -79,6 +81,14 @@ const router = createBrowserRouter([
       {
         path: '/saved-posts',
         element: <SavedPosts />
+      },
+      {
+        path: "/profile",
+        element: <Profile />
+      },
+      {
+        path : "/edit-profile",
+        element: <EditProfile />
       }
     ]
   }
