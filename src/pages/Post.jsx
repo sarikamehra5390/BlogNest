@@ -10,6 +10,7 @@ import CommentForm from "../components/CommentForm";
 import CommentCard from "../components/CommentCard";
 import likeService from "../appwrite/likeService";
 import bookmarkService from "../appwrite/bookmarkService";
+import profileService from "../appwrite/profileService";
 
 export default function Post() {
   const [post, setPost] = useState(null);
@@ -21,6 +22,7 @@ export default function Post() {
   const [bookmarked, setBookmarked] = useState(false);
   const [bookmarkId, setBookmarkId] = useState(null);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const [author, setAuthor] = useState(null);
 
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -31,18 +33,29 @@ export default function Post() {
     post && userData ? post.userId === userData.$id : false;
 
   useEffect(() => {
-    if (slug) {
-      appwriteService.getPost(slug).then((post) => {
-        if (post) {
-          setPost(post);
-        } else {
-          navigate("/");
+    const fetchPost = async () => {
+        if (!slug) {
+            navigate("/");
+            return;
         }
-      });
-    } else {
-      navigate("/");
-    }
-  }, [slug, navigate]);
+
+        const fetchedPost = await appwriteService.getPost(slug);
+
+        if (!fetchedPost) {
+            navigate("/");
+            return;
+        }
+
+        setPost(fetchedPost);
+
+        // Fetch author profile
+        const profile = await profileService.getProfile(fetchedPost.userId);
+     
+        setAuthor(profile);
+    };
+
+    fetchPost();
+}, [slug, navigate]);
 
   const deletePost = async () => {
     const status = await appwriteService.deletePost(post.$id);
@@ -266,6 +279,40 @@ const handleBookmark = async () => {
           <h1 className="text-5xl font-bold text-slate-800 dark:text-white leading-tight mb-4">
             {post.title}
           </h1>
+
+          <div className="flex items-center gap-4 mt-6 mb-8">
+
+    <Link to={`/author/${post.userId}`}>
+
+        <img
+            src={
+                author?.avatar
+                    ? appwriteService.getFilePreview(author.avatar)
+                    : `https://ui-avatars.com/api/?name=${author?.name || "User"}`
+            }
+            alt={author?.name}
+            className="w-14 h-14 rounded-full object-cover border-2 border-blue-500"
+        />
+
+    </Link>
+
+    <div>
+
+        <Link
+            to={`/author/${post.userId}`}
+            onClick={() => alert(`Navigating to /author/${post.userId}`)}
+            className="text-xl font-semibold hover:text-blue-600 transition"
+        >
+            {author?.name || "Unknown Author"}
+        </Link>
+
+        <p className="text-gray-500 dark:text-gray-400">
+            {author?.bio || "No bio available"}
+        </p>
+
+    </div>
+
+</div>
 
           {/* Meta */}
 

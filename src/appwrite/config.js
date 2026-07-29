@@ -144,6 +144,29 @@ export class Service{
         fileId,
     });
 }
+   // Get all posts by a specific author
+async getPostsByUser(userId) {
+    try {
+        console.log("Searching for userId:", userId);
+
+        const response = await this.databases.listRows({
+            databaseId: conf.appwriteDatabaseId,
+            tableId: conf.appwriteCollectionId,
+            queries: [
+                Query.equal("userId", userId),
+                Query.equal("status", "active"),
+            ],
+        });
+
+        console.log("Response:", response);
+        console.log("Rows:", response.rows);
+
+        return response.rows;
+    } catch (error) {
+        console.log(error);
+        return [];
+    }
+}
 
 }
 

@@ -4,6 +4,7 @@ import { Container } from "../components";
 import profileService from "../appwrite/profileService";
 import { useNavigate } from "react-router-dom";
 import appwriteService from "../appwrite/config";
+import { Link } from "react-router-dom";
 
 
 export default function Profile() {
@@ -43,6 +44,7 @@ export default function Profile() {
     );
 }
 
+
 return (
     <div className="bg-slate-100 dark:bg-slate-950 min-h-screen py-10">
         <Container>
@@ -51,21 +53,26 @@ return (
 
                 <div className="flex flex-col items-center">
 
-                  <img
-                   src={
-                    profile.avatar
-                      ? appwriteService.getFilePreview(profile.avatar)
-                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        profile.name
-                      )}&background=2563eb&color=fff`
-                    }
-                    alt={profile.name}
-                    className="w-32 h-32 rounded-full object-cover border-4 border-blue-600"
-                  />
+                <Link to={`/author/${profile?.userId}`}>
+                    <img
+                      src={
+                        profile?.avatar
+                        ? appwriteService.getFilePreview(profile.avatar)
+                        : `https://ui-avatars.com/api/?name=${profile?.name}`
+                      }
+                       alt={profile?.name}
+                        className="w-28 h-28 rounded-full object-cover mx-auto border-4 border-blue-500 hover:scale-105 transition-transform cursor-pointer"
+                      />
+                </Link>
 
-                    <h1 className="text-3xl font-bold mt-6 dark:text-white">
-                        {profile.name}
-                    </h1>
+                   <Link
+                     to={`/author/${profile?.userId}`}
+                     className="block text-center"
+                    >
+                     <h1 className="text-3xl font-bold mt-4 dark:text-white hover:text-blue-600 transition-colors cursor-pointer">
+                       {profile?.name}
+                     </h1>
+                    </Link>
 
                     <p className="text-gray-500 mt-2">
                         {profile.bio || "No bio added yet."}

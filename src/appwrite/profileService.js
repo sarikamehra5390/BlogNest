@@ -15,23 +15,27 @@ export class ProfileService {
 
     // Create Profile
     async createProfile({ userId, name, bio = "", avatar = "" }) {
-        try {
-            return await this.databases.createRow({
-                databaseId: conf.appwriteDatabaseId,
-                tableId: conf.appwriteProfilesTableId,
-                rowId: ID.unique(),
-                data: {
-                    userId,
-                    name,
-                    bio,
-                    avatar,
-                },
-            });
-        } catch (error) {
-            console.error("ProfileService :: createProfile ::", error);
-            return false;
-        }
+    try {
+        const response = await this.databases.createRow({
+            databaseId: conf.appwriteDatabaseId,
+            tableId: conf.appwriteProfilesTableId,
+            rowId: ID.unique(),
+            data: {
+                userId,
+                name,
+                bio,
+                avatar,
+            },
+        });
+
+        console.log("Profile created:", response);
+        return response;
+
+    } catch (error) {
+        console.error("Full Appwrite Error:", error);
+        throw error;
     }
+}
 
     // Get profile by userId
     async getProfile(userId) {

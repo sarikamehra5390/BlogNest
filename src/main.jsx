@@ -19,6 +19,7 @@ import SearchProvider from "./context/SearchProvider";
 import SavedPosts from './pages/SavedPosts.jsx';
 import Profile from './pages/Profile.jsx';
 import EditProfile from './pages/EditProfile.jsx';
+import AuthorProfile from './pages/AuthorProfile.jsx';
 
 
 const router = createBrowserRouter([
@@ -89,7 +90,11 @@ const router = createBrowserRouter([
       {
         path : "/edit-profile",
         element: <EditProfile />
-      }
+      },
+      {
+        path: "/author/:userId",
+        element: <AuthorProfile />
+      },
     ]
   }
 ])
