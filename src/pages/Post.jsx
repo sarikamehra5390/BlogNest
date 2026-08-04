@@ -11,6 +11,8 @@ import CommentCard from "../components/CommentCard";
 import likeService from "../appwrite/likeService";
 import bookmarkService from "../appwrite/bookmarkService";
 import profileService from "../appwrite/profileService";
+import viewService from "../appwrite/viewService";
+import notificationService from "../appwrite/notificationService";
 
 export default function Post() {
   const [post, setPost] = useState(null);
@@ -190,14 +192,42 @@ const handleLike = async () => {
         }
 
         const success = await likeService.likePost(
-            post.$id,
-            userData.$id
-        );
+    post.$id,
+    userData.$id
+);
 
-        if (success) {
-            toast.success("Post liked ❤️");
-            await fetchLikes();
-        }
+if (success) {
+
+    // Don't notify yourself
+    if (userData.$id !== post.userId) {
+
+        await notificationService.createNotification({
+
+            receiverId: post.userId,
+
+            senderId: userData.$id,
+
+            senderName: userData.name,
+
+            postId: post.$id,
+
+            postTitle: post.title,
+
+            type: "like",
+
+            message: `${userData.name} liked your post "${post.title}"`,
+
+            isRead: false,
+
+        });
+
+    }
+
+    toast.success("Post liked ❤️");
+
+    await fetchLikes();
+
+}
     } catch (error) {
         console.error(error);
         toast.error("Something went wrong");
@@ -255,6 +285,17 @@ const handleBookmark = async () => {
         setBookmarkLoading(false);
     }
 };
+
+useEffect(() => {
+
+    if (!post) return;
+
+    viewService.addView(
+        post.$id,
+        userData?.$id || null
+    );
+
+}, [post]);
 
   return post ? (
     <div className="bg-slate-100 min-h-screen py-12">

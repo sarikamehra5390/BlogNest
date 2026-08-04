@@ -20,7 +20,7 @@ import SavedPosts from './pages/SavedPosts.jsx';
 import Profile from './pages/Profile.jsx';
 import EditProfile from './pages/EditProfile.jsx';
 import AuthorProfile from './pages/AuthorProfile.jsx';
-
+import Notifications from "./pages/Notifications";
 
 const router = createBrowserRouter([
   {
@@ -95,6 +95,11 @@ const router = createBrowserRouter([
         path: "/author/:userId",
         element: <AuthorProfile />
       },
+      {
+        path : "/notifications",
+        element: <Notifications />
+      }
+      
     ]
   }
 ])

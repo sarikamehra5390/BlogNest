@@ -14,6 +14,10 @@ import Input from "./Input"
 import Select from "./Select"
 export { default as SearchBar } from "./SearchBar";
 export { default as SkeletonCard } from "./SkeletonCard";
+export {default as StatCard} from "./StatCard";
+export { default as DashboardSummary } from "./DashboardSummary";
+export { default as RecentPosts } from "./RecentPosts";
+export { default as AnalyticsChart } from "./AnalyticsChart";
 export {
     Header,
     Footer,

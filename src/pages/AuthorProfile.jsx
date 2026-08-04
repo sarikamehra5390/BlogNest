@@ -5,6 +5,9 @@ import service from "../appwrite/config";
 import { Link } from "react-router-dom";
 import { Container, PostCard } from "../components";
 import appwriteService from "../appwrite/config";
+import { useSelector } from "react-redux";
+import followService from "../appwrite/followService";
+import toast from "react-hot-toast";
 
 function AuthorProfile() {
     const { userId } = useParams();
@@ -12,6 +15,37 @@ function AuthorProfile() {
     const [profile, setProfile] = useState(null);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const userData = useSelector((state) => state.auth.userData);
+    const [followers, setFollowers] = useState(0);
+    const [following, setFollowing] = useState(0);
+    const[isFollowing, setIsFollowing] = useState(false);
+    const [followId, setFollowId] = useState(null);
+    const [followLoading, setFollowLoading] = useState(false);
+
+     const loadFollowData = async() => {
+            if(!userId) return 
+
+            const followerData = await followService.getFollowers(userId)
+            setFollowers(followerData?.rows?.length || 0)
+
+            const followingData = await followService.getFollowing(userId)
+            setFollowing(followingData?.rows?.length || 0)
+
+            if(userData && userData.$id !== userId){
+                const follow = await followService.getFollow(
+                    userData.$id,
+                    userId
+                )
+
+                if(follow?.rows?.length > 0){
+                    setIsFollowing(true)
+                    setFollowId(follow.rows[0].$id)
+                }else{
+                    setIsFollowing(false)
+                    setFollowId(null)
+                }
+            }
+        }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -22,12 +56,61 @@ function AuthorProfile() {
 
             const postData = await service.getPostsByUser(userId);
             setPosts(postData);
+            await loadFollowData();
 
             setLoading(false);
         };
 
         fetchData();
-    }, [userId]);
+
+    }, [userId, userData]);
+
+    const handleFollow = async() => {
+        if(!userData){
+            toast.error("Please login first")
+            return
+        }
+
+        if(followLoading) return 
+        setFollowLoading(true)
+
+        try {
+            if(isFollowing){
+                const success = await followService.unfollowAuthor(followId)
+
+                if(success){
+                    toast.success("Unfollowed")
+                }
+            }else{
+
+                const existing = await followService.getFollow(
+                    userData.$id,
+                    userId
+                );
+
+                if (existing?.rows?.length > 0) {
+                toast("You're already following this author.");
+                await loadFollowData();
+                 return;
+                }
+
+               const success =  await followService.followAuthor(
+                    userData.$id,
+                    userId
+                )
+                if(success){
+                toast.success("Following")
+                }
+            }
+
+            await loadFollowData()
+            
+        } catch (error) {
+            console.log(error)
+        }finally{
+            setFollowLoading(false)
+        }
+    }
 
     if (loading) {
     return (
@@ -88,13 +171,62 @@ return (
         })}
     </p>
 
-    <div className="mt-6 inline-flex items-center px-5 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
-        <span className="text-blue-700 dark:text-blue-300 font-semibold">
-            📝 {posts.length} Published Posts
-        </span>
+    <div className="flex justify-center gap-8 mt-6">
+
+    <div className="text-center">
+        <h3 className="font-bold text-2xl">
+            {followers}
+        </h3>
+
+        <p className="text-gray-500">
+            Followers
+        </p>
+    </div>
+
+    <div className="text-center">
+        <h3 className="font-bold text-2xl">
+            {following}
+        </h3>
+
+        <p className="text-gray-500">
+            Following
+        </p>
+    </div>
+
+    <div className="text-center">
+        <h3 className="font-bold text-2xl">
+            {posts.length}
+        </h3>
+
+        <p className="text-gray-500">
+            Posts
+        </p>
     </div>
 
 </div>
+
+</div>
+
+
+{userData && userData.$id !== userId && (
+    <div className="flex justify-center mt-8">
+        <button
+            onClick={handleFollow}
+            disabled={followLoading}
+            className={`px-8 py-3 rounded-xl font-semibold transition ${
+                isFollowing
+                    ? "bg-gray-700 text-white"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
+        >
+            {followLoading
+                ? "Loading..."
+                : isFollowing
+                ? "Following ✓"
+                : "Follow"}
+        </button>
+    </div>
+)}
 
 {/*Publised post heading*/}
 

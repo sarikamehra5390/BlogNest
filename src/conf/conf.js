@@ -11,16 +11,23 @@ const conf = {
 
     appwriteLikesTableId: String(
     import.meta.env.VITE_APPWRITE_LIKES_TABLE_ID
-),
+    ),
 
-appwriteBookmarksTableId: String(
+    appwriteBookmarksTableId: String(
     import.meta.env.VITE_APPWRITE_BOOKMARKS_TABLE_ID
-),
+    ),
 
-appwriteProfilesTableId: String(
+    appwriteProfilesTableId: String(
     import.meta.env.VITE_APPWRITE_PROFILES_TABLE_ID
-),
+    ),
+
+    appwriteViewsTableId:String(import.meta.env.VITE_APPWRITE_VIEWS_TABLE_ID),
+
+    appwriteFollowTableId: String(import.meta.env.VITE_APPWRITE_FOLLOW_TABLE_ID),
+
     appwriteBucketId: String(import.meta.env.VITE_APPWRITE_BUCKET_ID),
+
+    appwriteNotificationsTableId: String(import.meta.env.VITE_APPWRITE_NOTIFICATIONS_TABLE_ID),
 }
 
 

@@ -3,8 +3,12 @@ import appwriteService from "../appwrite/config";
 import { Container, PostCard, SkeletonCard } from "../components";
 import { useContext } from "react";
 import SearchContext from "../context/SearchContext";
+import { DashboardSummary } from "../components";
+import { useSelector } from "react-redux";
 
 function Home() {
+
+ const userData = useSelector((state) => state.auth.userData);
  const [posts, setPosts] = useState([]);
  const [loading, setLoading] = useState(true);
  const { search } = useContext(SearchContext);
@@ -128,6 +132,14 @@ function Home() {
   return (
    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 py-12 transition-colors">
       <Container>
+
+         {
+        userData &&
+
+        <DashboardSummary />
+
+         } 
+
 
         {/* Heading */}
         <div className="mb-10 text-center">
