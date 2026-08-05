@@ -21,6 +21,7 @@ import Profile from './pages/Profile.jsx';
 import EditProfile from './pages/EditProfile.jsx';
 import AuthorProfile from './pages/AuthorProfile.jsx';
 import Notifications from "./pages/Notifications";
+import ReadingHistory from "./pages/ReadingHistory";
 
 const router = createBrowserRouter([
   {
@@ -98,7 +99,11 @@ const router = createBrowserRouter([
       {
         path : "/notifications",
         element: <Notifications />
-      }
+      },
+      {
+       path: "/history",
+       element: <ReadingHistory />,
+      },
       
     ]
   }

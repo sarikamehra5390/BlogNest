@@ -13,6 +13,7 @@ import bookmarkService from "../appwrite/bookmarkService";
 import profileService from "../appwrite/profileService";
 import viewService from "../appwrite/viewService";
 import notificationService from "../appwrite/notificationService";
+import historyService from "../appwrite/historyService";
 
 export default function Post() {
   const [post, setPost] = useState(null);
@@ -48,16 +49,34 @@ export default function Post() {
             return;
         }
 
-        setPost(fetchedPost);
+       setPost(fetchedPost);
 
-        // Fetch author profile
-        const profile = await profileService.getProfile(fetchedPost.userId);
-     
-        setAuthor(profile);
+// ==========================
+// Save Reading History
+// ==========================
+
+if (userData) {
+
+    await historyService.addHistory(
+        userData.$id,
+        fetchedPost.$id
+    );
+
+}
+
+// ==========================
+// Fetch Author Profile
+// ==========================
+
+const profile = await profileService.getProfile(
+    fetchedPost.userId
+);
+
+setAuthor(profile);
     };
 
     fetchPost();
-}, [slug, navigate]);
+}, [slug, navigate, userData]);
 
   const deletePost = async () => {
     const status = await appwriteService.deletePost(post.$id);

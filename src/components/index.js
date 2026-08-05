@@ -18,6 +18,9 @@ export {default as StatCard} from "./StatCard";
 export { default as DashboardSummary } from "./DashboardSummary";
 export { default as RecentPosts } from "./RecentPosts";
 export { default as AnalyticsChart } from "./AnalyticsChart";
+export { default as TrendingPosts } from "./TrendingPosts";
+export { default as TopAuthors } from "./TopAuthors";
+export { default as PopularTags } from "./PopularTags";
 export {
     Header,
     Footer,

@@ -49,6 +49,11 @@ function Header() {
             slug: "/profile",
             active: authStatus,
         },
+        {
+            name: "History",
+            slug: "/history",
+            active: authStatus,
+        },
     ];
 
     return (

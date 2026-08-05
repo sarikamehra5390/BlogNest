@@ -5,6 +5,7 @@ import { useContext } from "react";
 import SearchContext from "../context/SearchContext";
 import { DashboardSummary } from "../components";
 import { useSelector } from "react-redux";
+import { TrendingPosts , TopAuthors, PopularTags} from "../components";
 
 function Home() {
 
@@ -134,12 +135,15 @@ function Home() {
       <Container>
 
          {
-        userData &&
-
-        <DashboardSummary />
-
-         } 
-
+    userData && (
+        <>
+            <DashboardSummary />
+            <TrendingPosts />
+            <TopAuthors />
+            <PopularTags />
+        </>
+    )
+}
 
         {/* Heading */}
         <div className="mb-10 text-center">

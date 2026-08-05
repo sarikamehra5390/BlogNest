@@ -28,6 +28,8 @@ const conf = {
     appwriteBucketId: String(import.meta.env.VITE_APPWRITE_BUCKET_ID),
 
     appwriteNotificationsTableId: String(import.meta.env.VITE_APPWRITE_NOTIFICATIONS_TABLE_ID),
+
+    appwriteHistoryTableId: String(import.meta.env.VITE_APPWRITE_HISTORY_TABLE_ID),
 }
 
 
