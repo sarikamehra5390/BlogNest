@@ -1,8 +1,8 @@
-export default async ({ req, res, log }) => {
-    log("BlogNest AI Function is running");
+export default async ({ req, res, log, error }) => {
+    log("BlogNest AI function started");
 
     return res.json({
         success: true,
-        message: "BlogNest AI Function is working!",
+        message: "BlogNest AI function is working!",
     });
 };
