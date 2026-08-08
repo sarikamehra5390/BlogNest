@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import historyService from "../appwrite/historyService";
 import appwriteService from "../appwrite/config";
 import { Container } from "../components";
+import ReadingStreak from "../components/ReadingStreak";
 
 function ReadingHistory() {
 
@@ -133,7 +134,9 @@ function ReadingHistory() {
 
             <div className="max-w-4xl mx-auto py-10">
 
-                <div className="flex justify-between items-center mb-8">
+                <ReadingStreak />
+
+                <div className="flex justify-between items-center mb-8 mt-12">
 
                     <h1 className="text-4xl font-bold dark:text-white">
 

@@ -4,8 +4,9 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
 import commentService from "../appwrite/commentService";
+import notificationService from "../appwrite/notificationService";
 
-function CommentForm({ postId, onCommentAdded }) {
+function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
   const { register, handleSubmit, reset } = useForm();
 
   const userData = useSelector((state) => state.auth.userData);
@@ -24,6 +25,31 @@ function CommentForm({ postId, onCommentAdded }) {
     });
 
     if (comment) {
+
+      if (postAuthorId && userData.$id !== postAuthorId && postTitle) {
+
+        await notificationService.createNotification({
+
+          receiverId: postAuthorId,
+
+          senderId: userData.$id,
+
+          senderName: userData.name,
+
+          postId,
+
+          postTitle,
+
+          type: "comment",
+
+          message: `${userData.name} commented on your post "${postTitle}"`,
+
+          isRead: false,
+
+        });
+
+      }
+
       toast.success("Comment added!");
 
       reset();

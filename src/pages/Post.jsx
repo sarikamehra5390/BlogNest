@@ -14,6 +14,9 @@ import profileService from "../appwrite/profileService";
 import viewService from "../appwrite/viewService";
 import notificationService from "../appwrite/notificationService";
 import historyService from "../appwrite/historyService";
+import badgeService from "../appwrite/badgeService";
+import followService from "../appwrite/followService";
+import SuggestedPosts from "../components/SuggestedPosts";
 
 export default function Post() {
   const [post, setPost] = useState(null);
@@ -242,6 +245,51 @@ if (success) {
 
     }
 
+    // Check author badges after like event
+    try {
+        const [likeBadges, trendingBadge, topAuthorBadge] =
+            await Promise.all([
+                badgeService.checkLikeMilestones(
+                    post.userId,
+                    appwriteService,
+                    likeService
+                ),
+                badgeService.checkTrendingAuthor(
+                    post.userId,
+                    appwriteService,
+                    likeService,
+                    commentService,
+                    bookmarkService,
+                    viewService
+                ),
+                badgeService.checkTopAuthor(
+                    post.userId,
+                    appwriteService,
+                    likeService,
+                    commentService,
+                    bookmarkService,
+                    viewService,
+                    profileService
+                ),
+            ]);
+
+        const authorEarned = [
+            ...(likeBadges || []),
+            trendingBadge,
+            topAuthorBadge,
+        ].filter(Boolean);
+
+        authorEarned.forEach((b) => {
+            if (userData.$id === post.userId) {
+                toast.success(`🎉 Badge Earned: ${b?.name || "New Badge"}!`, {
+                    duration: 5000,
+                });
+            }
+        });
+    } catch (badgeErr) {
+        console.log("Badge check error (like):", badgeErr);
+    }
+
     toast.success("Post liked ❤️");
 
     await fetchLikes();
@@ -294,6 +342,31 @@ const handleBookmark = async () => {
         );
 
         if (success) {
+
+            if (userData.$id !== post.userId) {
+
+                await notificationService.createNotification({
+
+                    receiverId: post.userId,
+
+                    senderId: userData.$id,
+
+                    senderName: userData.name,
+
+                    postId: post.$id,
+
+                    postTitle: post.title,
+
+                    type: "bookmark",
+
+                    message: `${userData.name} bookmarked your post "${post.title}"`,
+
+                    isRead: false,
+
+                });
+
+            }
+
             toast.success("Post bookmarked 🔖");
             await fetchBookmark();
         }
@@ -486,6 +559,8 @@ useEffect(() => {
 
     <CommentForm
         postId={post.$id}
+        postAuthorId={post.userId}
+        postTitle={post.title}
         onCommentAdded={fetchComments}
     />
 
@@ -510,6 +585,8 @@ useEffect(() => {
 </div>
 
         </div>
+
+        <SuggestedPosts currentPost={post} />
 
       </Container>
     </div>

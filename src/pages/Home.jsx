@@ -5,7 +5,7 @@ import { useContext } from "react";
 import SearchContext from "../context/SearchContext";
 import { DashboardSummary } from "../components";
 import { useSelector } from "react-redux";
-import { TrendingPosts , TopAuthors, PopularTags} from "../components";
+import { TrendingPosts , TopAuthors} from "../components";
 
 function Home() {
 
@@ -140,71 +140,9 @@ function Home() {
             <DashboardSummary />
             <TrendingPosts />
             <TopAuthors />
-            <PopularTags />
         </>
     )
 }
-
-        {/* Heading */}
-        <div className="mb-10 text-center">
-
-          <h1 className="text-5xl font-bold text-slate-800 dark:text-white">
-            Latest Posts
-          </h1>
-
-          <p className="text-slate-500 dark:text-slate-400 mt-3 text-lg">
-            Explore articles shared by the community.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-3 mt-8">
-
-  {categories.map((category) => (
-    <button
-      key={category}
-      onClick={() => setSelectedCategory(category)}
-      className={`px-5 py-2 rounded-full font-medium transition-all duration-300
-      ${
-        selectedCategory === category
-          ? "bg-blue-600 text-white shadow-lg"
-          : "bg-white dark:bg-slate-800 text-slate-700 dark:text-white hover:bg-blue-100 dark:hover:bg-slate-700"
-      }`}
-    >
-      {category}
-    </button>
-  ))}
-
-</div>
-
-        </div>
-
-        {filteredPosts.length === 0 && search !== "" && (
-  <div className="text-center py-16">
-
-    <div className="text-6xl mb-4">🔍</div>
-
-    <h2 className="text-3xl font-bold text-slate-700 dark:text-white">
-      No Posts Found
-    </h2>
-
-    <p className="mt-3 text-slate-500">
-      No articles match "
-      <span className="font-semibold">{search}</span>"
-    </p>
-
-  </div>
-)}
-
-        {/* Posts Grid */}
-        {filteredPosts.length > 0 && (
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-         {filteredPosts.map((post) => (
-            <PostCard
-              key={post.$id || post.$sequence}
-              {...post}
-            />
-          ))}
-        </div>
-        )}
 
       </Container>
     </div>

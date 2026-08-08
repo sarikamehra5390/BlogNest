@@ -3,11 +3,13 @@ import { useParams } from "react-router-dom";
 import profileService from "../appwrite/profileService";
 import service from "../appwrite/config";
 import { Link } from "react-router-dom";
-import { Container, PostCard } from "../components";
+import { Container, PostCard, BadgesList } from "../components";
 import appwriteService from "../appwrite/config";
 import { useSelector } from "react-redux";
 import followService from "../appwrite/followService";
 import toast from "react-hot-toast";
+import notificationService from "../appwrite/notificationService";
+import badgeService from "../appwrite/badgeService";
 
 function AuthorProfile() {
     const { userId } = useParams();
@@ -99,11 +101,53 @@ function AuthorProfile() {
                     userId
                 )
                 if(success){
+
+                if (profile?.name) {
+
+                    await notificationService.createNotification({
+
+                        receiverId: userId,
+
+                        senderId: userData.$id,
+
+                        senderName: userData.name,
+
+                        type: "follow",
+
+                        message: `${userData.name} started following you`,
+
+                        isRead: false,
+
+                    });
+
+                }
+
                 toast.success("Following")
                 }
             }
 
             await loadFollowData()
+
+            try {
+                const followerBadges =
+                    await badgeService.checkFollowerMilestones(
+                        userId,
+                        followService
+                    );
+
+                const earned = (followerBadges || []).filter(Boolean);
+
+                earned.forEach((b) => {
+                    if (userData.$id === userId) {
+                        toast.success(
+                            `🎉 Badge Earned: ${b?.name || "New Badge"}!`,
+                            { duration: 5000 }
+                        );
+                    }
+                });
+            } catch (badgeErr) {
+                console.log("Badge check error (follow):", badgeErr);
+            }
             
         } catch (error) {
             console.log(error)
@@ -227,6 +271,8 @@ return (
         </button>
     </div>
 )}
+
+<BadgesList userId={userId} title={`🏅 ${profile?.name || "Author"}'s Achievements`} />
 
 {/*Publised post heading*/}
 

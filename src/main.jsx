@@ -22,6 +22,7 @@ import EditProfile from './pages/EditProfile.jsx';
 import AuthorProfile from './pages/AuthorProfile.jsx';
 import Notifications from "./pages/Notifications";
 import ReadingHistory from "./pages/ReadingHistory";
+import TagPosts from "./pages/TagPosts";
 
 const router = createBrowserRouter([
   {
@@ -103,6 +104,10 @@ const router = createBrowserRouter([
       {
        path: "/history",
        element: <ReadingHistory />,
+      },
+      {
+        path: "/tag/:tagName",
+        element: <TagPosts />,
       },
       
     ]

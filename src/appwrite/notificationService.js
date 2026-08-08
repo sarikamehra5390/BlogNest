@@ -14,14 +14,16 @@ export class NotificationService {
         this.databases = new TablesDB(this.client);
     }
 
-    // Create Notification
     async createNotification(data) {
         try {
             return await this.databases.createRow({
                 databaseId: conf.appwriteDatabaseId,
                 tableId: conf.appwriteNotificationsTableId,
                 rowId: ID.unique(),
-                data,
+                data: {
+                    ...data,
+                    isRead: data.isRead ?? false,
+                },
             });
         } catch (error) {
             console.log("Create Notification Error:", error);
@@ -29,7 +31,73 @@ export class NotificationService {
         }
     }
 
-    // Get all notifications of a user
+    async createLikeNotification({ receiverId, senderId, senderName, postId, postTitle }) {
+        if (!receiverId || !senderId || receiverId === senderId) return null;
+        return this.createNotification({
+            receiverId,
+            senderId,
+            senderName,
+            postId,
+            postTitle,
+            type: "like",
+            message: `${senderName} liked your post "${postTitle}"`,
+        });
+    }
+
+    async createCommentNotification({ receiverId, senderId, senderName, postId, postTitle, commentPreview }) {
+        if (!receiverId || !senderId || receiverId === senderId) return null;
+        const msg = commentPreview && commentPreview.length > 60
+            ? `${senderName} commented on your post "${postTitle}": "${commentPreview.slice(0, 60)}..."`
+            : commentPreview
+                ? `${senderName} commented on your post "${postTitle}": "${commentPreview}"`
+                : `${senderName} commented on your post "${postTitle}"`;
+        return this.createNotification({
+            receiverId,
+            senderId,
+            senderName,
+            postId,
+            postTitle,
+            type: "comment",
+            message: msg,
+        });
+    }
+
+    async createFollowNotification({ receiverId, senderId, senderName }) {
+        if (!receiverId || !senderId || receiverId === senderId) return null;
+        return this.createNotification({
+            receiverId,
+            senderId,
+            senderName,
+            type: "follow",
+            message: `${senderName} started following you`,
+        });
+    }
+
+    async createBookmarkNotification({ receiverId, senderId, senderName, postId, postTitle }) {
+        if (!receiverId || !senderId || receiverId === senderId) return null;
+        return this.createNotification({
+            receiverId,
+            senderId,
+            senderName,
+            postId,
+            postTitle,
+            type: "bookmark",
+            message: `${senderName} bookmarked your post "${postTitle}"`,
+        });
+    }
+
+    async createBadgeNotification({ receiverId, badgeId, badgeName, badgeIcon, badgeDescription }) {
+        if (!receiverId || !badgeId) return null;
+        return this.createNotification({
+            receiverId,
+            badgeId,
+            badgeName,
+            badgeIcon,
+            type: "badge",
+            message: `🎉 Achievement Unlocked: "${badgeName}" — ${badgeDescription || "Keep it up!"}`,
+        });
+    }
+
    async getNotifications(receiverId) {
     try {
 
@@ -39,21 +107,39 @@ export class NotificationService {
             queries: [
                 Query.equal("receiverId", receiverId),
                 Query.orderDesc("$createdAt"),
+                Query.limit(100),
             ],
         });
 
-        return response.rows;      //  Return only the array
+        return response.rows;
 
     } catch (error) {
 
         console.log("Get Notifications Error:", error);
 
-        return [];                 //  Return an empty array
+        return [];
 
     }
 }
 
-    // Mark notification as read
+    async getUnreadCount(receiverId) {
+        try {
+            const response = await this.databases.listRows({
+                databaseId: conf.appwriteDatabaseId,
+                tableId: conf.appwriteNotificationsTableId,
+                queries: [
+                    Query.equal("receiverId", receiverId),
+                    Query.equal("isRead", false),
+                    Query.select(["$id"]),
+                ],
+            });
+            return response?.rows?.length || 0;
+        } catch (error) {
+            console.log("Get Unread Count Error:", error);
+            return 0;
+        }
+    }
+
     async markAsRead(notificationId) {
         try {
             return await this.databases.updateRow({
@@ -70,7 +156,32 @@ export class NotificationService {
         }
     }
 
-    // Delete notification
+    async markAllAsRead(receiverId) {
+        try {
+            const response = await this.databases.listRows({
+                databaseId: conf.appwriteDatabaseId,
+                tableId: conf.appwriteNotificationsTableId,
+                queries: [
+                    Query.equal("receiverId", receiverId),
+                    Query.equal("isRead", false),
+                ],
+            });
+
+            const unread = response?.rows || [];
+
+            if (unread.length === 0) return 0;
+
+            await Promise.all(
+                unread.map((n) => this.markAsRead(n.$id))
+            );
+
+            return unread.length;
+        } catch (error) {
+            console.log("Mark All As Read Error:", error);
+            return 0;
+        }
+    }
+
    async deleteNotification(notificationId) {
 
     try {
@@ -92,6 +203,24 @@ export class NotificationService {
     }
 
 }
+
+    async deleteAllNotifications(receiverId) {
+        try {
+            const all = await this.getNotifications(receiverId);
+
+            if (all.length === 0) return 0;
+
+            await Promise.all(
+                all.map((n) => this.deleteNotification(n.$id))
+            );
+
+            return all.length;
+        } catch (error) {
+            console.log("Delete All Notifications Error:", error);
+            return 0;
+        }
+    }
+
 }
 
 const notificationService = new NotificationService();

@@ -9,9 +9,17 @@ import commentService from "../appwrite/commentService";
 import bookmarkService from "../appwrite/bookmarkService";
 import viewService from "../appwrite/viewService";
 import RecentPosts from "./RecentPosts";
+import RecentlyViewed from "./RecentlyViewed";
+import BadgesList from "./BadgesList";
 
 import StatCard from "./StatCard";
 import AnalyticsChart from "./AnalyticsChart";
+import WeeklyAnalytics from "./WeeklyAnalytics";
+import ReadingStreak from "./ReadingStreak";
+import badgeService from "../appwrite/badgeService";
+import profileService from "../appwrite/profileService";
+import analyticsService from "../appwrite/analyticsService";
+import toast from "react-hot-toast";
 
 function DashboardSummary() {
    
@@ -28,6 +36,23 @@ function DashboardSummary() {
     const [views, setViews] = useState(0);
     const [topPost, setTopPost] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [justEarnedBadges, setJustEarnedBadges] = useState([]);
+    const [weekly, setWeekly] = useState(null);
+
+    useEffect(() => {
+
+        if (justEarnedBadges.length === 0) return;
+
+        justEarnedBadges.forEach((b) => {
+            toast.success(
+                `🎉 Badge Earned: ${b?.name || "New Badge"}!`,
+                { duration: 5000 }
+            );
+        });
+
+        setJustEarnedBadges([]);
+
+    }, [justEarnedBadges]);
 
     useEffect(() => {
 
@@ -145,6 +170,93 @@ function DashboardSummary() {
                 );
 
                 setTopPost(bestPost);
+
+                // ==========================
+                // Weekly Analytics + Achievements (Parallel)
+                // ==========================
+
+                try {
+
+                    const userId = userData.$id;
+
+                    const [weeklyResult, badgesResult] = await Promise.all([
+
+                        analyticsService.loadAllWeekly({
+                            userId,
+                            posts: myPosts,
+                            likeService,
+                            commentService,
+                            bookmarkService,
+                            viewService,
+                            followService,
+                            nWeeks: 8,
+                        }),
+
+                        Promise.all([
+
+                            (myPosts.length > 0)
+                                ? badgeService.awardIfNotEarned(userId, "first_post")
+                                : null,
+
+                            badgeService.checkLikeMilestones(
+                                userId,
+                                service,
+                                likeService
+                            ),
+
+                            badgeService.checkFollowerMilestones(
+                                userId,
+                                followService
+                            ),
+
+                            badgeService.checkTrendingAuthor(
+                                userId,
+                                service,
+                                likeService,
+                                commentService,
+                                bookmarkService,
+                                viewService
+                            ),
+
+                            badgeService.checkTopAuthor(
+                                userId,
+                                service,
+                                likeService,
+                                commentService,
+                                bookmarkService,
+                                viewService,
+                                profileService
+                            ),
+
+                        ]),
+
+                    ]);
+
+                    if (weeklyResult) setWeekly(weeklyResult);
+
+                    const [
+                        firstPostBadge,
+                        likeBadges,
+                        followerBadges,
+                        trendingBadge,
+                        topAuthorBadge,
+                    ] = badgesResult;
+
+                    const allEarned = [
+                        firstPostBadge,
+                        ...(likeBadges || []),
+                        ...(followerBadges || []),
+                        trendingBadge,
+                        topAuthorBadge,
+                    ].filter(Boolean);
+
+                    if (allEarned.length > 0) {
+                        setJustEarnedBadges(allEarned);
+                    }
+
+                } catch (badgeErr) {
+                    console.log("Dashboard badge check error:", badgeErr);
+                }
 
             } catch (error) {
 
@@ -300,7 +412,15 @@ function DashboardSummary() {
 
             <RecentPosts posts={recentPosts} />
 
+            <RecentlyViewed />
+
+            <BadgesList />
+
             <AnalyticsChart posts={posts} />
+
+            <WeeklyAnalytics weekly={weekly} />
+
+            <ReadingStreak />
 
 
         </div>

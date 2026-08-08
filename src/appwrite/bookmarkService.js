@@ -47,6 +47,22 @@ export class BookmarkService {
         }
     }
 
+    // Get all bookmarks for a specific post
+    async getBookmarksByPost(postId) {
+        try {
+            return await this.databases.listRows({
+                databaseId: conf.appwriteDatabaseId,
+                tableId: conf.appwriteBookmarksTableId,
+                queries: [
+                    Query.equal("postId", postId),
+                ],
+            });
+        } catch (error) {
+            console.log("BookmarkService :: getBookmarksByPost ::", error);
+            return { rows: [] };
+        }
+    }
+
     // Check if a post is bookmarked
     async getUserBookmark(postId, userId) {
         try {

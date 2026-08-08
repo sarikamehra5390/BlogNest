@@ -1,8 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 
 import notificationService from "../appwrite/notificationService";
+import realtimeService from "../appwrite/realtimeService";
 import { Container } from "../components";
+
+const NOTIFICATION_ICONS = {
+    like: "❤️",
+    comment: "💬",
+    follow: "👤",
+    bookmark: "🔖",
+    badge: "🏅",
+};
 
 function Notifications() {
 
@@ -12,68 +21,24 @@ function Notifications() {
 
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [markingAllRead, setMarkingAllRead] = useState(false);
 
-    useEffect(() => {
-
-        const loadNotifications = async () => {
-
-            if (!userData) return;
-
-            try {
-
-                const data =
-                    await notificationService.getNotifications(
-                        userData.$id
-                    );
-
-                setNotifications(data);
-
-            } catch (error) {
-
-                console.log(error);
-
-            } finally {
-
-                setLoading(false);
-
+    const markAllAsRead = useCallback(async () => {
+        if (!userData) return;
+        setMarkingAllRead(true);
+        try {
+            const count = await notificationService.markAllAsRead(userData.$id);
+            if (count > 0) {
+                setNotifications((prev) =>
+                    prev.map((n) => ({ ...n, isRead: true }))
+                );
             }
-
-        };
-
-        loadNotifications();
-
+        } finally {
+            setMarkingAllRead(false);
+        }
     }, [userData]);
 
-    const markAllAsRead = async () => {
-
-        await Promise.all(
-
-            notifications.map((notification) => {
-
-                if (!notification.isRead) {
-
-                    return notificationService.markAsRead(
-                        notification.$id
-                    );
-
-                }
-
-                return Promise.resolve();
-
-            })
-
-        );
-
-        setNotifications((prev) =>
-            prev.map((notification) => ({
-                ...notification,
-                isRead: true,
-            }))
-        );
-
-    };
-
-    const deleteNotification = async (id) => {
+    const deleteNotification = useCallback(async (id) => {
 
         const success =
             await notificationService.deleteNotification(id);
@@ -89,7 +54,95 @@ function Notifications() {
 
         }
 
-    };
+    }, []);
+
+    useEffect(() => {
+
+        let cancelled = false;
+        let realtimeUnsub = null;
+
+        const loadNotifications = async () => {
+
+            if (!userData) return;
+
+            try {
+
+                const data =
+                    await notificationService.getNotifications(
+                        userData.$id
+                    );
+
+                if (!cancelled) {
+                    setNotifications(data);
+                }
+
+            } catch (error) {
+
+                console.log(error);
+
+            } finally {
+
+                if (!cancelled) {
+                    setLoading(false);
+                }
+
+            }
+
+        };
+
+        loadNotifications();
+
+        if (userData) {
+
+            realtimeUnsub = realtimeService.subscribeToNotifications(
+                userData.$id,
+                (event) => {
+
+                    const action = event?.events?.[0] || "";
+                    const payload = event?.payload;
+
+                    if (!payload) return;
+
+                    if (action.includes(".create")) {
+
+                        setNotifications((prev) => {
+                            if (prev.some(n => n.$id === payload.$id)) return prev;
+                            return [payload, ...prev];
+                        });
+
+                    } else if (action.includes(".update")) {
+
+                        setNotifications((prev) =>
+                            prev.map(n =>
+                                n.$id === payload.$id
+                                    ? { ...n, ...payload }
+                                    : n
+                            )
+                        );
+
+                    } else if (action.includes(".delete")) {
+
+                        setNotifications((prev) =>
+                            prev.filter(n => n.$id !== payload.$id)
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+        return () => {
+            cancelled = true;
+            if (realtimeUnsub && typeof realtimeUnsub.unsubscribe === "function") {
+                realtimeUnsub.unsubscribe();
+            }
+        };
+
+    }, [userData]);
+
+    const unreadCount = notifications.filter((n) => !n.isRead).length;
 
     if (loading) {
 
@@ -115,17 +168,27 @@ function Notifications() {
 
             <div className="max-w-3xl mx-auto py-10">
 
-                <div className="flex justify-between items-center mb-8">
+                <div className="flex flex-wrap justify-between items-center mb-8 gap-4">
 
-                    <h1 className="text-3xl font-bold dark:text-white">
+                    <div className="flex items-center gap-3">
 
-                        Notifications
+                        <h1 className="text-3xl font-bold dark:text-white">
 
-                    </h1>
+                            Notifications
+
+                        </h1>
+
+                        {unreadCount > 0 && (
+                            <span className="inline-flex items-center justify-center bg-red-600 text-white text-xs font-bold rounded-full min-w-[28px] h-7 px-2">
+                                {unreadCount > 99 ? "99+" : unreadCount}
+                            </span>
+                        )}
+
+                    </div>
 
                     <button
                        onClick={markAllAsRead}
-                       disabled={!notifications.some(n => !n.isRead)}
+                       disabled={unreadCount === 0 || markingAllRead}
                        className="
                             bg-blue-600
                             text-white
@@ -136,7 +199,7 @@ function Notifications() {
                               disabled:cursor-not-allowed
                              "
                     >
-                        Mark All Read
+                        {markingAllRead ? "Processing..." : "Mark All Read"}
                    </button>
                 </div>
 
@@ -156,11 +219,11 @@ function Notifications() {
         🔔
     </div>
 
-    <h2 className="text-2xl font-bold">
+    <h2 className="text-2xl font-bold dark:text-white">
         No Notifications
     </h2>
 
-    <p className="text-gray-500 mt-2">
+    <p className="text-gray-500 mt-2 dark:text-gray-400">
         You're all caught up!
     </p>
 
@@ -168,7 +231,12 @@ function Notifications() {
 
                 ) : (
 
-                    notifications.map((notification) => (
+                    notifications.map((notification) => {
+
+                        const type = notification.type || "default";
+                        const icon = NOTIFICATION_ICONS[type] || "📬";
+
+                        return (
 
                         <div
                             key={notification.$id}
@@ -185,6 +253,12 @@ function Notifications() {
                                 }
                             `}
                         >
+
+                            <div className="flex items-start gap-4">
+
+                                <div className="text-3xl flex-shrink-0">{icon}</div>
+
+                                <div className="flex-1 min-w-0">
 
                             {!notification.isRead && (
 
@@ -218,6 +292,9 @@ function Notifications() {
                             <small
                                 className="
                                     text-gray-500
+                                    dark:text-gray-400
+                                    block
+                                    mt-1
                                 "
                             >
 
@@ -244,9 +321,14 @@ function Notifications() {
                              </button>
                             </div>
 
-                        </div>
+                                </div>
 
-                    ))
+                            </div>
+
+                        </div>
+                    );
+
+                    })
 
                 )}
 

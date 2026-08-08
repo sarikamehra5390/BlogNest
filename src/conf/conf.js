@@ -30,6 +30,10 @@ const conf = {
     appwriteNotificationsTableId: String(import.meta.env.VITE_APPWRITE_NOTIFICATIONS_TABLE_ID),
 
     appwriteHistoryTableId: String(import.meta.env.VITE_APPWRITE_HISTORY_TABLE_ID),
+
+    appwriteBadgesTableId: String(
+    import.meta.env.VITE_APPWRITE_BADGES_TABLE_ID
+),
 }
 
 

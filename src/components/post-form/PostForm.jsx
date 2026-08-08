@@ -4,6 +4,13 @@ import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Input, Select, RTE } from "../index";
 import appwriteService from "../../appwrite/config";
+import badgeService from "../../appwrite/badgeService";
+import likeService from "../../appwrite/likeService";
+import followService from "../../appwrite/followService";
+import commentService from "../../appwrite/commentService";
+import bookmarkService from "../../appwrite/bookmarkService";
+import viewService from "../../appwrite/viewService";
+import profileService from "../../appwrite/profileService";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -86,6 +93,38 @@ function PostForm({ post }) {
           console.log("Created Post:", dbPost);
 
           if(dbPost){
+
+            const userId = userData.$id;
+
+            const [
+              firstPostBadge,
+              likeBadges,
+              followerBadges,
+              trendingBadge,
+              topAuthorBadge,
+            ] = await Promise.all([
+              badgeService.checkFirstPost(userId, appwriteService),
+              badgeService.checkLikeMilestones(userId, appwriteService, likeService),
+              badgeService.checkFollowerMilestones(userId, followService),
+              badgeService.checkTrendingAuthor(userId, appwriteService, likeService, commentService, bookmarkService, viewService),
+              badgeService.checkTopAuthor(userId, appwriteService, likeService, commentService, bookmarkService, viewService, profileService),
+            ]);
+
+            const allEarned = [
+              firstPostBadge,
+              ...(likeBadges || []),
+              ...(followerBadges || []),
+              trendingBadge,
+              topAuthorBadge,
+            ].filter(Boolean);
+
+            allEarned.forEach((b) => {
+              toast.success(
+                `🎉 Badge Earned: ${b?.name || "New Badge"}!`,
+                { duration: 5000 }
+              );
+            });
+
             navigate(`/post/${dbPost.$id}`)
           }
         }
