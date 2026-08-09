@@ -105,13 +105,18 @@ ${content}
          * AI TITLE GENERATOR
          * ==========================================
          */
+/*
+ * ==========================================
+ * AI TITLE GENERATOR
+ * ==========================================
+ */
 
-        if (action === "titles") {
-            log(
-                `Generating AI titles for content length: ${content.length}`
-            );
+if (action === "titles") {
+    log(
+        `Generating AI titles for content length: ${content.length}`
+    );
 
-            const prompt = `
+    const prompt = `
 You are an expert headline writer for a professional blogging platform called BlogNest.
 
 Read the following blog article and generate exactly 5 strong title suggestions.
@@ -126,103 +131,109 @@ Requirements:
 - Keep each title between 5 and 12 words.
 - Make every title different.
 - Do not add numbering.
+- Do not add bullet points.
 - Do not add explanations.
 - Do not use markdown.
-- Return ONLY a valid JSON array of strings.
+- Return exactly one title per line.
+- Return ONLY the 5 titles.
 
-Example format:
+Example:
 
-[
-  "Understanding React Hooks for Modern Applications",
-  "A Practical Guide to React Hooks",
-  "How React Hooks Simplify Component Development",
-  "Mastering React Hooks Step by Step",
-  "React Hooks: Concepts Every Developer Should Know"
-]
+Understanding React Components and Hooks
+A Practical Guide to Modern React Development
+How React Helps Build Scalable Applications
+Mastering React for Frontend Development
+React Development Best Practices
 
 BLOG ARTICLE:
 
 ${content}
 `;
 
-            const response = await ai.models.generateContent({
-                model: "gemini-3.6-flash",
+    const response = await ai.models.generateContent({
+        model: "gemini-3.6-flash",
 
-                contents: prompt,
+        contents: prompt,
 
-                config: {
-                    temperature: 0.7,
-                    maxOutputTokens: 300,
-                },
-            });
+        config: {
+            temperature: 0.7,
+            maxOutputTokens: 500,
+        },
+    });
 
-            const rawResult = response.text?.trim();
+    const rawResult = response.text?.trim();
 
-            if (!rawResult) {
-                throw new Error(
-                    "Gemini returned an empty response."
-                );
-            }
+    if (!rawResult) {
+        throw new Error(
+            "Gemini returned an empty title response."
+        );
+    }
 
-            log(
-                `Raw title response received: ${rawResult}`
-            );
+    log(`Raw title response: ${rawResult}`);
 
-            let titles;
+    /*
+     * Convert Gemini's response into individual titles.
+     */
+    const titles = rawResult
+        .split("\n")
+        .map((title) => title.trim())
 
-            try {
-                /*
-                 * Gemini may occasionally wrap JSON
-                 * inside markdown code fences.
-                 */
-                const cleanedResult = rawResult
-                    .replace(/^```json\s*/i, "")
-                    .replace(/^```\s*/i, "")
-                    .replace(/\s*```$/i, "")
-                    .trim();
+        // Remove empty lines
+        .filter(Boolean)
 
-                titles = JSON.parse(cleanedResult);
-            } catch (parseError) {
-                error(
-                    `Failed to parse title response: ${rawResult}`
-                );
+        // Remove accidental numbering
+        .map((title) =>
+            title.replace(/^\d+[\).\-\:]\s*/, "")
+        )
 
-                throw new Error(
-                    "Gemini returned an invalid title response."
-                );
-            }
+        // Remove accidental bullet points
+        .map((title) =>
+            title.replace(/^[-*•]\s*/, "")
+        )
 
-            if (!Array.isArray(titles)) {
-                throw new Error(
-                    "Invalid title response format."
-                );
-            }
+        // Remove surrounding quotes
+        .map((title) =>
+            title.replace(/^["']|["']$/g, "")
+        )
 
-            const cleanTitles = titles
-                .filter(
-                    (title) =>
-                        typeof title === "string" &&
-                        title.trim().length > 0
-                )
-                .map((title) => title.trim())
-                .slice(0, 5);
+        // Remove markdown code fences if Gemini adds them
+        .filter(
+            (title) =>
+                title !== "```" &&
+                title.toLowerCase() !== "```text"
+        )
 
-            if (cleanTitles.length === 0) {
-                throw new Error(
-                    "No valid titles were generated."
-                );
-            }
+        // Remove duplicates
+        .filter(
+            (title, index, array) =>
+                array.indexOf(title) === index
+        )
 
-            log(
-                `Generated ${cleanTitles.length} AI titles successfully.`
-            );
+        // Maximum 5 titles
+        .slice(0, 5);
 
-            return res.json({
-                success: true,
-                action: "titles",
-                result: cleanTitles,
-            });
-        }
+    if (titles.length === 0) {
+        throw new Error(
+            "No valid titles were generated."
+        );
+    }
+
+    if (titles.length < 5) {
+        log(
+            `Gemini returned ${titles.length} titles instead of 5.`
+        );
+    }
+
+    log(
+        `Generated ${titles.length} AI titles successfully.`
+    );
+
+    return res.json({
+        success: true,
+        action: "titles",
+        result: titles,
+    });
+}
 
         /*
          * ==========================================
