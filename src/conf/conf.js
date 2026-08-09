@@ -34,6 +34,8 @@ const conf = {
     appwriteBadgesTableId: String(
     import.meta.env.VITE_APPWRITE_BADGES_TABLE_ID
 ),
+
+     appwriteAiFunctionId: String(import.meta.env.VITE_APPWRITE_AI_FUNCTION_ID),
 }
 
 

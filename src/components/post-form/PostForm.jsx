@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Input, Select, RTE } from "../index";
+import { Button, Input, Select, RTE, AITitleGenerator } from "../index";
 import appwriteService from "../../appwrite/config";
 import badgeService from "../../appwrite/badgeService";
 import likeService from "../../appwrite/likeService";
@@ -191,6 +191,16 @@ gap-8">
        className= "mb-4"
        {...register("title", {required : true})}
     />
+
+    <AITitleGenerator
+    content={watch("content")}
+    onSelectTitle={(title) => {
+        setValue("title", title, {
+            shouldDirty: true,
+            shouldValidate: true,
+        });
+    }}
+/>
 
     <Select
     label="Category"

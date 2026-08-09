@@ -17,6 +17,7 @@ import historyService from "../appwrite/historyService";
 import badgeService from "../appwrite/badgeService";
 import followService from "../appwrite/followService";
 import SuggestedPosts from "../components/SuggestedPosts";
+import AISummary from "../components/AISummary";
 
 export default function Post() {
   const [post, setPost] = useState(null);
@@ -495,6 +496,8 @@ useEffect(() => {
           >
             {parse(post.content)}
           </div>
+
+          <AISummary content={post.content} />
 
           {/* Likes */}
 

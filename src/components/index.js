@@ -27,6 +27,7 @@ export { default as RecentlyViewed } from "./RecentlyViewed";
 export { default as BadgeToast } from "./BadgeToast";
 export { default as WeeklyAnalytics } from "./WeeklyAnalytics";
 export { default as ReadingStreak } from "./ReadingStreak";
+export { default as AITitleGenerator } from "./AITitleGenerator";
 export {
     Header,
     Footer,
