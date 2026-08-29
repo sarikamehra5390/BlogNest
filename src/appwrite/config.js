@@ -37,7 +37,7 @@ export class Service{
 
            }); 
         } catch (error) {
-           console.log("Appwrite service :: createPost:: error", error) 
+           if (import.meta.env.DEV) { console.log("Appwrite service :: createPost:: error", error) }
            return false
         }
     }
@@ -58,7 +58,7 @@ export class Service{
                 }
             })
          } catch (error) {
-            console.log("Appwrite service :: updatePost :: error", error) 
+            if (import.meta.env.DEV) { console.log("Appwrite service :: updatePost :: error", error) }
             return false 
          }
     }
@@ -74,7 +74,7 @@ export class Service{
             return true 
 
         } catch (error) {
-            console.log("Appwrite service :: deletePost :: error", error) 
+            if (import.meta.env.DEV) { console.log("Appwrite service :: deletePost :: error", error) }
             return false
         }
     }
@@ -89,7 +89,7 @@ export class Service{
 
         })
     } catch (error) {
-         console.log("Appwrite service :: getPost :: error", error) 
+         if (import.meta.env.DEV) { console.log("Appwrite service :: getPost :: error", error) }
          return false 
     }
    }
@@ -105,7 +105,7 @@ export class Service{
               
           })
         } catch (error) {
-             console.log("Appwrite service :: getPosts :: error", error) 
+             if (import.meta.env.DEV) { console.log("Appwrite service :: getPosts :: error", error) }
              return false
         }
    }
@@ -120,7 +120,7 @@ export class Service{
             file,
          })
        } catch (error) {
-        console.log("Appwrite service :: uploadFile :: error", error) 
+        if (import.meta.env.DEV) { console.log("Appwrite service :: uploadFile :: error", error) }
         return false
        }
    }
@@ -133,21 +133,26 @@ export class Service{
         })
         return true
     } catch (error) {
-        console.log("Appwrite service :: deleteFile :: error", error) 
+        if (import.meta.env.DEV) { console.log("Appwrite service :: deleteFile :: error", error) }
         return false
     }
    }
 
   getFilePreview(fileId) {
-    return this.bucket.getFileView({
-        bucketId: conf.appwriteBucketId,
-        fileId,
-    });
+    try {
+        return this.bucket.getFileView({
+            bucketId: conf.appwriteBucketId,
+            fileId,
+        });
+    } catch (e) {
+        if (import.meta.env.DEV) { console.log(e); }
+        return null;
+    }
 }
    // Get all posts by a specific author
 async getPostsByUser(userId) {
     try {
-        console.log("Searching for userId:", userId);
+        if (import.meta.env.DEV) { console.log("Searching for userId:", userId); }
 
         const response = await this.databases.listRows({
             databaseId: conf.appwriteDatabaseId,
@@ -158,12 +163,12 @@ async getPostsByUser(userId) {
             ],
         });
 
-        console.log("Response:", response);
-        console.log("Rows:", response.rows);
+        if (import.meta.env.DEV) { console.log("Response:", response); }
+        if (import.meta.env.DEV) { console.log("Rows:", response.rows); }
 
         return response.rows;
     } catch (error) {
-        console.log(error);
+        if (import.meta.env.DEV) { console.log(error); }
         return [];
     }
 }

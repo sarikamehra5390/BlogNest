@@ -29,6 +29,7 @@ function SearchBar() {
       <input
         type="text"
         placeholder="Search articles..."
+        aria-label="Search articles"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="
@@ -58,6 +59,7 @@ function SearchBar() {
       {search && (
         <button
           onClick={() => setSearch("")}
+          aria-label="Clear search"
           className="
           absolute
           right-4

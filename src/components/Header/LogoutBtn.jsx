@@ -30,6 +30,8 @@ rounded-lg
 font-medium
 text-red-600
 hover:bg-red-50
+dark:hover:bg-red-950/40
+dark:text-red-300
 hover:text-red-700
 transition-all
 duration-300

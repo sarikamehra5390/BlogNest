@@ -35,7 +35,7 @@ const fetchSavedPosts = async () => {
 
         setPosts(bookmarkedPosts.filter(Boolean));
     } catch (error) {
-        console.error(error);
+        if (import.meta.env.DEV) { console.error(error); }
     } finally {
         setLoading(false);
     }
@@ -46,7 +46,7 @@ if (loading) {
     return (
         <Container>
             <div className="flex justify-center items-center min-h-[60vh]">
-                <h2 className="text-2xl font-semibold">
+                <h2 className="text-2xl font-semibold dark:text-white">
                     Loading saved posts...
                 </h2>
             </div>
@@ -58,11 +58,11 @@ if (posts.length === 0) {
     return (
         <Container>
             <div className="text-center py-20">
-                <h1 className="text-4xl font-bold mb-4">
+                <h1 className="text-4xl font-bold mb-4 dark:text-white">
                     🔖 Saved Posts
                 </h1>
 
-                <p className="text-gray-500">
+                <p className="text-gray-500 dark:text-gray-400">
                     You haven't saved any posts yet.
                 </p>
             </div>

@@ -48,9 +48,11 @@ function PostForm({ post }) {
 
   // if the user has submited the form
   const submit = async (data) => {
-     console.log("FORM DATA:", data);
-     console.log("CONTENT:", data.content);
-     console.log("TYPE:", typeof data.content);
+     if (import.meta.env.DEV) {
+        console.log("FORM DATA:", data);
+        console.log("CONTENT:", data.content);
+        console.log("TYPE:", typeof data.content);
+     }
 
     if (post) {
 
@@ -90,7 +92,9 @@ function PostForm({ post }) {
             userId: userData.$id,
           })
 
-          console.log("Created Post:", dbPost);
+          if (import.meta.env.DEV) {
+            console.log("Created Post:", dbPost);
+          }
 
           if(dbPost){
 

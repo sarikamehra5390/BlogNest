@@ -22,7 +22,7 @@ export default function Profile() {
             const data = await profileService.getProfile(userData.$id);
             setProfile(data);
         } catch (error) {
-            console.error(error);
+            if (import.meta.env.DEV) { console.error(error); }
         } finally {
             setLoading(false);
         }

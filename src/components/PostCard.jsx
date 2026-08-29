@@ -45,11 +45,6 @@ function PostCard({
             src={imageUrl}
             alt={title}
             loading="lazy"
-            onLoad={() => console.log("Image Loaded")}
-            onError={(e) => {
-              console.log("Image Failed");
-              console.log(e);
-            }}
             className="
               w-full
               h-full
@@ -102,20 +97,6 @@ function PostCard({
         <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 mb-3">
 
           <span>📖 {readingTime} min read</span>
-
-             {category && (
-              <>
-                   <span>•</span>
-
-                     <span className="
-                           font-medium
-                         text-blue-600
-                         dark:text-blue-400
-                 ">
-                       📂 {category}
-                    </span>
-                 </>
-               )}
 
             </div>
 

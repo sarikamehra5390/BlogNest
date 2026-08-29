@@ -46,17 +46,20 @@ export class AuthService {
     try {
       return await this.account.get();
     } catch (error) {
-      return null
+      if (import.meta.env.DEV) {
+        console.log("Appwrite service :: getCurrentUser :: error", error);
+      }
+      return null;
     }
-
-    return null;
   }
 
   async logout() {
     try {
       return await this.account.deleteSessions();
     } catch (error) {
-      console.log("Appwrite service :: logout :: error", error);
+      if (import.meta.env.DEV) {
+        console.log("Appwrite service :: logout :: error", error);
+      }
     }
   }
 }

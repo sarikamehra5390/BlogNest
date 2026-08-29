@@ -195,7 +195,7 @@ function NotificationBell() {
                         absolute
                         right-0
                         mt-3
-                        w-96
+                        w-[92vw] sm:w-96 max-w-sm
                         bg-white
                         dark:bg-slate-900
                         rounded-2xl
@@ -250,6 +250,14 @@ function NotificationBell() {
                                 <div
                                     key={notification.$id}
                                     onClick={() => handleNotificationClick(notification)}
+                                    role="button"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            handleNotificationClick(notification);
+                                        }
+                                    }}
                                     className={`
                                         p-4
                                         border-b
@@ -268,7 +276,7 @@ function NotificationBell() {
 
                                     <div className="flex items-start gap-3">
 
-                                        <span className="text-2xl flex-shrink-0">{icon}</span>
+                                        <span className="text-2xl flex-shrink-0" aria-hidden="true">{icon}</span>
 
                                         <div className="flex-1 min-w-0">
 

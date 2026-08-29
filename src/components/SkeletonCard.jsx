@@ -3,6 +3,8 @@ import React from "react";
 function SkeletonCard() {
   return (
     <div
+      role="status"
+      aria-busy="true"
       className="
       bg-white
       dark:bg-slate-900

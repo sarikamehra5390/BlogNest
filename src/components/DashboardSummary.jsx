@@ -255,12 +255,16 @@ function DashboardSummary() {
                     }
 
                 } catch (badgeErr) {
-                    console.log("Dashboard badge check error:", badgeErr);
+                    if (import.meta.env.DEV) {
+                        console.log("Dashboard badge check error:", badgeErr);
+                    }
                 }
 
             } catch (error) {
 
-                console.log("Dashboard Error:", error);
+                if (import.meta.env.DEV) {
+                    console.log("Dashboard Error:", error);
+                }
 
             } finally {
 

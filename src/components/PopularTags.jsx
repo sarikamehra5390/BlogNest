@@ -79,10 +79,12 @@ function PopularTags() {
 
             } catch (error) {
 
-                console.log(
-                    "Popular Tags Error:",
-                    error
-                );
+                if (import.meta.env.DEV) {
+                    console.log(
+                        "Popular Tags Error:",
+                        error
+                    );
+                }
 
             } finally {
 
@@ -177,6 +179,7 @@ function PopularTags() {
                                     text-lg
                                     font-bold
                                     text-blue-600
+                                    dark:text-blue-400
                                 "
                             >
                                 #{tag.name}

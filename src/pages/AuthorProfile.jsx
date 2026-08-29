@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import profileService from "../appwrite/profileService";
-import service from "../appwrite/config";
 import { Link } from "react-router-dom";
 import { Container, PostCard, BadgesList } from "../components";
 import appwriteService from "../appwrite/config";
@@ -56,7 +55,7 @@ function AuthorProfile() {
             const profileData = await profileService.getProfile(userId);
             setProfile(profileData);
 
-            const postData = await service.getPostsByUser(userId);
+            const postData = await appwriteService.getPostsByUser(userId);
             setPosts(postData);
             await loadFollowData();
 
@@ -146,11 +145,11 @@ function AuthorProfile() {
                     }
                 });
             } catch (badgeErr) {
-                console.log("Badge check error (follow):", badgeErr);
+                if (import.meta.env.DEV) { console.log("Badge check error (follow):", badgeErr); }
             }
             
         } catch (error) {
-            console.log(error)
+            if (import.meta.env.DEV) { console.log(error); }
         }finally{
             setFollowLoading(false)
         }
@@ -203,11 +202,11 @@ return (
         {profile?.name}
     </h1>
 
-    <p className="text-slate-500 mt-2">
+    <p className="text-slate-500 dark:text-slate-400 mt-2">
         {profile?.bio || "No bio available"}
     </p>
 
-    <p className="text-slate-400 mt-2">
+    <p className="text-slate-400 dark:text-gray-400 mt-2">
         Joined{" "}
         {new Date(profile.$createdAt).toLocaleDateString("en-US", {
             month: "long",
@@ -215,14 +214,14 @@ return (
         })}
     </p>
 
-    <div className="flex justify-center gap-8 mt-6">
+    <div className="flex flex-wrap justify-center gap-8 mt-6">
 
     <div className="text-center">
         <h3 className="font-bold text-2xl">
             {followers}
         </h3>
 
-        <p className="text-gray-500">
+        <p className="text-gray-500 dark:text-gray-400">
             Followers
         </p>
     </div>
@@ -232,7 +231,7 @@ return (
             {following}
         </h3>
 
-        <p className="text-gray-500">
+        <p className="text-gray-500 dark:text-gray-400">
             Following
         </p>
     </div>
@@ -242,7 +241,7 @@ return (
             {posts.length}
         </h3>
 
-        <p className="text-gray-500">
+        <p className="text-gray-500 dark:text-gray-400">
             Posts
         </p>
     </div>
@@ -288,7 +287,7 @@ return (
             No posts yet
         </h2>
 
-        <p className="text-slate-500 mt-2">
+        <p className="text-slate-500 dark:text-slate-400 mt-2">
             This author hasn't published any articles.
         </p>
     </div>

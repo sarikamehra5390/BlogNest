@@ -26,7 +26,7 @@ export class BookmarkService {
                 },
             });
         } catch (error) {
-            console.log("BookmarkService :: bookmarkPost ::", error);
+            if (import.meta.env.DEV) { console.log("BookmarkService :: bookmarkPost ::", error); }
             return false;
         }
     }
@@ -42,7 +42,7 @@ export class BookmarkService {
                 ],
             });
         } catch (error) {
-            console.log("BookmarkService :: getBookmarks ::", error);
+            if (import.meta.env.DEV) { console.log("BookmarkService :: getBookmarks ::", error); }
             return false;
         }
     }
@@ -58,7 +58,7 @@ export class BookmarkService {
                 ],
             });
         } catch (error) {
-            console.log("BookmarkService :: getBookmarksByPost ::", error);
+            if (import.meta.env.DEV) { console.log("BookmarkService :: getBookmarksByPost ::", error); }
             return { rows: [] };
         }
     }
@@ -75,7 +75,7 @@ export class BookmarkService {
                 ],
             });
         } catch (error) {
-            console.log("BookmarkService :: getUserBookmark ::", error);
+            if (import.meta.env.DEV) { console.log("BookmarkService :: getUserBookmark ::", error); }
             return false;
         }
     }
@@ -91,7 +91,7 @@ export class BookmarkService {
 
             return true;
         } catch (error) {
-            console.log("BookmarkService :: removeBookmark ::", error);
+            if (import.meta.env.DEV) { console.log("BookmarkService :: removeBookmark ::", error); }
             return false;
         }
     }

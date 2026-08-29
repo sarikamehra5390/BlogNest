@@ -29,11 +29,13 @@ import {useNavigate} from 'react-router-dom'
     }, [authStatus, navigate, authentication])
 
   return loader ? (
-  <div className='flex justify-center items-center h-screen'>
+  <div className='min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center' role="status" aria-live="polite">
     <h1>Loading....</h1>
     </div>
     ) :
     (  <>{children}</>
     )
 }
+
+export const AuthLayout = Protected;
 

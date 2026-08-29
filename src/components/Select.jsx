@@ -10,7 +10,7 @@ function Select({
   return (
     <div className='w-full '>
         {label && <label htmlFor={id}
-className="block mb-2 text-sm font-semibold text-slate-700"
+className="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300"
 >
             {label}</label>}
         <select

@@ -6,11 +6,11 @@ import realtimeService from "../appwrite/realtimeService";
 import { Container } from "../components";
 
 const NOTIFICATION_ICONS = {
-    like: "❤️",
-    comment: "💬",
-    follow: "👤",
-    bookmark: "🔖",
-    badge: "🏅",
+    like: <span aria-hidden="true">❤️</span>,
+    comment: <span aria-hidden="true">💬</span>,
+    follow: <span aria-hidden="true">👤</span>,
+    bookmark: <span aria-hidden="true">🔖</span>,
+    badge: <span aria-hidden="true">🏅</span>,
 };
 
 function Notifications() {
@@ -33,27 +33,31 @@ function Notifications() {
                     prev.map((n) => ({ ...n, isRead: true }))
                 );
             }
+        } catch (e) {
+            if (import.meta.env.DEV) console.log(e);
         } finally {
             setMarkingAllRead(false);
         }
     }, [userData]);
 
     const deleteNotification = useCallback(async (id) => {
+        try {
+            const success =
+                await notificationService.deleteNotification(id);
 
-        const success =
-            await notificationService.deleteNotification(id);
+            if (success) {
 
-        if (success) {
+                setNotifications((prev) =>
+                    prev.filter(
+                        (notification) =>
+                            notification.$id !== id
+                    )
+                );
 
-            setNotifications((prev) =>
-                prev.filter(
-                    (notification) =>
-                        notification.$id !== id
-                )
-            );
-
+            }
+        } catch (e) {
+            if (import.meta.env.DEV) console.log(e);
         }
-
     }, []);
 
     useEffect(() => {
@@ -78,7 +82,7 @@ function Notifications() {
 
             } catch (error) {
 
-                console.log(error);
+                if (import.meta.env.DEV) { console.log(error); }
 
             } finally {
 
@@ -215,7 +219,7 @@ function Notifications() {
     "
 >
 
-    <div className="text-6xl mb-4">
+    <div className="text-6xl mb-4" aria-hidden="true">
         🔔
     </div>
 
@@ -234,7 +238,7 @@ function Notifications() {
                     notifications.map((notification) => {
 
                         const type = notification.type || "default";
-                        const icon = NOTIFICATION_ICONS[type] || "📬";
+                        const icon = NOTIFICATION_ICONS[type] || <span aria-hidden="true">📬</span>;
 
                         return (
 
@@ -256,7 +260,7 @@ function Notifications() {
 
                             <div className="flex items-start gap-4">
 
-                                <div className="text-3xl flex-shrink-0">{icon}</div>
+                                <div className="text-3xl flex-shrink-0" aria-hidden="true">{icon}</div>
 
                                 <div className="flex-1 min-w-0">
 

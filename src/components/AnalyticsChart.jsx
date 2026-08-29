@@ -48,11 +48,11 @@ function AnalyticsChart({ posts }) {
 
                 <BarChart data={chartData}>
 
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e180" />
 
-                    <XAxis dataKey="month" />
+                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#64748b" }} />
 
-                    <YAxis />
+                    <YAxis tick={{ fontSize: 11, fill: "#64748b" }} />
 
                     <Tooltip />
 

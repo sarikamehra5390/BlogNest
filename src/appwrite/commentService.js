@@ -31,7 +31,7 @@ export class CommentService {
             })
             
         } catch (error) {
-            console.log("Comment Service :: createComment ::", error)
+            if (import.meta.env.DEV) { console.log("Comment Service :: createComment ::", error) }
             return false
             
         }
@@ -49,7 +49,7 @@ export class CommentService {
                 ],
             })
         } catch (error) {
-             console.log("Comment Service :: getComments ::", error)
+             if (import.meta.env.DEV) { console.log("Comment Service :: getComments ::", error) }
             return false
         }
     }
@@ -64,7 +64,7 @@ export class CommentService {
             })
             return true
         } catch (error) {
-            console.log("Comment Service :: deleteComment ::", error);
+            if (import.meta.env.DEV) { console.log("Comment Service :: deleteComment ::", error); }
             return false
         }
     }

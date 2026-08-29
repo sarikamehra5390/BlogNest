@@ -27,7 +27,7 @@ function CommentCard({ comment, onDelete }) {
             {comment.userName}
           </h3>
 
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             {new Date(comment.$createdAt).toLocaleString()}
           </p>
         </div>

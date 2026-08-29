@@ -49,7 +49,7 @@ function TagPosts() {
 
             } catch (error) {
 
-                console.log("Tag Posts Error:", error);
+                if (import.meta.env.DEV) { console.log("Tag Posts Error:", error); }
                 setPosts([]);
 
             } finally {
@@ -74,7 +74,7 @@ function TagPosts() {
 
                     <div className="text-center mb-10">
 
-                        <h1 className="text-5xl font-bold text-slate-800 dark:text-white">
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-white">
 
                             #{decodedTag}
 
@@ -114,7 +114,7 @@ function TagPosts() {
 
                 <div className="text-center mb-10">
 
-                    <h1 className="text-5xl font-bold text-slate-800 dark:text-white">
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-white">
 
                         #{decodedTag}
 
@@ -141,7 +141,7 @@ function TagPosts() {
                         "
                     >
 
-                        ← Back to All Posts
+                        <span aria-hidden="true">←</span> Back to All Posts
 
                     </Link>
 
@@ -151,7 +151,7 @@ function TagPosts() {
 
                     <div className="text-center py-16">
 
-                        <div className="text-6xl mb-4">🏷️</div>
+                        <div className="text-6xl mb-4" aria-hidden="true">🏷️</div>
 
                         <h2 className="text-3xl font-bold text-slate-700 dark:text-white">
 

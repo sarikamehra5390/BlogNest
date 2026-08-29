@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { Container, PostForm } from '../components'
 import appwriteService from "../appwrite/config"
 import { useNavigate, useParams } from 'react-router-dom'
+import toast from "react-hot-toast"
 
 
 function EditPost() {
@@ -19,6 +20,9 @@ function EditPost() {
                 }else{
                     navigate('/')
                 }
+            }).catch(error => {
+                toast.error('Failed to load post');
+                navigate('/');
             })
         }else{
             navigate('/')

@@ -74,107 +74,117 @@ function Header() {
             "
         >
             <Container>
-                <nav className="flex items-center justify-between h-16">
+                <nav className="h-auto py-3">
+                    <div className="flex items-center justify-between h-16">
 
-                    {/* Logo */}
-                    <div className="flex items-center gap-3">
+                        {/* Logo */}
+                        <div className="flex items-center gap-3">
 
-                        <Link to="/">
-                            <Logo width="55px" />
-                        </Link>
+                            <Link to="/">
+                                <Logo width="55px" />
+                            </Link>
 
-                        <h1
-                            className="
-                                text-2xl
-                                font-bold
-                                text-slate-800
-                                dark:text-white
-                                tracking-tight
-                            "
-                        >
-                            BlogNest
-                        </h1>
-
-                    </div>
-
-                    {/* Search */}
-                    <div className="hidden lg:flex flex-1 justify-center px-8">
-                        <SearchBar />
-                    </div>
-
-                    {/* Navigation */}
-                    <ul className="flex items-center gap-2">
-
-                        {navItems.map((item) =>
-                            item.active ? (
-                                <li key={item.slug}>
-                                    <button
-                                        onClick={() => navigate(item.slug)}
-                                        className="
-                                            px-4
-                                            py-2
-                                            rounded-lg
-                                            font-medium
-                                            text-slate-700
-                                            dark:text-slate-200
-                                            hover:bg-blue-100
-                                            dark:hover:bg-slate-800
-                                            hover:text-blue-700
-                                            dark:hover:text-blue-400
-                                            transition-all
-                                            duration-300
-                                        "
-                                    >
-                                        {item.name}
-                                    </button>
-                                </li>
-                            ) : null
-                        )}
-
-                        {/* Notification Bell */}
-                        {authStatus && (
-                            <li>
-                                <NotificationBell />
-                            </li>
-                        )}
-
-                        {/* Logout */}
-                        {authStatus && (
-                            <li>
-                                <LogoutBtn />
-                            </li>
-                        )}
-
-                        {/* Dark Mode */}
-                        <li>
-                            <button
-                                onClick={() => setDark(!dark)}
+                            <h1
                                 className="
-                                    ml-2
-                                    w-10
-                                    h-10
-                                    rounded-full
-                                    flex
-                                    items-center
-                                    justify-center
-                                    bg-slate-100
-                                    dark:bg-slate-800
-                                    hover:bg-blue-100
-                                    dark:hover:bg-slate-700
-                                    transition-all
-                                    duration-300
+                                    text-2xl
+                                    font-bold
+                                    text-slate-800
+                                    dark:text-white
+                                    tracking-tight
                                 "
                             >
-                                {dark ? (
-                                    <Sun size={20} />
-                                ) : (
-                                    <Moon size={20} />
-                                )}
-                            </button>
-                        </li>
+                                BlogNest
+                            </h1>
 
-                    </ul>
+                        </div>
 
+                        <>
+                            {/* Search - Desktop */}
+                            <div className="hidden lg:flex flex-1 justify-center px-8">
+                                <SearchBar />
+                            </div>
+                        </>
+
+                        {/* Navigation */}
+                        <ul className="flex items-center gap-2">
+
+                            {navItems.map((item) =>
+                                item.active ? (
+                                    <li key={item.slug}>
+                                        <button
+                                            onClick={() => navigate(item.slug)}
+                                            className="
+                                                px-4
+                                                py-2
+                                                rounded-lg
+                                                font-medium
+                                                text-slate-700
+                                                dark:text-slate-200
+                                                hover:bg-blue-100
+                                                dark:hover:bg-slate-800
+                                                hover:text-blue-700
+                                                dark:hover:text-blue-400
+                                                transition-all
+                                                duration-300
+                                            "
+                                        >
+                                            {item.name}
+                                        </button>
+                                    </li>
+                                ) : null
+                            )}
+
+                            {/* Notification Bell */}
+                            {authStatus && (
+                                <li>
+                                    <NotificationBell />
+                                </li>
+                            )}
+
+                            {/* Logout */}
+                            {authStatus && (
+                                <li>
+                                    <LogoutBtn />
+                                </li>
+                            )}
+
+                            {/* Dark Mode */}
+                            <li>
+                                <button
+                                    onClick={() => setDark(!dark)}
+                                    aria-label="Toggle dark mode"
+                                    className="
+                                        ml-2
+                                        w-10
+                                        h-10
+                                        rounded-full
+                                        flex
+                                        items-center
+                                        justify-center
+                                        bg-slate-100
+                                        dark:bg-slate-800
+                                        hover:bg-blue-100
+                                        dark:hover:bg-slate-700
+                                        transition-all
+                                        duration-300
+                                    "
+                                >
+                                    {dark ? (
+                                        <Sun size={20} />
+                                    ) : (
+                                        <Moon size={20} />
+                                    )}
+                                </button>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    {/* Search - Mobile */}
+                    <div className="block lg:hidden mb-3">
+                        <SearchBar />
+                    </div>
                 </nav>
             </Container>
         </header>

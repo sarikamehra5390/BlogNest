@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import appwriteService from "../appwrite/config";
-import { Container, PostCard, SkeletonCard } from "../components";
+import { Container, SkeletonCard } from "../components";
 import { useContext } from "react";
 import SearchContext from "../context/SearchContext";
 import { DashboardSummary } from "../components";
@@ -13,7 +13,6 @@ function Home() {
  const [posts, setPosts] = useState([]);
  const [loading, setLoading] = useState(true);
  const { search } = useContext(SearchContext);
- const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -22,7 +21,7 @@ function Home() {
         
         const response = await appwriteService.getPosts();
 
-        console.log(response.rows);
+        if (import.meta.env.DEV) { console.log(response.rows); }
 
         // TablesDB
         if (response?.rows) {
@@ -51,7 +50,7 @@ function Home() {
          setLoading(false);
 
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        if (import.meta.env.DEV) { console.error("Error fetching posts:", error); }
         setPosts([]);
         setLoading(false);
       }
@@ -59,37 +58,6 @@ function Home() {
 
     fetchPosts();
   }, []);
-
-   const categories = [
-  "All",
-  "General",
-  "Java",
-  "React",
-  "DSA",
-  "AI",
-  "Web Development",
-];
-
-
-  const filteredPosts = posts.filter((post) => {
-  const query = search.trim().toLowerCase();
-
-  const matchesSearch =
-    !query ||
-    (post.title || "").toLowerCase().includes(query) ||
-    (post.content || "")
-      .replace(/<[^>]*>/g, "")
-      .toLowerCase()
-      .includes(query) ||
-    (post.tags || "").toLowerCase().includes(query);
-
-  const matchesCategory =
-    selectedCategory === "All" ||
-    post.category === selectedCategory;
-
-  return matchesSearch && matchesCategory;
-});
-  
 
 
   if (loading) {
@@ -108,15 +76,15 @@ function Home() {
 
   if (posts.length === 0) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center bg-slate-100">
+      <div className="min-h-[80vh] flex items-center justify-center bg-slate-100 dark:bg-slate-950">
         <Container>
           <div className="text-center">
 
-            <h1 className="text-4xl font-bold text-slate-800 mb-4">
+            <h1 className="text-4xl font-bold text-slate-800 dark:text-white mb-4">
               Welcome to BlogNest
             </h1>
 
-            <p className="text-slate-500 text-lg mb-8">
+            <p className="text-slate-500 dark:text-slate-400 text-lg mb-8">
               Sign in to discover amazing articles written by our community.
             </p>
 

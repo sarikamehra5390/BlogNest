@@ -19,7 +19,7 @@ function AllPost() {
                     setPosts([]);
                 }
             } catch (error) {
-                console.log(error);
+                if (import.meta.env.DEV) { console.log(error); }
             } finally {
                 setLoading(false);
             }
@@ -71,7 +71,7 @@ function AllPost() {
                 {/* Heading */}
                 <div className="mb-10 text-center">
 
-                    <h1 className="text-5xl font-bold text-slate-800 dark:text-white">
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-white">
                         Latest Posts
                     </h1>
 
@@ -119,7 +119,7 @@ function AllPost() {
 
                     <div className="text-center py-20">
 
-                        <div className="text-6xl mb-4">
+                        <div className="text-6xl mb-4" aria-hidden="true">
                             📝
                         </div>
 

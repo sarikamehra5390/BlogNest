@@ -98,29 +98,26 @@ export class NotificationService {
         });
     }
 
-   async getNotifications(receiverId) {
-    try {
+    async getNotifications(receiverId) {
+        try {
+            const response = await this.databases.listRows({
+                databaseId: conf.appwriteDatabaseId,
+                tableId: conf.appwriteNotificationsTableId,
+                queries: [
+                    Query.equal("receiverId", receiverId),
+                    Query.orderDesc("$createdAt"),
+                    Query.limit(100),
+                ],
+            });
 
-        const response = await this.databases.listRows({
-            databaseId: conf.appwriteDatabaseId,
-            tableId: conf.appwriteNotificationsTableId,
-            queries: [
-                Query.equal("receiverId", receiverId),
-                Query.orderDesc("$createdAt"),
-                Query.limit(100),
-            ],
-        });
-
-        return response.rows;
-
-    } catch (error) {
-
-        console.log("Get Notifications Error:", error);
-
-        return [];
-
+            return response.rows;
+        } catch (error) {
+            if (import.meta.env.DEV) {
+                console.log("Get Notifications Error:", error);
+            }
+            return [];
+        }
     }
-}
 
     async getUnreadCount(receiverId) {
         try {
@@ -135,7 +132,9 @@ export class NotificationService {
             });
             return response?.rows?.length || 0;
         } catch (error) {
-            console.log("Get Unread Count Error:", error);
+            if (import.meta.env.DEV) {
+                console.log("Get Unread Count Error:", error);
+            }
             return 0;
         }
     }
@@ -151,7 +150,9 @@ export class NotificationService {
                 },
             });
         } catch (error) {
-            console.log("Mark As Read Error:", error);
+            if (import.meta.env.DEV) {
+                console.log("Mark As Read Error:", error);
+            }
             return null;
         }
     }
@@ -177,32 +178,29 @@ export class NotificationService {
 
             return unread.length;
         } catch (error) {
-            console.log("Mark All As Read Error:", error);
+            if (import.meta.env.DEV) {
+                console.log("Mark All As Read Error:", error);
+            }
             return 0;
         }
     }
 
-   async deleteNotification(notificationId) {
+    async deleteNotification(notificationId) {
+        try {
+            await this.databases.deleteRow({
+                databaseId: conf.appwriteDatabaseId,
+                tableId: conf.appwriteNotificationsTableId,
+                rowId: notificationId,
+            });
 
-    try {
-
-        await this.databases.deleteRow({
-            databaseId: conf.appwriteDatabaseId,
-            tableId: conf.appwriteNotificationsTableId,
-            rowId: notificationId,
-        });
-
-        return true;
-
-    } catch (error) {
-
-        console.log(error);
-
-        return false;
-
+            return true;
+        } catch (error) {
+            if (import.meta.env.DEV) {
+                console.log(error);
+            }
+            return false;
+        }
     }
-
-}
 
     async deleteAllNotifications(receiverId) {
         try {
@@ -216,7 +214,9 @@ export class NotificationService {
 
             return all.length;
         } catch (error) {
-            console.log("Delete All Notifications Error:", error);
+            if (import.meta.env.DEV) {
+                console.log("Delete All Notifications Error:", error);
+            }
             return 0;
         }
     }

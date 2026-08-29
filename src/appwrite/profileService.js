@@ -28,11 +28,11 @@ export class ProfileService {
             },
         });
 
-        console.log("Profile created:", response);
+        if (import.meta.env.DEV) { console.log("Profile created:", response); }
         return response;
 
     } catch (error) {
-        console.error("Full Appwrite Error:", error);
+        if (import.meta.env.DEV) { console.error("Full Appwrite Error:", error); }
         throw error;
     }
 }
@@ -50,7 +50,7 @@ export class ProfileService {
 
             return response.rows.length ? response.rows[0] : null;
         } catch (error) {
-            console.error("ProfileService :: getProfile ::", error);
+            if (import.meta.env.DEV) { console.error("ProfileService :: getProfile ::", error); }
             return null;
         }
     }
@@ -65,7 +65,7 @@ export class ProfileService {
                 data,
             });
         } catch (error) {
-            console.error("ProfileService :: updateProfile ::", error);
+            if (import.meta.env.DEV) { console.error("ProfileService :: updateProfile ::", error); }
             return false;
         }
     }
@@ -81,7 +81,7 @@ export class ProfileService {
 
             return true;
         } catch (error) {
-            console.error("ProfileService :: deleteProfile ::", error);
+            if (import.meta.env.DEV) { console.error("ProfileService :: deleteProfile ::", error); }
             return false;
         }
     }

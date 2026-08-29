@@ -130,13 +130,7 @@ function MiniBarChart({ data, dataKey, color, gradientId }) {
 
                     <Tooltip
                         cursor={{ fill: "#0f172a" }}
-                        contentStyle={{
-                            backgroundColor: "#0f172a",
-                            color: "#f8fafc",
-                            border: "none",
-                            borderRadius: 12,
-                            fontSize: 12,
-                        }}
+                        contentStyle={{ borderRadius: 12, border: "none", fontSize: 12, background: "rgba(15,23,42,0.95)", color: "#f8fafc", boxShadow: "0 4px 12px rgba(0,0,0,0.15)", padding: "8px 12px" }}
                     />
 
                     <Bar
@@ -194,13 +188,7 @@ function MiniLineChart({ data, dataKey, color, gradientId }) {
                     />
 
                     <Tooltip
-                        contentStyle={{
-                            backgroundColor: "#0f172a",
-                            color: "#f8fafc",
-                            border: "none",
-                            borderRadius: 12,
-                            fontSize: 12,
-                        }}
+                        contentStyle={{ borderRadius: 12, border: "none", fontSize: 12, background: "rgba(15,23,42,0.95)", color: "#f8fafc", boxShadow: "0 4px 12px rgba(0,0,0,0.15)", padding: "8px 12px" }}
                     />
 
                     <Area

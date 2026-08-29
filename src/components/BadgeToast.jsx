@@ -28,7 +28,7 @@ function BadgeToast({ badge, onClose, duration = 6000 }) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -20, scale: 0.8 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="fixed bottom-6 right-6 z-[100] max-w-sm"
+                    className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 z-[100] max-w-sm mx-auto"
                 >
                     <div
                         className={`

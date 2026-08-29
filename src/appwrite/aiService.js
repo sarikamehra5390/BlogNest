@@ -81,10 +81,12 @@ class AIService {
 
             } catch (parseError) {
 
-                console.error(
-                    "AIService :: Invalid response:",
-                    response.responseBody
-                );
+                if (import.meta.env.DEV) {
+                    console.error(
+                        "AIService :: Invalid response:",
+                        response.responseBody
+                    );
+                }
 
                 throw new Error(
                     "Invalid response received from AI service."
@@ -105,10 +107,12 @@ class AIService {
 
         } catch (error) {
 
-            console.error(
-                "AIService :: generateSummary ::",
-                error
-            );
+            if (import.meta.env.DEV) {
+                console.error(
+                    "AIService :: generateSummary ::",
+                    error
+                );
+            }
 
             throw error;
 
@@ -185,10 +189,12 @@ class AIService {
 
             } catch (parseError) {
 
-                console.error(
-                    "AIService :: Invalid title response:",
-                    response.responseBody
-                );
+                if (import.meta.env.DEV) {
+                    console.error(
+                        "AIService :: Invalid title response:",
+                        response.responseBody
+                    );
+                }
 
                 throw new Error(
                     "Invalid response received from AI service."
@@ -211,10 +217,12 @@ class AIService {
 
         } catch (error) {
 
-            console.error(
-                "AIService :: generateTitles ::",
-                error
-            );
+            if (import.meta.env.DEV) {
+                console.error(
+                    "AIService :: generateTitles ::",
+                    error
+                );
+            }
 
             throw error;
 

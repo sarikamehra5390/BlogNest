@@ -188,7 +188,7 @@ function ReadingHistory() {
                             "
                         >
 
-                            No Reading History Yet 📚
+                            <span className="dark:text-white">No Reading History Yet 📚</span>
 
                         </div>
 
@@ -214,7 +214,7 @@ function ReadingHistory() {
 
                                     >
 
-                                        <div className="flex justify-between">
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
 
                                             <div>
 
@@ -240,6 +240,7 @@ function ReadingHistory() {
                                                     className="
                                                         mt-2
                                                         text-gray-500
+                                                        dark:text-gray-400
                                                     "
                                                 >
 

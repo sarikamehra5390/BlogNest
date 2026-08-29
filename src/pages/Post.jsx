@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import appwriteService from "../appwrite/config";
 import { Button, Container } from "../components";
 import parse from "html-react-parser";
+import DOMPurify from "dompurify";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import commentService from "../appwrite/commentService";
@@ -15,7 +16,6 @@ import viewService from "../appwrite/viewService";
 import notificationService from "../appwrite/notificationService";
 import historyService from "../appwrite/historyService";
 import badgeService from "../appwrite/badgeService";
-import followService from "../appwrite/followService";
 import SuggestedPosts from "../components/SuggestedPosts";
 import AISummary from "../components/AISummary";
 
@@ -83,12 +83,17 @@ setAuthor(profile);
 }, [slug, navigate, userData]);
 
   const deletePost = async () => {
-    const status = await appwriteService.deletePost(post.$id);
+    try {
+      const status = await appwriteService.deletePost(post.$id);
 
-    if (status) {
-      await appwriteService.deleteFile(post.featuredImage);
-      toast.success("Post deleted successfully 🗑️");
-      navigate("/");
+      if (status) {
+        await appwriteService.deleteFile(post.featuredImage);
+        toast.success("Post deleted successfully 🗑️");
+        navigate("/");
+      }
+    } catch (e) {
+      if (import.meta.env.DEV) console.log(e);
+      toast.error("Failed to delete post");
     }
   };
 
@@ -103,7 +108,7 @@ setAuthor(profile);
         setComments([]);
     }
   } catch (error) {
-        console.error(error);
+        if (import.meta.env.DEV) { console.error(error); }
         setComments([]);
     }
 };
@@ -149,7 +154,7 @@ const fetchLikes = async () => {
       setLikeId(null);
     }
   }catch (error) {
-        console.error(error);
+        if (import.meta.env.DEV) { console.error(error); }
     }
 };
 
@@ -176,7 +181,7 @@ const fetchBookmark = async () => {
             setBookmarkId(null);
         }
     } catch (error) {
-        console.error(error);
+        if (import.meta.env.DEV) { console.error(error); }
     }
 };
 
@@ -288,7 +293,7 @@ if (success) {
             }
         });
     } catch (badgeErr) {
-        console.log("Badge check error (like):", badgeErr);
+        if (import.meta.env.DEV) { console.log("Badge check error (like):", badgeErr); }
     }
 
     toast.success("Post liked ❤️");
@@ -297,7 +302,7 @@ if (success) {
 
 }
     } catch (error) {
-        console.error(error);
+        if (import.meta.env.DEV) { console.error(error); }
         toast.error("Something went wrong");
     } finally {
         setLikeLoading(false);
@@ -372,7 +377,7 @@ const handleBookmark = async () => {
             await fetchBookmark();
         }
     } catch (error) {
-        console.error(error);
+        if (import.meta.env.DEV) { console.error(error); }
         toast.error("Something went wrong");
     } finally {
         setBookmarkLoading(false);
@@ -383,15 +388,19 @@ useEffect(() => {
 
     if (!post) return;
 
-    viewService.addView(
-        post.$id,
-        userData?.$id || null
-    );
+    try {
+        viewService.addView(
+            post.$id,
+            userData?.$id || null
+        );
+    } catch (e) {
+        if (import.meta.env.DEV) console.log(e);
+    }
 
 }, [post]);
 
   return post ? (
-    <div className="bg-slate-100 min-h-screen py-12">
+    <div className="bg-slate-100 dark:bg-slate-950 transition-colors min-h-screen py-12">
       <Container>
 
         <div className="max-w-5xl mx-auto">
@@ -403,18 +412,18 @@ useEffect(() => {
             <img
               src={appwriteService.getFilePreview(post.featuredImage)}
               alt={post.title}
-              className="w-full h-[450px] object-cover"
+              className="h-64 md:h-80 lg:h-[450px] object-cover w-full"
             />
 
           </div>
 
           {/* Title */}
 
-          <h1 className="text-5xl font-bold text-slate-800 dark:text-white leading-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl leading-tight font-bold text-slate-800 dark:text-white mb-4">
             {post.title}
           </h1>
 
-          <div className="flex items-center gap-4 mt-6 mb-8">
+          <div className="flex flex-wrap items-center gap-4 mt-6 mb-8">
 
     <Link to={`/author/${post.userId}`}>
 
@@ -434,7 +443,6 @@ useEffect(() => {
 
         <Link
             to={`/author/${post.userId}`}
-            onClick={() => alert(`Navigating to /author/${post.userId}`)}
             className="text-xl font-semibold hover:text-blue-600 transition"
         >
             {author?.name || "Unknown Author"}
@@ -450,7 +458,7 @@ useEffect(() => {
 
           {/* Meta */}
 
-          <div className="flex items-center justify-between mb-10">
+          <div className="flex flex-wrap items-center justify-between mb-10">
 
             <p className="text-slate-500 dark:text-slate-400 text-lg">
               Published Article
@@ -494,24 +502,25 @@ useEffect(() => {
             max-w-none
           "
           >
-            {parse(post.content)}
+            {parse(DOMPurify.sanitize(post.content))}
           </div>
 
           <AISummary content={post.content} />
 
           {/* Likes */}
 
-          <div className="flex items-center gap-4 mt-6">
+          <div className="flex flex-wrap items-center gap-4 mt-6">
     <button
     disabled={likeLoading}
     onClick={handleLike}
+    aria-pressed={String(liked)}
     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105 ${
         liked
             ? "bg-red-500 text-white hover:bg-red-600"
             : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
     } ${likeLoading ? "opacity-50 cursor-not-allowed" : ""}`}
 >
-    <span className="text-xl">
+    <span className="text-xl" aria-hidden="true">
         {liked ? "❤️" : "🤍"}
     </span>
 
@@ -525,7 +534,7 @@ useEffect(() => {
 </button>
 
     <span className="font-medium text-gray-700 dark:text-gray-300">
-        ❤️ {likes} {likes === 1 ? "Like" : "Likes"}
+        <span aria-hidden="true">❤️</span> {likes} {likes === 1 ? "Like" : "Likes"}
     </span>
 </div>
 
@@ -533,13 +542,14 @@ useEffect(() => {
     <button
     disabled={bookmarkLoading}
     onClick={handleBookmark}
+    aria-pressed={String(bookmarked)}
     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105 ${
         bookmarked
             ? "bg-blue-600 text-white hover:bg-blue-700"
             : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
     } ${bookmarkLoading ? "opacity-50 cursor-not-allowed" : ""}`}
 >
-    <span className="text-xl">
+    <span className="text-xl" aria-hidden="true">
         {bookmarked ? "🔖" : "📑"}
     </span>
 

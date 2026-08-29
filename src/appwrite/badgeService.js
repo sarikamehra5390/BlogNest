@@ -90,7 +90,7 @@ export class BadgeService {
 
             return response?.rows || [];
         } catch (error) {
-            console.log("BadgeService :: getBadges ::", error);
+            if (import.meta.env.DEV) { console.log("BadgeService :: getBadges ::", error); }
             return [];
         }
     }
@@ -108,7 +108,7 @@ export class BadgeService {
 
             return (response?.rows?.length || 0) > 0;
         } catch (error) {
-            console.log("BadgeService :: hasBadge ::", error);
+            if (import.meta.env.DEV) { console.log("BadgeService :: hasBadge ::", error); }
             return false;
         }
     }
@@ -147,13 +147,13 @@ export class BadgeService {
                         badgeDescription: def.description,
                     });
                 } catch (notifyErr) {
-                    console.log("BadgeService :: notification create error ::", notifyErr);
+                    if (import.meta.env.DEV) { console.log("BadgeService :: notification create error ::", notifyErr); }
                 }
             }
 
             return badge;
         } catch (error) {
-            console.log("BadgeService :: createBadge ::", error);
+            if (import.meta.env.DEV) { console.log("BadgeService :: createBadge ::", error); }
             return null;
         }
     }
@@ -175,7 +175,7 @@ export class BadgeService {
 
         const promise = this.checkAllBadges(userId, services)
             .catch((err) => {
-                console.log("BadgeService :: debouncedCheckAllBadges ::", err);
+                if (import.meta.env.DEV) { console.log("BadgeService :: debouncedCheckAllBadges ::", err); }
                 return [];
             });
 
@@ -215,7 +215,7 @@ export class BadgeService {
 
             return allEarned;
         } catch (error) {
-            console.log("BadgeService :: checkAllBadges ::", error);
+            if (import.meta.env.DEV) { console.log("BadgeService :: checkAllBadges ::", error); }
             return [];
         }
     }
@@ -231,7 +231,7 @@ export class BadgeService {
             }
             return null;
         } catch (error) {
-            console.log("BadgeService :: checkFirstPost ::", error);
+            if (import.meta.env.DEV) { console.log("BadgeService :: checkFirstPost ::", error); }
             return null;
         }
     }
@@ -270,7 +270,7 @@ export class BadgeService {
 
             return awarded;
         } catch (error) {
-            console.log("BadgeService :: checkLikeMilestones ::", error);
+            if (import.meta.env.DEV) { console.log("BadgeService :: checkLikeMilestones ::", error); }
             return [];
         }
     }
@@ -300,7 +300,7 @@ export class BadgeService {
 
             return awarded;
         } catch (error) {
-            console.log("BadgeService :: checkFollowerMilestones ::", error);
+            if (import.meta.env.DEV) { console.log("BadgeService :: checkFollowerMilestones ::", error); }
             return [];
         }
     }
@@ -355,7 +355,7 @@ export class BadgeService {
 
             return null;
         } catch (error) {
-            console.log("BadgeService :: checkTopAuthor ::", error);
+            if (import.meta.env.DEV) { console.log("BadgeService :: checkTopAuthor ::", error); }
             return null;
         }
     }
@@ -405,7 +405,7 @@ export class BadgeService {
 
             return null;
         } catch (error) {
-            console.log("BadgeService :: checkTrendingAuthor ::", error);
+            if (import.meta.env.DEV) { console.log("BadgeService :: checkTrendingAuthor ::", error); }
             return null;
         }
     }

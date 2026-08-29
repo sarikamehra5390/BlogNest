@@ -24,26 +24,32 @@ export default function EditProfile() {
 
     useEffect(() => {
     if (userData) {
-        loadProfile();
+        loadProfile().catch(e => {
+            if (import.meta.env.DEV) console.log(e);
+        });
     }
 }, [userData]);
 
 const loadProfile = async () => {
+    try {
+        const data = await profileService.getProfile(userData.$id);
 
-    const data = await profileService.getProfile(userData.$id);
+        if (data) {
+            setProfile(data);
 
-    if (data) {
-        setProfile(data);
-
-        setValue("name", data.name);
-        setValue("bio", data.bio);
+            setValue("name", data.name);
+            setValue("bio", data.bio);
+        }
+    } catch (e) {
+        if (import.meta.env.DEV) console.log(e);
+        return null;
     }
-
 };
 
 const update = async (data) => {
 
     try {
+        if (!profile) return toast.error('Profile not loaded');
 
         let avatar = profile.avatar;
 
@@ -71,7 +77,7 @@ const update = async (data) => {
 
     } catch (error) {
 
-        console.error(error);
+        if (import.meta.env.DEV) { console.error(error); }
 
         toast.error("Unable to update profile.");
 

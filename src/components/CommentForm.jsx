@@ -75,6 +75,7 @@ function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
           })}
           rows={5}
           placeholder="Share your thoughts..."
+          aria-label="Write a comment"
           className="w-full rounded-xl border p-4 dark:bg-slate-800 dark:text-white"
         />
 
