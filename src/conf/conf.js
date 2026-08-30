@@ -37,6 +37,8 @@ const conf = {
 ),
 
      appwriteAiFunctionId: env("VITE_APPWRITE_AI_FUNCTION_ID"),
+
+      tinymceApiKey: env("VITE_TINYMCE_API_KEY"),
 }
 
 

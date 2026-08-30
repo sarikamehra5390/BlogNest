@@ -17,11 +17,13 @@ function CommentCard({ comment, onDelete }) {
   };
 
   return (
-    <article className="surface-card p-5 mb-4">
+    <article className="surface-card mb-4 p-5 transition duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md dark:hover:border-indigo-900">
 
       <div className="flex justify-between items-center">
 
-        <div>
+        <div className="flex items-center gap-3">
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-indigo-100 font-bold text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300" aria-hidden="true">{comment.userName?.slice(0, 1).toUpperCase() || "U"}</div>
+          <div>
           <h3 className="font-semibold text-slate-900 dark:text-white">
             {comment.userName}
           </h3>
@@ -29,6 +31,7 @@ function CommentCard({ comment, onDelete }) {
           <p className="text-sm text-slate-500 dark:text-slate-400">
             {new Date(comment.$createdAt).toLocaleString()}
           </p>
+          </div>
         </div>
 
         {userData?.$id === comment.userId && (

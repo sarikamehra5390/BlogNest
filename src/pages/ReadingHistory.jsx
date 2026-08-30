@@ -114,15 +114,7 @@ function ReadingHistory() {
 
         return (
 
-            <Container>
-
-                <div className="py-10 text-center">
-
-                    Loading History...
-
-                </div>
-
-            </Container>
+            <div className="page-shell"><Container><div className="mx-auto max-w-4xl space-y-5 py-10"><div className="h-44 rounded-2xl shimmer" />{[0, 1, 2].map((item) => <div key={item} className="h-28 rounded-2xl shimmer" />)}</div></Container></div>
 
         );
 
@@ -130,19 +122,15 @@ function ReadingHistory() {
 
     return (
 
-        <Container>
+        <div className="page-shell"><Container>
 
-            <div className="max-w-4xl mx-auto py-10">
+            <div className="max-w-4xl mx-auto py-2 sm:py-6">
 
                 <ReadingStreak />
 
-                <div className="flex justify-between items-center mb-8 mt-12">
+                <div className="surface-card flex flex-wrap justify-between items-center gap-4 mb-8 mt-12 p-5 sm:p-6">
 
-                    <h1 className="text-4xl font-bold dark:text-white">
-
-                        📖 Reading History
-
-                    </h1>
+                    <div><p className="page-kicker">Your library</p><h1 className="mt-2 text-3xl font-bold tracking-tight dark:text-white">Reading history</h1></div>
 
                     {
 
@@ -153,7 +141,7 @@ function ReadingHistory() {
                                 onClick={clearHistory}
 
                                 className="
-                                    bg-red-500
+                                    rounded-xl bg-red-500
                                     text-white
                                     px-4
                                     py-2
@@ -179,16 +167,11 @@ function ReadingHistory() {
 
                         <div
                             className="
-                                bg-white
-                                dark:bg-slate-900
-                                rounded-2xl
-                                shadow-lg
-                                p-10
-                                text-center
+                                empty-state
                             "
                         >
 
-                            <span className="dark:text-white">No Reading History Yet 📚</span>
+                            <div className="text-5xl" aria-hidden="true">📚</div><h2 className="mt-4 text-2xl font-bold dark:text-white">No reading history yet</h2><p className="mt-2 text-slate-500 dark:text-slate-400">Articles you open will appear here, ready for your next visit.</p>
 
                         </div>
 
@@ -205,11 +188,7 @@ function ReadingHistory() {
                                         key={item.$id}
 
                                         className="
-                                            bg-white
-                                            dark:bg-slate-900
-                                            rounded-2xl
-                                            shadow-lg
-                                            p-6
+                                            surface-card p-5 sm:p-6 transition duration-200 hover:-translate-y-0.5 hover:shadow-md
                                         "
 
                                     >
@@ -275,7 +254,7 @@ function ReadingHistory() {
                                                             to={`/post/${item.post.$id}`}
 
                                                             className="
-                                                                bg-blue-600
+                                                        rounded-xl bg-indigo-600
                                                                 text-white
                                                                 px-4
                                                                 py-2
@@ -329,7 +308,7 @@ function ReadingHistory() {
 
             </div>
 
-        </Container>
+        </Container></div>
 
     );
 

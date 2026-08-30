@@ -152,15 +152,7 @@ function Notifications() {
 
         return (
 
-            <Container>
-
-                <div className="py-10 text-center">
-
-                    Loading Notifications...
-
-                </div>
-
-            </Container>
+            <div className="page-shell"><Container><div className="mx-auto max-w-3xl space-y-4 py-10"><div className="h-20 rounded-2xl shimmer" />{[0, 1, 2].map((item) => <div key={item} className="h-28 rounded-2xl shimmer" />)}</div></Container></div>
 
         );
 
@@ -242,7 +234,7 @@ function Notifications() {
                         <div
                             key={notification.$id}
                             className={`
-                                mb-4
+                                mb-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-md
                                 p-5
                                 rounded-2xl shadow-sm
                                 border
