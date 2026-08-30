@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import {useState} from 'react'
 import authService from '../appwrite/auth'
 import {Link, useNavigate} from 'react-router-dom'
 import {login} from '../store/authSlice'
@@ -52,24 +52,22 @@ function Signup() {
 };
 
   return (
-  <div className="min-h-[90vh] flex items-center justify-center bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300 px-4">
+  <div className="relative isolate min-h-[80vh] overflow-hidden flex items-center justify-center bg-slate-50 dark:bg-slate-950 transition-colors duration-300 px-4 py-10"><div className="absolute inset-x-0 top-0 -z-10 h-80 bg-[radial-gradient(circle_at_50%_0,rgba(129,140,248,.25),transparent_55%)]" />
       <div className={` mx-auto
     w-full
     max-w-md
-    bg-white/90 dark:bg-slate-900/90
-    backdrop-blur-md
+    bg-white dark:bg-slate-900
     rounded-3xl
     shadow-2xl
     border
-    bg-white/90 dark:bg-slate-900/90
-    p-10`}>
+    border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-300/40 dark:shadow-none p-7 sm:p-10`}>
       <div className='mb-2 flex justify-center'>
       <span className="inline-block w-full max-w-[80px] mb-4">
           <Logo width= '100%' />
         </span>
       </div>
        <h2 className="text-center text-3xl font-bold text-slate-800 dark:text-white mt-4 transition-colors">
-                  Sign up to create account
+                  Create your BlogNest account
               </h2>
               <p className="mt-3 text-center text-slate-500 dark:text-slate-400 leading-6 transition-colors">
                   Already have an account?&nbsp;
@@ -93,7 +91,7 @@ function Signup() {
       dark:text-red-300
     ">{error}</p>}
 
-              <form onSubmit={handleSubmit(create)}>
+              <form onSubmit={handleSubmit(create)} className="mt-8">
                 <div className="space-y-6">
                   <Input
                    label = "Full Name: "
@@ -128,7 +126,7 @@ function Signup() {
 
                       <Button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600"
+                      className="w-full"
                       >Create Account</Button>
                   
                 </div>

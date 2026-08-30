@@ -1,4 +1,3 @@
-import React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authSlice";
@@ -14,7 +13,6 @@ function Login() {
   const { 
     register,
     handleSubmit,
-    formState: {errors} 
    } = useForm();
   const [error, setError] = useState("");
 
@@ -47,28 +45,26 @@ function Login() {
   };
 
   return (
-   <div className="min-h-[90vh] flex items-center justify-center bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300 px-4">
+   <div className="relative isolate min-h-[80vh] overflow-hidden flex items-center justify-center bg-slate-50 dark:bg-slate-950 transition-colors duration-300 px-4 py-10"><div className="absolute inset-x-0 top-0 -z-10 h-80 bg-[radial-gradient(circle_at_50%_0,rgba(129,140,248,.25),transparent_55%)]" />
       <div className=" mx-auto
     w-full
     max-w-md
-    bg-white/90
-     dark:bg-slate-900/90
-    backdrop-blur-md
+    bg-white dark:bg-slate-900
     rounded-3xl
-    shadow-2xl
+    shadow-xl shadow-slate-300/40 dark:shadow-none
     border
    border-slate-200 dark:border-slate-700
-    p-10">
+    p-7 sm:p-10">
         <div className="mb-2 flex justify-center">
         <span className="inline-block w-full max-w-[80px] mb-4">
             <Logo width="100%" />
           </span>
         </div>
         <h2 className="text-center text-3xl font-bold text-slate-800 dark:text-white mt-4 transition-colors">
-          Sign in to your account
+          Welcome back
         </h2>
         <p className="text-center text-slate-500 dark:text-slate-400 mt-2 mb-6">
-  Welcome back! Continue writing and exploring amazing blogs.
+  Sign in to continue reading, writing, and connecting with the community.
 </p>
         <p className="mt-3 text-center text-slate-500 dark:text-slate-400 leading-6 transition-colors">
           Don&apos;t have an account ?&nbsp;
@@ -101,7 +97,7 @@ function Login() {
 
         {/*Handle submit is an event.Whenever the form is submit it is through handleSubmit() method  */}
 
-        <form onSubmit={handleSubmit(login)} className="mt-10">
+        <form onSubmit={handleSubmit(login)} className="mt-8">
           <div className="space-y-6">
             <Input
               label="Email: "
@@ -127,7 +123,7 @@ function Login() {
                 required: true,
               })}
             />
-            <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600">
+            <Button type="submit" className="w-full">
               Sign in
             </Button>
           </div>

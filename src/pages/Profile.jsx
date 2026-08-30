@@ -58,10 +58,10 @@ export default function Profile() {
 
 
     return (
-        <div className="bg-slate-100 dark:bg-slate-950 min-h-screen py-10">
+        <div className="page-shell">
             <Container>
 
-                <div className="max-w-3xl mx-auto bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-8">
+                <div className="max-w-3xl mx-auto surface-card p-7 sm:p-10">
 
                     <div className="flex flex-col items-center">
 
@@ -73,7 +73,7 @@ export default function Profile() {
                             : `https://ui-avatars.com/api/?name=${profile?.name}`
                           }
                            alt={profile?.name}
-                            className="w-28 h-28 rounded-full object-cover mx-auto border-4 border-blue-500 hover:scale-105 transition-transform cursor-pointer"
+                            className="w-28 h-28 rounded-full object-cover mx-auto ring-4 ring-indigo-500/20 ring-offset-4 dark:ring-offset-slate-900 hover:scale-105 transition-transform cursor-pointer"
                           />
                     </Link>
 
@@ -81,7 +81,7 @@ export default function Profile() {
                          to={`/author/${profile?.userId}`}
                          className="block text-center"
                         >
-                         <h1 className="text-3xl font-bold mt-4 dark:text-white hover:text-blue-600 transition-colors cursor-pointer">
+                         <h1 className="text-3xl font-bold tracking-tight mt-5 dark:text-white hover:text-indigo-600 transition-colors cursor-pointer">
                            {profile?.name}
                          </h1>
                         </Link>
@@ -97,7 +97,7 @@ export default function Profile() {
 
                         <button
                            onClick={() => navigate("/edit-profile")}
-                           className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition"
+                           className="mt-7 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-sm shadow-indigo-500/25 transition"
                         >
                             Edit Profile
                         </button>

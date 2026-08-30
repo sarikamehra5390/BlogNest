@@ -1,108 +1,49 @@
 @import "tailwindcss";
 
-/*enable manual dark mode*/
-
 @custom-variant dark (&:where(.dark, .dark *));
 
-html {
-    scroll-behavior: smooth;
-}
-
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
+html { scroll-behavior: smooth; }
 body {
-    font-family: "Inter", sans-serif;
-    background-color: #f8fafc;
-    color: #1e293b;
-    line-height: 1.6;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  font-family: "Inter", sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+#root { min-height: 100vh; }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-    width: 10px;
-}
+/* Shared editorial primitives */
+.page-shell { @apply min-h-screen bg-slate-50 py-8 sm:py-12 dark:bg-slate-950; }
+.page-heading { @apply text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl dark:text-white; }
+.page-kicker { @apply text-sm font-semibold uppercase tracking-[0.16em] text-indigo-600 dark:text-indigo-400; }
+.page-subtitle { @apply mt-3 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg dark:text-slate-400; }
+.surface-card { @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/50 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none; }
+.empty-state { @apply mx-auto max-w-xl rounded-2xl border border-slate-200/80 bg-white px-6 py-14 text-center shadow-sm shadow-slate-200/50 sm:px-10 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none; }
 
-::-webkit-scrollbar-track {
-    background: #f1f5f9;
-}
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #818cf8; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+::selection { background: #4f46e5; color: white; }
+a { text-decoration: none; transition: color .2s ease; }
+button { cursor: pointer; transition: all .2s ease; }
+img { display: block; max-width: 100%; height: auto; }
+input:focus, textarea:focus, select:focus { outline: none; }
+button:focus-visible, a:focus-visible { outline: none; box-shadow: 0 0 0 4px rgb(99 102 241 / .24); }
 
-::-webkit-scrollbar-thumb {
-    background: #3b82f6;
-    border-radius: 9999px;
-}
+.article-content { @apply text-[1.05rem] leading-8 text-slate-700 dark:text-slate-300; }
+.article-content :where(h1,h2,h3,h4) { @apply mt-10 font-bold tracking-tight text-slate-950 dark:text-white; }
+.article-content h2 { @apply text-2xl; }
+.article-content h3 { @apply text-xl; }
+.article-content :where(p,ul,ol,blockquote,pre) { @apply my-5; }
+.article-content a { @apply font-medium text-indigo-600 underline decoration-indigo-300 underline-offset-4 hover:text-indigo-700 dark:text-indigo-400; }
+.article-content img { @apply my-8 rounded-xl; }
+.article-content blockquote { @apply border-l-4 border-indigo-500 bg-indigo-50 px-5 py-3 italic text-slate-700 dark:bg-indigo-950/30 dark:text-slate-300; }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #2563eb;
-}
-
-/* Text Selection */
-::selection {
-    background: #2563eb;
-    color: white;
-}
-
-/* Links */
-a {
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-/* Buttons */
-button {
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* Images */
-img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-    
-}
-
-/* Better Focus States */
-input:focus,
-textarea:focus,
-select:focus {
-    outline: none;
-}
-
-
-/* ============================= */
-/* Shimmer Loading Animation */
-/* ============================= */
-
-@keyframes shimmer {
-  0% {
-    background-position: -800px 0;
-  }
-
-  100% {
-    background-position: 800px 0;
-  }
-}
-
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    #e2e8f0 25%,
-    #f8fafc 50%,
-    #e2e8f0 75%
-  );
-
-  background-size: 800px 100%;
-  animation: shimmer 1.6s infinite linear;
-}
-
-.dark .shimmer {
-  background: linear-gradient(
-    90deg,
-    #334155 25%,
-    #475569 50%,
-    #334155 75%
-  );
-
-  background-size: 800px 100%;
-}
+@keyframes shimmer { 0% { background-position: -800px 0; } 100% { background-position: 800px 0; } }
+.shimmer { background: linear-gradient(90deg,#e2e8f0 25%,#f8fafc 50%,#e2e8f0 75%); background-size: 800px 100%; animation: shimmer 1.6s infinite linear; }
+.dark .shimmer { background: linear-gradient(90deg,#1e293b 25%,#334155 50%,#1e293b 75%); background-size: 800px 100%; }

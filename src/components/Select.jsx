@@ -24,7 +24,7 @@ py-3
 mt-1
 rounded-xl
 border
-border-slate-300
+border-slate-200
 dark:border-slate-600
 bg-white
 dark:bg-slate-800
@@ -33,9 +33,9 @@ dark:text-white
 shadow-sm
 transition-all
 duration-300
-focus:border-blue-500
+focus:border-indigo-500
 focus:ring-4
-focus:ring-blue-100
+focus:ring-indigo-500/15
 focus:shadow-md
 ${className}
 `}

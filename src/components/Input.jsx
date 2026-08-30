@@ -20,19 +20,19 @@ const Input = React.forwardRef(function Input(
     mt-1
     rounded-xl
     border
-    border-slate-300
+    border-slate-200
     bg-white
     dark:bg-slate-800
     text-slate-800
     dark:text-white
     placeholder:text-slate-400
     dark: placeholder:text-slate-500
-    shadow-sm
+    shadow-sm shadow-slate-200/50
     transition-all
     duration-300
-    focus:border-blue-500
+    focus:border-indigo-500
     focus:ring-4
-    focus:ring-blue-100
+    focus:ring-indigo-500/15
     focus:shadow-md
     ${className}
   `;
@@ -60,12 +60,11 @@ const Input = React.forwardRef(function Input(
             h-52
             border-2
             border-dashed
-            border-slate-300
+            border-slate-200 dark:border-slate-700 dark:bg-slate-800
             rounded-2xl
             bg-slate-50
             cursor-pointer
-            hover:border-blue-500
-            hover:bg-blue-50
+            hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/30
             transition-all
             duration-300
           "
@@ -73,7 +72,7 @@ const Input = React.forwardRef(function Input(
           {/* Upload Icon */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-14 h-14 text-blue-500 mb-4"
+            className="w-12 h-12 text-indigo-500 mb-3"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

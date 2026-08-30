@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import commentService from "../appwrite/commentService";
 import toast from "react-hot-toast";
@@ -18,12 +17,12 @@ function CommentCard({ comment, onDelete }) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-md p-5 mb-4">
+    <article className="surface-card p-5 mb-4">
 
       <div className="flex justify-between items-center">
 
         <div>
-          <h3 className="font-semibold text-slate-800 dark:text-white">
+          <h3 className="font-semibold text-slate-900 dark:text-white">
             {comment.userName}
           </h3>
 
@@ -35,7 +34,7 @@ function CommentCard({ comment, onDelete }) {
         {userData?.$id === comment.userId && (
           <button
             onClick={handleDelete}
-            className="text-red-500 hover:text-red-700 font-medium"
+            className="rounded-lg px-2 py-1 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/30"
           >
             Delete
           </button>
@@ -43,11 +42,11 @@ function CommentCard({ comment, onDelete }) {
 
       </div>
 
-      <p className="mt-4 text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
+      <p className="mt-4 border-t border-slate-100 pt-4 text-slate-700 dark:border-slate-800 dark:text-slate-300 whitespace-pre-wrap">
         {comment.content}
       </p>
 
-    </div>
+    </article>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Container, PostCard } from "../components";
 import bookmarkService from "../appwrite/bookmarkService";
@@ -56,29 +56,27 @@ if (loading) {
 
 if (posts.length === 0) {
     return (
-        <Container>
-            <div className="text-center py-20">
-                <h1 className="text-4xl font-bold mb-4 dark:text-white">
-                    🔖 Saved Posts
+        <div className="page-shell"><Container>
+            <div className="empty-state">
+                <div className="text-5xl mb-4">🔖</div><h1 className="text-3xl font-bold mb-3 dark:text-white">
+                    Your reading shelf
                 </h1>
 
                 <p className="text-gray-500 dark:text-gray-400">
                     You haven't saved any posts yet.
                 </p>
             </div>
-        </Container>
+        </Container></div>
     );
 }
 
 return (
-    <div className="bg-slate-100 dark:bg-slate-950 min-h-screen py-10">
+    <div className="page-shell">
         <Container>
 
-            <h1 className="text-4xl font-bold mb-8 dark:text-white">
-                🔖 Saved Posts
-            </h1>
+            <div className="mb-9"><p className="page-kicker">Your library</p><h1 className="page-heading mt-2">Saved posts</h1><p className="page-subtitle">A quiet corner for the articles you want to return to.</p></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 {posts.map((post) => (
                     <PostCard

@@ -168,11 +168,11 @@ function PostForm({ post }) {
   return (
     <>
     <div className="mb-8">
-    <h1 className="text-4xl font-bold text-slate-800">
+    <p className="page-kicker">Writer studio</p><h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
       {post ? "Edit Article" : "Create New Article"}
     </h1>
 
-    <p className="text-slate-500 mt-2">
+    <p className="text-slate-500 dark:text-slate-400 mt-2">
       Share your knowledge with the BlogNest community.
     </p>
   </div>
@@ -180,15 +180,15 @@ function PostForm({ post }) {
 bg-white
 dark:bg-slate-900
 rounded-3xl
-shadow-xl
+shadow-xl shadow-slate-200/50 dark:shadow-none
 border
 border-slate-200
 dark:border-slate-700
-p-8
+p-5 sm:p-8
 flex
 flex-wrap
 gap-8">
-    <div className="w-full lg:w-2/3 space-y-8">
+    <div className="w-full max-w-4xl space-y-7">
     <Input 
        label = "Title: "
        placeholder = "Title"
@@ -239,7 +239,7 @@ gap-8">
        }}
     />
 
-    <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+    <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm">
     <RTE
         label="Content:"
         name="content"
@@ -273,7 +273,7 @@ max-h-64"
   </>
       )}
       
-      <h3 className="text-lg font-semibold text-slate-700">
+    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
     Publish Settings
 </h3>
 

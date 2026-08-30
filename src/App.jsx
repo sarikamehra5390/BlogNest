@@ -1,5 +1,5 @@
 import {useDispatch} from 'react-redux'
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import './App.css'
 import authService from "./appwrite/auth"
 import {login, logout} from "./store/authSlice"
@@ -88,10 +88,10 @@ function App() {
   },[dispatch, showBadgeToast])
 
   return !loading ? (
-    <div className="min-h-screen flex flex-wrap content-between bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
+    <div className="min-h-screen flex flex-wrap content-between bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
       <div className='w-full block'>
         <Header />
-        <main>
+        <main className="min-h-[calc(100vh-13rem)]">
            <Outlet />
         </main>
         <Footer />

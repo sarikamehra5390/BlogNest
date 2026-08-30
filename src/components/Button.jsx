@@ -1,9 +1,8 @@
-import React from "react";
 
 function Button({
   children,
   type = "button",
-  bgColor = "bg-gradient-to-r from-blue-600 to-indigo-600",
+  bgColor = "bg-indigo-600 hover:bg-indigo-700",
   textColor = "text-white",
   className = "",
   ...props
@@ -18,8 +17,8 @@ function Button({
         ${bgColor}
         ${textColor}
         font-semibold
-        shadow-md
-        hover:shadow-lg
+        shadow-sm shadow-indigo-500/25
+        hover:shadow-md
         hover:-translate-y-0.5
         active:scale-95
         transition-all

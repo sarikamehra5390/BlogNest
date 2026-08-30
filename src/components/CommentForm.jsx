@@ -1,4 +1,3 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -61,13 +60,13 @@ function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6 mt-10">
+    <div className="surface-card mt-8 p-5 sm:p-6">
 
-      <h2 className="text-2xl font-bold mb-4 dark:text-white">
+      <h2 className="text-xl font-bold tracking-tight mb-1 dark:text-white">
         Leave a Comment
       </h2>
 
-      <form onSubmit={handleSubmit(submit)}>
+      <p className="mb-5 text-sm text-slate-500 dark:text-slate-400">Join the conversation with a useful, respectful response.</p><form onSubmit={handleSubmit(submit)}>
 
         <textarea
           {...register("content", {
@@ -76,12 +75,12 @@ function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
           rows={5}
           placeholder="Share your thoughts..."
           aria-label="Write a comment"
-          className="w-full rounded-xl border p-4 dark:bg-slate-800 dark:text-white"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50 p-4 text-slate-800 placeholder:text-slate-400 transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:bg-slate-800"
         />
 
         <button
           type="submit"
-          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition"
+          className="mt-4 rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white shadow-sm shadow-indigo-500/25 transition hover:bg-indigo-700"
         >
           Post Comment
         </button>

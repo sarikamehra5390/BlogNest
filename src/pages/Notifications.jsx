@@ -168,15 +168,15 @@ function Notifications() {
 
     return (
 
-        <Container>
+        <div className="page-shell"><Container>
 
             <div className="max-w-3xl mx-auto py-10">
 
-                <div className="flex flex-wrap justify-between items-center mb-8 gap-4">
+                <div className="surface-card flex flex-wrap justify-between items-center mb-6 gap-4 p-5 sm:p-6">
 
                     <div className="flex items-center gap-3">
 
-                        <h1 className="text-3xl font-bold dark:text-white">
+                        <h1 className="text-2xl font-bold tracking-tight dark:text-white">
 
                             Notifications
 
@@ -194,11 +194,11 @@ function Notifications() {
                        onClick={markAllAsRead}
                        disabled={unreadCount === 0 || markingAllRead}
                        className="
-                            bg-blue-600
+                            bg-indigo-600 hover:bg-indigo-700
                             text-white
                               px-4
                               py-2
-                              rounded-lg
+                              rounded-xl font-semibold transition
                             disabled:bg-gray-400
                               disabled:cursor-not-allowed
                              "
@@ -211,10 +211,7 @@ function Notifications() {
 
                    <div
     className="
-        bg-white
-        dark:bg-slate-900
-        rounded-xl
-        p-10
+        surface-card rounded-2xl p-10
         text-center
     "
 >
@@ -247,12 +244,12 @@ function Notifications() {
                             className={`
                                 mb-4
                                 p-5
-                                rounded-xl
+                                rounded-2xl shadow-sm
                                 border
                                 dark:border-slate-700
                                 ${
                                     !notification.isRead
-                                        ? "bg-blue-50 dark:bg-slate-800"
+                                        ? "bg-indigo-50/70 border-indigo-100 dark:bg-indigo-950/20 dark:border-indigo-900"
                                         : "bg-white dark:bg-slate-900"
                                 }
                             `}
@@ -269,7 +266,7 @@ function Notifications() {
                          <span
                            className="
                              inline-block
-                           bg-blue-600
+                           bg-indigo-600
                             text-white
                              text-xs
                               px-2
@@ -338,7 +335,7 @@ function Notifications() {
 
             </div>
 
-        </Container>
+        </Container></div>
 
     );
 

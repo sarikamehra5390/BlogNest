@@ -93,16 +93,16 @@ function AISummary({ content }) {
                 mt-8
                 mb-8
                 bg-gradient-to-br
-                from-blue-50
-                to-indigo-50
-                dark:from-slate-900
-                dark:to-slate-800
+                from-indigo-50
+                via-white
+                to-violet-50
+                dark:from-indigo-950/40
+                dark:via-slate-900
+                dark:to-violet-950/30
                 border
-                border-blue-100
+                border-indigo-200/80
                 dark:border-slate-700
-                rounded-2xl
-                p-6
-                shadow-sm
+                rounded-3xl p-6 sm:p-7 shadow-sm shadow-indigo-100/50 dark:shadow-none
             "
         >
 
@@ -130,7 +130,7 @@ function AISummary({ content }) {
                             gap-2
                         "
                     >
-                        ✨ AI Summary
+                        <span className="grid h-9 w-9 place-items-center rounded-xl bg-indigo-600 text-base text-white shadow-sm">✦</span> AI brief
                     </h2>
 
                     <p
@@ -141,7 +141,7 @@ function AISummary({ content }) {
                             mt-1
                         "
                     >
-                        Get a quick summary of this article.
+                        A focused overview, generated when you need the highlights first.
                     </p>
 
                 </div>
@@ -154,8 +154,7 @@ function AISummary({ content }) {
                         px-5
                         py-2.5
                         rounded-xl
-                        bg-blue-600
-                        hover:bg-blue-700
+                        bg-indigo-600 hover:bg-indigo-700
                         text-white
                         font-semibold
                         transition-all
@@ -228,7 +227,7 @@ function AISummary({ content }) {
                         mt-6
                         pt-6
                         border-t
-                        border-blue-100
+                        border-indigo-200/80
                         dark:border-slate-700
                     "
                     initial={{
