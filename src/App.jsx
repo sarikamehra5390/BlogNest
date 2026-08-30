@@ -7,6 +7,7 @@ import { Footer, Header, BadgeToast } from './components'
 import { Outlet } from 'react-router-dom'
 import realtimeService from './appwrite/realtimeService'
 import { BADGE_DEFINITIONS } from './appwrite/badgeService'
+import profileService from './appwrite/profileService'
 
 function App() {
 
@@ -37,6 +38,13 @@ function App() {
       if(userData){
         dispatch(login(userData))
         userRef.current = userData;
+
+        // Older accounts may predate the profiles table. Repair that state on
+        // session restore so protected profile pages do not fail after refresh.
+        profileService.ensureProfile({ userId: userData.$id, name: userData.name })
+          .catch((error) => {
+            if (import.meta.env.DEV) console.error("App :: profile repair", error);
+          });
 
         if (realtimeUnsubRef.current && typeof realtimeUnsubRef.current.unsubscribe === "function") {
           realtimeUnsubRef.current.unsubscribe();

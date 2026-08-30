@@ -30,16 +30,10 @@ function Signup() {
 
         if (currentUser) {
 
-                const existingProfile = await profileService.getProfile(currentUser.$id);
-
-                if (!existingProfile) {
-                    await profileService.createProfile({
-                        userId: currentUser.$id,
-                        name: currentUser.name,
-                        bio: "",
-                        avatar: "",
-                    });
-                }
+                await profileService.ensureProfile({
+                    userId: currentUser.$id,
+                    name: currentUser.name,
+                });
 
                 dispatch(login(currentUser));
                 toast.success("Account created successfully! 🎉");

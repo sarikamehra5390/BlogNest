@@ -1,5 +1,5 @@
 import conf from "../conf/conf";
-import { Client, ID, TablesDB, Query } from "appwrite";
+import { Client, TablesDB, Query } from "appwrite";
 
 export class ProfileService {
     client = new Client();
@@ -13,32 +13,36 @@ export class ProfileService {
         this.databases = new TablesDB(this.client);
     }
 
-    // Create Profile
+    // One profile belongs to one Appwrite user. Using the user id as the row id
+    // makes profile creation idempotent even if two requests arrive together.
     async createProfile({ userId, name, bio = "", avatar = "" }) {
-    try {
+        if (!userId) throw new Error("A user ID is required to create a profile.");
+
         const existingProfile = await this.getProfile(userId);
         if (existingProfile) return existingProfile;
 
-        const response = await this.databases.createRow({
-            databaseId: conf.appwriteDatabaseId,
-            tableId: conf.appwriteProfilesTableId,
-            rowId: ID.unique(),
-            data: {
-                userId,
-                name,
-                bio,
-                avatar,
-            },
-        });
-
-        if (import.meta.env.DEV) { console.log("Profile created:", response); }
-        return response;
-
-    } catch (error) {
-        if (import.meta.env.DEV) { console.error("Full Appwrite Error:", error); }
-        throw error;
+        try {
+            return await this.databases.createRow({
+                databaseId: conf.appwriteDatabaseId,
+                tableId: conf.appwriteProfilesTableId,
+                rowId: userId,
+                data: { userId, name: name || "", bio, avatar },
+            });
+        } catch (error) {
+            // A competing request may have created the deterministic row first.
+            if (error?.code === 409) {
+                const profile = await this.getProfile(userId);
+                if (profile) return profile;
+            }
+            if (import.meta.env.DEV) console.error("ProfileService :: createProfile", error);
+            throw error;
+        }
     }
-}
+
+    async ensureProfile({ userId, name, bio = "", avatar = "" }) {
+        const existingProfile = await this.getProfile(userId);
+        return existingProfile || this.createProfile({ userId, name, bio, avatar });
+    }
 
     // Get profile by userId
     async getProfile(userId) {
@@ -53,8 +57,8 @@ export class ProfileService {
 
             return response.rows.length ? response.rows[0] : null;
         } catch (error) {
-            if (import.meta.env.DEV) { console.error("ProfileService :: getProfile ::", error); }
-            return null;
+            if (import.meta.env.DEV) console.error("ProfileService :: getProfile", error);
+            throw error;
         }
     }
 

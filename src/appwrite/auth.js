@@ -5,6 +5,7 @@ export class AuthService {
   client = new Client();
   account;
   currentUserRequest = null;
+  loginRequest = null;
 
   constructor() {
     this.client.setEndpoint(conf.appwriteUrl).setProject(conf.appwriteProjectId);
@@ -16,14 +17,20 @@ export class AuthService {
   }
 
   async login({ email, password }) {
+    if (this.loginRequest) return this.loginRequest;
+
     // Appwrite rejects a second session creation while a valid session exists.
     // Reuse it so repeated clicks and restored sessions stay idempotent.
-    const currentUser = await this.getCurrentUser();
-    if (currentUser) return { user: currentUser, reusedSession: true };
+    this.loginRequest = (async () => {
+      const currentUser = await this.getCurrentUser();
+      if (currentUser) return { user: currentUser, reusedSession: true };
 
-    const session = await this.account.createEmailPasswordSession(email.trim(), password);
-    const user = await this.account.get();
-    return { session, user, reusedSession: false };
+      const session = await this.account.createEmailPasswordSession(email.trim(), password);
+      const user = await this.account.get();
+      return { session, user, reusedSession: false };
+    })().finally(() => { this.loginRequest = null; });
+
+    return this.loginRequest;
   }
 
   async getCurrentUser() {
@@ -31,10 +38,9 @@ export class AuthService {
     this.currentUserRequest = this.account.get()
       .catch((error) => {
         // A missing or expired session is an expected unauthenticated state.
-        if (error?.code && error.code !== 401 && import.meta.env.DEV) {
-          console.error("AuthService :: getCurrentUser", error);
-        }
-        return null;
+        if (error?.code === 401) return null;
+        if (import.meta.env.DEV) console.error("AuthService :: getCurrentUser", error);
+        throw error;
       })
       .finally(() => { this.currentUserRequest = null; });
     return this.currentUserRequest;

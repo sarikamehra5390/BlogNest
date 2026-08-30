@@ -26,7 +26,10 @@ export default function EditProfile() {
 const loadProfile = useCallback(async () => {
     if (!userData?.$id) return;
     try {
-        const data = await profileService.getProfile(userData.$id);
+        const data = await profileService.ensureProfile({
+            userId: userData.$id,
+            name: userData.name,
+        });
 
         if (data) {
             setProfile(data);

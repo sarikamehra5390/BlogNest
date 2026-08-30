@@ -41,6 +41,7 @@ export default function Post() {
 
   useEffect(() => {
     const fetchPost = async () => {
+      try {
         if (!slug) {
             navigate("/");
             return;
@@ -72,11 +73,20 @@ if (userData) {
 // Fetch Author Profile
 // ==========================
 
-const profile = await profileService.getProfile(
-    fetchedPost.userId
-);
-
-setAuthor(profile);
+        // A post can outlive a deleted or incomplete author profile. Keep the
+        // article available and render the existing "Unknown Author" fallback.
+        try {
+          const profile = await profileService.getProfile(fetchedPost.userId);
+          setAuthor(profile);
+        } catch (profileError) {
+          if (import.meta.env.DEV) console.error("Post :: author profile", profileError);
+          setAuthor(null);
+        }
+      } catch (error) {
+        if (import.meta.env.DEV) console.error("Post :: load", error);
+        toast.error("Unable to load this post.");
+        navigate("/", { replace: true });
+      }
     };
 
     fetchPost();
@@ -91,9 +101,13 @@ setAuthor(profile);
       const status = await appwriteService.deletePost(post.$id);
 
       if (status) {
-        await appwriteService.deleteFile(post.featuredImage);
+        // The post is already gone if its storage cleanup fails; don't report a
+        // failed deletion or leave the user on a stale page.
+        if (post.featuredImage) await appwriteService.deleteFile(post.featuredImage);
         toast.success("Post deleted successfully 🗑️");
         navigate("/");
+      } else {
+        toast.error("Unable to delete this post. Please try again.");
       }
     } catch (e) {
       if (import.meta.env.DEV) console.log(e);

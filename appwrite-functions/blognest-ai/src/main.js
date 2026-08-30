@@ -4,8 +4,17 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
 });
 
+const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
 export default async ({ req, res, log, error }) => {
     try {
+        if (!process.env.GEMINI_API_KEY) {
+            return res.json(
+                { success: false, message: "AI service is not configured." },
+                503
+            );
+        }
+
         if (req.method !== "POST") {
             return res.json(
                 {
@@ -16,7 +25,9 @@ export default async ({ req, res, log, error }) => {
             );
         }
 
-        const body = JSON.parse(req.body || "{}");
+        const body = typeof req.body === "string"
+            ? JSON.parse(req.body || "{}")
+            : (req.body || {});
 
         const { action, content } = body;
 
@@ -73,7 +84,7 @@ ${content}
 `;
 
             const response = await ai.models.generateContent({
-                model: "gemini-3.6-flash",
+                model,
 
                 contents: prompt,
 
@@ -151,7 +162,7 @@ ${content}
 `;
 
     const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model,
 
         contents: prompt,
 
@@ -183,7 +194,7 @@ ${content}
 
         // Remove accidental numbering
         .map((title) =>
-            title.replace(/^\d+[\).\-\:]\s*/, "")
+            title.replace(/^\d+[).\-:]\s*/, "")
         )
 
         // Remove accidental bullet points

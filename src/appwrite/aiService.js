@@ -144,7 +144,7 @@ class AIService {
 
                     body: JSON.stringify({
 
-                        action: "title",
+                        action: "titles",
 
                         content,
 

@@ -12,6 +12,7 @@ export default function Profile() {
 
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     const fetchProfile = useCallback(async () => {
         if (!userData) {
@@ -19,10 +20,14 @@ export default function Profile() {
             return;
         }
         try {
-            const data = await profileService.getProfile(userData.$id);
+            const data = await profileService.ensureProfile({
+                userId: userData.$id,
+                name: userData.name,
+            });
             setProfile(data);
         } catch (error) {
             if (import.meta.env.DEV) { console.error(error); }
+            setError("We couldn’t load your profile. Please try again shortly.");
         } finally {
             setLoading(false);
         }
@@ -44,12 +49,12 @@ export default function Profile() {
         );
     }
 
-    if (!profile) {
+    if (error || !profile) {
         return (
             <Container>
                 <div className="text-center py-20">
                     <h2 className="text-3xl font-bold dark:text-white">
-                        Profile not found
+                        {error || "Profile not found"}
                     </h2>
                 </div>
             </Container>
