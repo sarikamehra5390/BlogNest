@@ -83,6 +83,10 @@ setAuthor(profile);
 }, [slug, navigate, userData]);
 
   const deletePost = async () => {
+    if (!isAuthor) {
+      toast.error("You can only delete your own posts.");
+      return;
+    }
     try {
       const status = await appwriteService.deletePost(post.$id);
 

@@ -1,69 +1,58 @@
 import conf from "../conf/conf.js";
-import { Client, Account, ID } from "appwrite";
-
-// This code snippet can be used in any appwrite work as it is used everywhere
+import { Account, Client, ID } from "appwrite";
 
 export class AuthService {
   client = new Client();
   account;
+  currentUserRequest = null;
 
   constructor() {
-    this.client
-      .setEndpoint(conf.appwriteUrl)
-      .setProject(conf.appwriteProjectId);
+    this.client.setEndpoint(conf.appwriteUrl).setProject(conf.appwriteProjectId);
     this.account = new Account(this.client);
   }
 
   async createAccount({ email, password, name }) {
-    try {
-      const userAccount = await this.account.create(
-        ID.unique(),
-        email,
-        password,
-        name,
-      );
-      if (userAccount) {
-        // call another method
-
-        return this.login({ email, password });
-      } else {
-        return userAccount;
-      }
-    } catch (error) {
-      throw error;
-    }
+    return this.account.create(ID.unique(), email.trim(), password, name.trim());
   }
 
   async login({ email, password }) {
-    try {
-      return await this.account.createEmailPasswordSession(email, password);
-    } catch (error) {
-      throw error;
-    }
+    // Appwrite rejects a second session creation while a valid session exists.
+    // Reuse it so repeated clicks and restored sessions stay idempotent.
+    const currentUser = await this.getCurrentUser();
+    if (currentUser) return { user: currentUser, reusedSession: true };
+
+    const session = await this.account.createEmailPasswordSession(email.trim(), password);
+    const user = await this.account.get();
+    return { session, user, reusedSession: false };
   }
 
   async getCurrentUser() {
-    try {
-      return await this.account.get();
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.log("Appwrite service :: getCurrentUser :: error", error);
-      }
-      return null;
-    }
+    if (this.currentUserRequest) return this.currentUserRequest;
+    this.currentUserRequest = this.account.get()
+      .catch((error) => {
+        // A missing or expired session is an expected unauthenticated state.
+        if (error?.code && error.code !== 401 && import.meta.env.DEV) {
+          console.error("AuthService :: getCurrentUser", error);
+        }
+        return null;
+      })
+      .finally(() => { this.currentUserRequest = null; });
+    return this.currentUserRequest;
   }
 
   async logout() {
     try {
-      return await this.account.deleteSessions();
+      await this.account.deleteSession("current");
+      return true;
     } catch (error) {
-      if (import.meta.env.DEV) {
-        console.log("Appwrite service :: logout :: error", error);
+      // Delete is idempotent from the UI's perspective: a stale session means logged out.
+      if (error?.code !== 401 && import.meta.env.DEV) {
+        console.error("AuthService :: logout", error);
       }
+      return error?.code === 401;
     }
   }
 }
 
 const authService = new AuthService();
-
 export default authService;

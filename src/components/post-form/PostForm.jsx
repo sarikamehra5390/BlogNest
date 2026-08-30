@@ -1,6 +1,6 @@
 //It is a reusable form component that is used for both creating a new post and editing an existing post.
 
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Input, Select, RTE, AITitleGenerator } from "../index";
 import appwriteService from "../../appwrite/config";
@@ -45,15 +45,23 @@ function PostForm({ post }) {
 
   // Get logged in user's data from Redux.
   const userData = useSelector((state) => state.auth.userData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // if the user has submited the form
   const submit = async (data) => {
+     if (isSubmitting || !userData) return;
+     if (post && post.userId !== userData.$id) {
+       toast.error("You can only update your own posts.");
+       return;
+     }
+     setIsSubmitting(true);
      if (import.meta.env.DEV) {
         console.log("FORM DATA:", data);
         console.log("CONTENT:", data.content);
         console.log("TYPE:", typeof data.content);
      }
 
+    try {
     if (post) {
 
       // Upload new image only if user selected one.
@@ -61,19 +69,19 @@ function PostForm({ post }) {
         ? await appwriteService.uploadFile(data.image[0])
         : null;
 
-      // Old image no longer needed.delete it 
-      if (file) {
-        await appwriteService.deleteFile(post.featuredImage);
-      }
-
       // Update the post in database.
       const dbPost = await appwriteService.updatePost(post.$id, {
         ...data,
         featuredImage: file ? file.$id : undefined
       })
         if(dbPost) {
+          // Only delete the old image after the row points at the new one.
+          if (file && post.featuredImage) await appwriteService.deleteFile(post.featuredImage);
           toast.success("Post published successfully ✍️");
           navigate(`/post/${dbPost.$id}`)
+        } else {
+          if (file) await appwriteService.deleteFile(file.$id);
+          throw new Error("Post update was not saved");
         }
 
 
@@ -130,8 +138,19 @@ function PostForm({ post }) {
             });
 
             navigate(`/post/${dbPost.$id}`)
+          } else {
+            await appwriteService.deleteFile(fileId);
+            throw new Error("Post creation was not saved");
           }
+        } else {
+          throw new Error("Featured image upload failed");
         }
+    }
+    } catch (error) {
+      console.error("Post submission failed", error);
+      toast.error("Unable to save your post. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
  
@@ -286,11 +305,12 @@ max-h-64"
 
         <Button 
         type="submit" 
+        disabled={isSubmitting}
         bgColor= {post ? "bg-green-500" : undefined} className="w-full
 py-4
 text-lg
 font-semibold">
-          {post ? "Update" : "Submit"}
+          {isSubmitting ? "Saving…" : post ? "Update" : "Publish article"}
         </Button>
     </div>
   </form>

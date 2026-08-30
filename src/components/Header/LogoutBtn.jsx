@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import authService from "../../appwrite/auth";
 import { logout } from "../../store/authSlice";
@@ -6,23 +6,28 @@ import toast from "react-hot-toast";
 
 function LogoutBtn() {
     const dispatch = useDispatch();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    const logoutHandler = () => {
-        authService
-            .logout()
-            .then(() => {
+    const logoutHandler = async () => {
+        if (isLoggingOut) return;
+        setIsLoggingOut(true);
+        try {
+            const success = await authService.logout();
+            if (success) {
                 dispatch(logout());
-
-                 toast.success("Logged out successfully 👋");
-            })
-            .catch(() => {
-                dispatch(logout());
-            });
+                toast.success("Logged out successfully 👋");
+            } else {
+                toast.error("Unable to end the current session. Please try again.");
+            }
+        } finally {
+            setIsLoggingOut(false);
+        }
     };
 
     return (
         <button
             onClick={logoutHandler}
+            disabled={isLoggingOut}
           className="
 px-4
 py-2
@@ -37,7 +42,7 @@ transition-all
 duration-300
 "
         >
-            Logout
+            {isLoggingOut ? "Logging out…" : "Logout"}
         </button>
     );
 }

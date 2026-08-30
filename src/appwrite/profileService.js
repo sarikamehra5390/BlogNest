@@ -16,6 +16,9 @@ export class ProfileService {
     // Create Profile
     async createProfile({ userId, name, bio = "", avatar = "" }) {
     try {
+        const existingProfile = await this.getProfile(userId);
+        if (existingProfile) return existingProfile;
+
         const response = await this.databases.createRow({
             databaseId: conf.appwriteDatabaseId,
             tableId: conf.appwriteProfilesTableId,

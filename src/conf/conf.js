@@ -1,41 +1,42 @@
+const env = (name) => import.meta.env[name] || "";
+
 const conf = {
-    
-    appwriteUrl: String(import.meta.env.VITE_APPWRITE_URL),
-    appwriteProjectId: String(import.meta.env.VITE_APPWRITE_PROJECT_ID),
-    appwriteDatabaseId: String(import.meta.env.VITE_APPWRITE_DATABASE_ID),
-    appwriteCollectionId: String(import.meta.env.VITE_APPWRITE_COLLECTION_ID),
+    appwriteUrl: env("VITE_APPWRITE_URL"),
+    appwriteProjectId: env("VITE_APPWRITE_PROJECT_ID"),
+    appwriteDatabaseId: env("VITE_APPWRITE_DATABASE_ID"),
+    appwriteCollectionId: env("VITE_APPWRITE_COLLECTION_ID"),
 
      appwriteCommentsTableId: String(
-        import.meta.env.VITE_APPWRITE_COMMENTS_TABLE_ID
+        env("VITE_APPWRITE_COMMENTS_TABLE_ID")
     ),
 
     appwriteLikesTableId: String(
-    import.meta.env.VITE_APPWRITE_LIKES_TABLE_ID
+    env("VITE_APPWRITE_LIKES_TABLE_ID")
     ),
 
     appwriteBookmarksTableId: String(
-    import.meta.env.VITE_APPWRITE_BOOKMARKS_TABLE_ID
+    env("VITE_APPWRITE_BOOKMARKS_TABLE_ID")
     ),
 
     appwriteProfilesTableId: String(
-    import.meta.env.VITE_APPWRITE_PROFILES_TABLE_ID
+    env("VITE_APPWRITE_PROFILES_TABLE_ID")
     ),
 
-    appwriteViewsTableId:String(import.meta.env.VITE_APPWRITE_VIEWS_TABLE_ID),
+    appwriteViewsTableId: env("VITE_APPWRITE_VIEWS_TABLE_ID"),
 
-    appwriteFollowTableId: String(import.meta.env.VITE_APPWRITE_FOLLOW_TABLE_ID),
+    appwriteFollowTableId: env("VITE_APPWRITE_FOLLOW_TABLE_ID"),
 
-    appwriteBucketId: String(import.meta.env.VITE_APPWRITE_BUCKET_ID),
+    appwriteBucketId: env("VITE_APPWRITE_BUCKET_ID"),
 
-    appwriteNotificationsTableId: String(import.meta.env.VITE_APPWRITE_NOTIFICATIONS_TABLE_ID),
+    appwriteNotificationsTableId: env("VITE_APPWRITE_NOTIFICATIONS_TABLE_ID"),
 
-    appwriteHistoryTableId: String(import.meta.env.VITE_APPWRITE_HISTORY_TABLE_ID),
+    appwriteHistoryTableId: env("VITE_APPWRITE_HISTORY_TABLE_ID"),
 
     appwriteBadgesTableId: String(
-    import.meta.env.VITE_APPWRITE_BADGES_TABLE_ID
+    env("VITE_APPWRITE_BADGES_TABLE_ID")
 ),
 
-     appwriteAiFunctionId: String(import.meta.env.VITE_APPWRITE_AI_FUNCTION_ID),
+     appwriteAiFunctionId: env("VITE_APPWRITE_AI_FUNCTION_ID"),
 }
 
 

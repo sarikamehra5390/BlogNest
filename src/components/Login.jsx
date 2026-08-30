@@ -1,46 +1,44 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authSlice";
 import { Button, Input, Logo } from "./index";
 import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { getAppwriteErrorMessage } from "../utils/appwriteError";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const { 
     register,
     handleSubmit,
    } = useForm();
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const login = async (data) => {
-    // whenever you want to set the login the first thing to do is to empty out all the errors using setError(""). All the login form and register form should be made in the same way. as there are error but as soon as we are starting the submition the error should be clear out
-
+    if (isSubmitting) return;
     setError("");
+    setIsSubmitting(true);
     try {
-      const session = await authService.login(data);
-      if (session) {
-        // userdata is always pull from the await function
-
-        const userData = await authService.getCurrentUser();
-        if (userData)
-           dispatch(authLogin(userData));
-
-        // link is not used here has link doesnot work automatically we have to click the link to go to some other page .
-        // navigate is used here as navigate programmtically move to the page after the login for eg : home page
-
-         toast.success(`Welcome back, ${userData.name}! 👋`, {
+      const { user, reusedSession } = await authService.login(data);
+      if (user) {
+        dispatch(authLogin(user));
+        toast.success(reusedSession ? `Welcome back, ${user.name}!` : `Welcome back, ${user.name}! 👋`, {
           duration: 3000,
         });
-
-        navigate("/");
+        navigate(location.state?.from || "/", { replace: true });
       }
     } catch (error) {
-       setError(error.message);
-       toast.error(error.message || "Login Failed");
+       console.error("Login failed", error);
+       const message = getAppwriteErrorMessage(error, "login");
+       setError(message);
+       toast.error(message);
+    } finally {
+       setIsSubmitting(false);
     }
   };
 
@@ -104,7 +102,7 @@ function Login() {
               placeholder="Enter your email"
               type="email"
               {...register("email", {
-                required: true,
+                required: "Email is required",
                 validate: {
                   // This is the pattern which is used to validate the email using regular expression
 
@@ -120,11 +118,11 @@ function Login() {
               type="password"
               placeholder="Enter the password"
               {...register("password", {
-                required: true,
+                required: "Password is required",
               })}
             />
-            <Button type="submit" className="w-full">
-              Sign in
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "Signing in…" : "Sign in"}
             </Button>
           </div>
         </form>

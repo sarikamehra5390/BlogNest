@@ -7,10 +7,12 @@ import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import toast from "react-hot-toast";
 import profileService from "../appwrite/profileService";
+import { getAppwriteErrorMessage } from "../utils/appwriteError";
 
 function Signup() {
     const navigate = useNavigate()
     const [error, setError] = useState("")
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const dispatch = useDispatch()
     const {
       register,
@@ -18,17 +20,16 @@ function Signup() {
       } = useForm()
 
     const create = async (data) => {
+    if (isSubmitting) return;
     setError("");
+    setIsSubmitting(true);
 
     try {
-        const account = await authService.createAccount(data);
+        await authService.createAccount(data);
+        const { user: currentUser } = await authService.login(data);
 
-        if (account) {
-            const currentUser = await authService.getCurrentUser();
+        if (currentUser) {
 
-            if (currentUser) {
-
-                // Check if profile already exists
                 const existingProfile = await profileService.getProfile(currentUser.$id);
 
                 if (!existingProfile) {
@@ -43,11 +44,14 @@ function Signup() {
                 dispatch(login(currentUser));
                 toast.success("Account created successfully! 🎉");
                 navigate("/");
-            }
         }
     } catch (error) {
-        setError(error.message);
-        toast.error(error.message);
+        console.error("Signup failed", error);
+        const message = getAppwriteErrorMessage(error, "signup");
+        setError(message);
+        toast.error(message);
+    } finally {
+        setIsSubmitting(false);
     }
 };
 
@@ -97,7 +101,8 @@ function Signup() {
                    label = "Full Name: "
                    placeholder ="Enter your full name"
                    {...register("name", {
-                    required : true,
+                    required : "Name is required",
+                    minLength: { value: 2, message: "Name must be at least 2 characters" },
                    })}
                   />
                     <Input
@@ -105,11 +110,11 @@ function Signup() {
                      placeholder = "Enter your email"
                      type="email"
                      {...register("email", {
-                      required: true,
+                      required: "Email is required",
                       validate: {
                      // This is the pattern which is used to validate the email using regular expression 
                   
-                        matchPattern: (value) => /^([\w\.\-_]+)?\w+@[\w-_]+(\.\w+){1,}$/.test(value) || "Email address must be a valid email address",
+                        matchPattern: (value) => /^([\w.\-_]+)?\w+@[\w-]+(\.\w+){1,}$/.test(value) || "Email address must be a valid email address",
                            }
                        })}
                       />
@@ -119,15 +124,17 @@ function Signup() {
                       type = "password"
                       placeholder= "Enter your password" 
                       {...register("password", {
-                        required:true,
+                        required:"Password is required",
+                        minLength: { value: 8, message: "Password must be at least 8 characters" },
 
                       })}
                       />
 
                       <Button
                       type="submit"
+                      disabled={isSubmitting}
                       className="w-full"
-                      >Create Account</Button>
+                      >{isSubmitting ? "Creating account…" : "Create Account"}</Button>
                   
                 </div>
               </form>

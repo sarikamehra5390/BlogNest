@@ -1,41 +1,17 @@
-// this layout is a mechansim that how to protect the pages and the route
-// this is a container there is nothing much just it is used whether to show the value or not
+import { useSelector } from "react-redux";
+import { Navigate, useLocation } from "react-router-dom";
 
-import React , {useEffect, useState} from 'react'
-import {useSelector} from 'react-redux'
-import {useNavigate} from 'react-router-dom'
+export default function Protected({ children, authentication = true }) {
+  const authStatus = useSelector((state) => state.auth.status);
+  const location = useLocation();
 
-
-// Name of the file and the function can be different there is no problem in that 
-
-// this protected is used that whether to render the info or not 
-
- export default function Protected({children, authentication = true}) {
-
-    const navigate = useNavigate()
-    const [loader, setLoader] = useState(true)
-    const authStatus = useSelector(state => state.auth.status) 
-
-    useEffect(() => {
-    
-        // true && (false !== true)--> true
-        if (authentication && authStatus !== authentication) {
-            navigate("/login")
-        }else if(!authentication && authStatus !== authentication){
-            navigate("/")
-        }
-        setLoader(false)
-
-    }, [authStatus, navigate, authentication])
-
-  return loader ? (
-  <div className='min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center' role="status" aria-live="polite">
-    <h1>Loading....</h1>
-    </div>
-    ) :
-    (  <>{children}</>
-    )
+  if (authentication && !authStatus) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+  if (!authentication && authStatus) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
 }
 
 export const AuthLayout = Protected;
-

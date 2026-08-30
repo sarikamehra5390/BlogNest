@@ -49,16 +49,7 @@ const router = createBrowserRouter([
           </AuthLayout>
         )
       },
-       {
-        // as for reading the post we need authentication
-        path:'/all-posts',
-        element:(
-          <AuthLayout authentication={true}>
-            {" "}
-            <AllPost />
-          </AuthLayout>
-        )
-      },
+      { path:'/all-posts', element:<AllPost /> },
        {
         path:'/add-post',
         element:(
@@ -83,15 +74,15 @@ const router = createBrowserRouter([
       },
       {
         path: '/saved-posts',
-        element: <SavedPosts />
+        element: <AuthLayout authentication={true}><SavedPosts /></AuthLayout>
       },
       {
         path: "/profile",
-        element: <Profile />
+        element: <AuthLayout authentication={true}><Profile /></AuthLayout>
       },
       {
         path : "/edit-profile",
-        element: <EditProfile />
+        element: <AuthLayout authentication={true}><EditProfile /></AuthLayout>
       },
       {
         path: "/author/:userId",
@@ -99,11 +90,11 @@ const router = createBrowserRouter([
       },
       {
         path : "/notifications",
-        element: <Notifications />
+        element: <AuthLayout authentication={true}><Notifications /></AuthLayout>
       },
       {
        path: "/history",
-       element: <ReadingHistory />,
+       element: <AuthLayout authentication={true}><ReadingHistory /></AuthLayout>,
       },
       {
         path: "/tag/:tagName",

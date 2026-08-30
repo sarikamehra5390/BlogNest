@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
@@ -9,6 +10,7 @@ function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
   const { register, handleSubmit, reset } = useForm();
 
   const userData = useSelector((state) => state.auth.userData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submit = async (data) => {
     if (!userData) {
@@ -16,6 +18,9 @@ function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
       return;
     }
 
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
     const comment = await commentService.createComment({
       content: data.content,
       postId,
@@ -56,6 +61,14 @@ function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
       if (onCommentAdded) {
         onCommentAdded();
       }
+    } else {
+      toast.error("Unable to add your comment. Please try again.");
+    }
+    } catch (error) {
+      console.error("Comment submission failed", error);
+      toast.error("Unable to add your comment. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -80,9 +93,10 @@ function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
 
         <button
           type="submit"
+          disabled={isSubmitting}
           className="mt-4 rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white shadow-sm shadow-indigo-500/25 transition hover:bg-indigo-700"
         >
-          Post Comment
+          {isSubmitting ? "Posting…" : "Post Comment"}
         </button>
 
       </form>

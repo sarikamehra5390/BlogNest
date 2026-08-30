@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,7 @@ export default function EditProfile() {
     const userData = useSelector((state) => state.auth.userData);
 
     const [profile, setProfile] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const {
         register,
@@ -22,15 +23,8 @@ export default function EditProfile() {
         setValue
     } = useForm();
 
-    useEffect(() => {
-    if (userData) {
-        loadProfile().catch(e => {
-            if (import.meta.env.DEV) console.log(e);
-        });
-    }
-}, [userData]);
-
-const loadProfile = async () => {
+const loadProfile = useCallback(async () => {
+    if (!userData?.$id) return;
     try {
         const data = await profileService.getProfile(userData.$id);
 
@@ -44,32 +38,44 @@ const loadProfile = async () => {
         if (import.meta.env.DEV) console.log(e);
         return null;
     }
-};
+}, [setValue, userData?.$id]);
+
+    useEffect(() => {
+        loadProfile();
+    }, [loadProfile]);
 
 const update = async (data) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
     try {
         if (!profile) return toast.error('Profile not loaded');
-
-        let avatar = profile.avatar;
-
-        if (data.image[0]) {
-
-            // delete old avatar if it exists 
-            if(profile.avatar){
-                await appwriteService.deleteFile(profile.avatar);
-            }
-
-            const file = await appwriteService.uploadFile(data.image[0]);
-
-            avatar = file.$id;
+        if (profile.userId !== userData?.$id) {
+            toast.error("You can only update your own profile.");
+            return;
         }
 
-        await profileService.updateProfile(profile.$id, {
+        let avatar = profile.avatar;
+        let uploadedAvatarId = null;
+
+        if (data.image?.[0]) {
+            const file = await appwriteService.uploadFile(data.image[0]);
+            if (!file) throw new Error("Avatar upload failed");
+            avatar = file.$id;
+            uploadedAvatarId = file.$id;
+        }
+
+        const updatedProfile = await profileService.updateProfile(profile.$id, {
             name: data.name,
             bio: data.bio,
             avatar,
         });
+        if (!updatedProfile) {
+            if (uploadedAvatarId) await appwriteService.deleteFile(uploadedAvatarId);
+            throw new Error("Profile update was not saved");
+        }
+
+        if (uploadedAvatarId && profile.avatar) await appwriteService.deleteFile(profile.avatar);
 
         toast.success("Profile updated successfully!");
 
@@ -80,7 +86,8 @@ const update = async (data) => {
         if (import.meta.env.DEV) { console.error(error); }
 
         toast.error("Unable to update profile.");
-
+    } finally {
+        setIsSubmitting(false);
     }
 
 };
@@ -122,10 +129,10 @@ return (
 
          <Button
           type="submit"
+          disabled={isSubmitting}
          className="w-full"
          >
-
-            Save Changes
+            {isSubmitting ? "Saving…" : "Save Changes"}
 
          </Button>
 
