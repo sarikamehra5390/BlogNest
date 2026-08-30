@@ -38,7 +38,9 @@ const conf = {
 
      appwriteAiFunctionId: env("VITE_APPWRITE_AI_FUNCTION_ID"),
 
-      tinymceApiKey: env("VITE_TINYMCE_API_KEY"),
+    // TinyMCE Cloud API keys are public client identifiers, so Vite exposes
+    // this value intentionally. Keep the actual key in local/Vercel env vars.
+    tinymceApiKey: env("VITE_TINYMCE_API_KEY").trim(),
 }
 
 

@@ -264,6 +264,7 @@ gap-8">
         name="content"
         control={control}
         defaultValue={getValues("content")}
+        rules={{ required: "Article content is required" }}
     />
 </div>
       <Input
