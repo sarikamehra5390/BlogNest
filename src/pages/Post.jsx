@@ -24,10 +24,8 @@ export default function Post() {
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
-  const [likeId, setLikeId] = useState(null);
   const [likeLoading, setLikeLoading] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
-  const [bookmarkId, setBookmarkId] = useState(null);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
   const [author, setAuthor] = useState(null);
 
@@ -151,7 +149,7 @@ const fetchLikes = async () => {
     const response = await likeService.getLikes(post.$id);
 
     if (response?.rows) {
-        setLikes(response.rows.length);
+        setLikes(response.total ?? response.rows.length);
     }
 
     if (userData) {
@@ -162,14 +160,11 @@ const fetchLikes = async () => {
 
         if (userLike?.rows?.length > 0) {
             setLiked(true);
-            setLikeId(userLike.rows[0].$id);
         } else {
             setLiked(false);
-            setLikeId(null);
         }
     }else{
       setLiked(false);
-      setLikeId(null);
     }
   }catch (error) {
         if (import.meta.env.DEV) { console.error(error); }
@@ -182,7 +177,6 @@ const fetchBookmark = async () => {
     try {
         if (!userData) {
             setBookmarked(false);
-            setBookmarkId(null);
             return;
         }
 
@@ -193,10 +187,8 @@ const fetchBookmark = async () => {
 
         if (response?.rows?.length > 0) {
             setBookmarked(true);
-            setBookmarkId(response.rows[0].$id);
         } else {
             setBookmarked(false);
-            setBookmarkId(null);
         }
     } catch (error) {
         if (import.meta.env.DEV) { console.error(error); }
@@ -215,7 +207,7 @@ const handleLike = async () => {
 
     try {
         if (liked) {
-            const success = await likeService.unlikePost(likeId);
+            const success = await likeService.unlikePost(post.$id, userData.$id);
 
             if (success) {
                 toast.success("Like removed");
@@ -237,12 +229,18 @@ const handleLike = async () => {
             return;
         }
 
-        const success = await likeService.likePost(
+        const result = await likeService.likePost(
     post.$id,
     userData.$id
 );
 
-if (success) {
+if (result) {
+    setLiked(true);
+    await fetchLikes();
+
+    // Another tab can persist the deterministic record first. Synchronize the
+    // UI but avoid duplicating its notification and badge side effects.
+    if (!result.created) return;
 
     // Don't notify yourself
     if (userData.$id !== post.userId) {
@@ -316,12 +314,10 @@ if (success) {
 
     toast.success("Post liked ❤️");
 
-    await fetchLikes();
-
 }
     } catch (error) {
         if (import.meta.env.DEV) { console.error(error); }
-        toast.error("Something went wrong");
+        toast.error("Unable to like this post. Please try again.");
     } finally {
         setLikeLoading(false);
     }
@@ -339,7 +335,7 @@ const handleBookmark = async () => {
 
     try {
         if (bookmarked) {
-            const success = await bookmarkService.removeBookmark(bookmarkId);
+            const success = await bookmarkService.removeBookmark(post.$id, userData.$id);
 
             if (success) {
                 toast.success("Bookmark removed");
@@ -356,16 +352,19 @@ const handleBookmark = async () => {
 
         if (existing?.rows?.length > 0) {
             setBookmarked(true);
-            setBookmarkId(existing.rows[0].$id);
             return;
         }
 
-        const success = await bookmarkService.bookmarkPost(
+        const result = await bookmarkService.bookmarkPost(
             post.$id,
             userData.$id
         );
 
-        if (success) {
+        if (result) {
+            setBookmarked(true);
+            await fetchBookmark();
+
+            if (!result.created) return;
 
             if (userData.$id !== post.userId) {
 
@@ -392,11 +391,10 @@ const handleBookmark = async () => {
             }
 
             toast.success("Post bookmarked 🔖");
-            await fetchBookmark();
         }
     } catch (error) {
         if (import.meta.env.DEV) { console.error(error); }
-        toast.error("Something went wrong");
+        toast.error("Unable to save this post. Please try again.");
     } finally {
         setBookmarkLoading(false);
     }

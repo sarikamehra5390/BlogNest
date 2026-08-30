@@ -49,7 +49,7 @@ function TrendingPosts() {
 
                 const bookmarkResponses = await Promise.all(
                     allPosts.map(post =>
-                        bookmarkService.getBookmarks(post.$id)
+                        bookmarkService.getBookmarksByPost(post.$id)
                     )
                 );
 

@@ -94,7 +94,7 @@ function DashboardSummary() {
                 );
 
                 const bookmarkResponses = await Promise.all(
-                    myPosts.map(post => bookmarkService.getBookmarks(post.$id))
+                    myPosts.map(post => bookmarkService.getBookmarksByPost(post.$id))
                 );
 
                 const viewResponses = await Promise.all(
