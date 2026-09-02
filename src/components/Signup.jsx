@@ -113,16 +113,32 @@ function Signup() {
                        })}
                       />
 
-                      <Input
-                      label = "Password"
-                      type = "password"
-                      placeholder= "Enter your password" 
-                      {...register("password", {
-                        required:"Password is required",
-                        minLength: { value: 8, message: "Password must be at least 8 characters" },
+                    <div>
+    <Input
+        label="Password"
+        type="password"
+        placeholder="Enter your password"
+        {...register("password", {
+            required: "Password is required",
+            minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters"
+            }
+        })}
+    />
 
-                      })}
-                      />
+    {!errors.password && (
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            Password must be at least 8 characters.
+        </p>
+    )}
+
+    {errors.password && (
+        <p className="mt-2 text-sm text-red-500">
+            {errors.password.message}
+        </p>
+    )}
+</div>
 
                       <Button
                       type="submit"
