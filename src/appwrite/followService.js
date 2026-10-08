@@ -10,14 +10,33 @@ export class FollowService {
             .setEndpoint(conf.appwriteUrl)
             .setProject(conf.appwriteProjectId);
 
-        // ✅ Correct
         this.databases = new TablesDB(this.client);
     }
 
-    // Follow an author
+    // ==========================================
+    // FOLLOW AUTHOR
+    // ==========================================
     async followAuthor(followerId, followingId) {
+        if (!followerId || !followingId) {
+            throw new Error("Follower and following user IDs are required.");
+        }
+
+        if (followerId === followingId) {
+            throw new Error("You cannot follow yourself.");
+        }
+
         try {
-            return await this.databases.createRow({
+            // Check if already following
+            const existing = await this.getFollow(
+                followerId,
+                followingId
+            );
+
+            if (existing?.rows?.length > 0) {
+                return existing.rows[0];
+            }
+
+            const follow = await this.databases.createRow({
                 databaseId: conf.appwriteDatabaseId,
                 tableId: conf.appwriteFollowTableId,
                 rowId: ID.unique(),
@@ -26,14 +45,23 @@ export class FollowService {
                     followingId,
                 },
             });
+
+            return follow;
+
         } catch (error) {
-            console.log(error);
-            return null;
+            console.error("Follow author failed:", error);
+            throw error;
         }
     }
 
-    // Unfollow an author
+    // ==========================================
+    // UNFOLLOW AUTHOR
+    // ==========================================
     async unfollowAuthor(followId) {
+        if (!followId) {
+            throw new Error("Follow ID is required.");
+        }
+
         try {
             await this.databases.deleteRow({
                 databaseId: conf.appwriteDatabaseId,
@@ -42,14 +70,23 @@ export class FollowService {
             });
 
             return true;
+
         } catch (error) {
-            console.log(error);
-            return false;
+            console.error("Unfollow author failed:", error);
+            throw error;
         }
     }
 
-    // Check if current user follows an author
+    // ==========================================
+    // CHECK IF USER FOLLOWS AUTHOR
+    // ==========================================
     async getFollow(followerId, followingId) {
+        if (!followerId || !followingId) {
+            throw new Error(
+                "Follower and following user IDs are required."
+            );
+        }
+
         try {
             return await this.databases.listRows({
                 databaseId: conf.appwriteDatabaseId,
@@ -57,43 +94,61 @@ export class FollowService {
                 queries: [
                     Query.equal("followerId", followerId),
                     Query.equal("followingId", followingId),
+                    Query.limit(1),
                 ],
             });
+
         } catch (error) {
-            console.log(error);
-            return null;
+            console.error("Get follow failed:", error);
+            throw error;
         }
     }
 
-    // Get followers
+    // ==========================================
+    // GET FOLLOWERS
+    // ==========================================
     async getFollowers(userId) {
+        if (!userId) {
+            throw new Error("User ID is required.");
+        }
+
         try {
             return await this.databases.listRows({
                 databaseId: conf.appwriteDatabaseId,
                 tableId: conf.appwriteFollowTableId,
                 queries: [
                     Query.equal("followingId", userId),
+                    Query.limit(100),
                 ],
             });
+
         } catch (error) {
-            console.log(error);
-            return { rows: [] };
+            console.error("Get followers failed:", error);
+            throw error;
         }
     }
 
-    // Get following
+    // ==========================================
+    // GET FOLLOWING
+    // ==========================================
     async getFollowing(userId) {
+        if (!userId) {
+            throw new Error("User ID is required.");
+        }
+
         try {
             return await this.databases.listRows({
                 databaseId: conf.appwriteDatabaseId,
                 tableId: conf.appwriteFollowTableId,
                 queries: [
                     Query.equal("followerId", userId),
+                    Query.limit(100),
                 ],
             });
+
         } catch (error) {
-            console.log(error);
-            return { rows: [] };
+            console.error("Get following failed:", error);
+            throw error;
         }
     }
 }
