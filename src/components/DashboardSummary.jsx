@@ -20,6 +20,15 @@ import badgeService from "../appwrite/badgeService";
 import profileService from "../appwrite/profileService";
 import analyticsService from "../appwrite/analyticsService";
 import toast from "react-hot-toast";
+import {
+  FileText,
+  Users,
+  UserRoundPlus,
+  Heart,
+  MessageCircle,
+  Bookmark,
+  Eye,
+} from "lucide-react";
 
 function DashboardSummary() {
    
@@ -316,47 +325,19 @@ function DashboardSummary() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
-                <StatCard
-                    title="Posts"
-                    value={posts.length}
-                    icon="📝"
-                />
+               <StatCard title="Posts" value={posts.length} icon={<FileText />} />
 
-                <StatCard
-                    title="Followers"
-                    value={followers}
-                    icon="👥"
-                />
+               <StatCard title="Followers" value={followers} icon={<Users />} />
 
-                <StatCard
-                    title="Following"
-                    value={following}
-                    icon="⭐"
-                />
+               <StatCard title="Following" value={following} icon={<UserRoundPlus />} />
 
-                <StatCard
-                    title="Likes"
-                    value={likes}
-                    icon="❤️"
-                />
+               <StatCard title="Likes" value={likes} icon={<Heart />} />
 
-                <StatCard
-                    title="Comments"
-                    value={comments}
-                    icon="💬"
-                />
+               <StatCard title="Comments" value={comments} icon={<MessageCircle />} />
 
-                <StatCard
-                    title="Bookmarks"
-                    value={bookmarks}
-                    icon="🔖"
-                />
+               <StatCard title="Bookmarks" value={bookmarks} icon={<Bookmark />} />
 
-                <StatCard
-                    title="Views"
-                    value={views}
-                    icon="👁️"
-                />
+               <StatCard title="Views" value={views} icon={<Eye />} />
 
             </div>
 
@@ -416,16 +397,7 @@ function DashboardSummary() {
 
             <RecentPosts posts={recentPosts} />
 
-            <RecentlyViewed />
-
             <BadgesList />
-
-            <AnalyticsChart posts={posts} />
-
-            <WeeklyAnalytics weekly={weekly} />
-
-            <ReadingStreak />
-
 
         </div>
 
