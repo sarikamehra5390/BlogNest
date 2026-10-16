@@ -222,9 +222,9 @@ The project was built to gain practical experience with:
 
 ## 🌐 Live Demo
 
-**Live Website:** Add your deployed URL here
+**Live Website:** https://blog-nest-seven-self.vercel.app/
 
-**GitHub Repository:** Add your GitHub URL here
+**GitHub Repository:** https://github.com/sarikamehra5390/BlogNest
 
 ## 👩‍💻 Author
 
