@@ -24,7 +24,9 @@ const conf = {
 
     appwriteViewsTableId: env("VITE_APPWRITE_VIEWS_TABLE_ID"),
 
-    appwriteFollowTableId: env("VITE_APPWRITE_FOLLOW_TABLE_ID"),
+   
+  appwriteFollowTableId: env("VITE_APPWRITE_FOLLOWS_TABLE_ID") || env("VITE_APPWRITE_FOLLOW_TABLE_ID"),
+
 
     appwriteBucketId: env("VITE_APPWRITE_BUCKET_ID"),
 
