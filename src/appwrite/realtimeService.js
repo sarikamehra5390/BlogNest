@@ -1,5 +1,5 @@
 import conf from "../conf/conf";
-import { Client } from "appwrite";
+import appwriteClient from "./client";
 
 class RealtimeService {
 
@@ -7,9 +7,7 @@ class RealtimeService {
 
     constructor() {
 
-        this.client = new Client()
-            .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId);
+        this.client = appwriteClient;
 
     }
 

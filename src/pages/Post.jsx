@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import appwriteService from "../appwrite/config";
 import { Button, Container } from "../components";
@@ -23,6 +23,7 @@ import SuggestedPosts from "../components/SuggestedPosts";
 import AISummary from "../components/AISummary";
 import { getAppwriteErrorMessage } from "../utils/appwriteError";
 import { calculateReadingTime } from "../utils/readingTime";
+import SignInPrompt from "../components/SignInPrompt";
 
 export default function Post() {
     const [post, setPost] = useState(null);
@@ -36,6 +37,7 @@ export default function Post() {
     const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
     const [author, setAuthor] = useState(null);
+    const [signInOpen, setSignInOpen] = useState(false);
 
     const { slug } = useParams();
     const navigate = useNavigate();
@@ -65,7 +67,12 @@ export default function Post() {
                     await appwriteService.getPost(slug);
 
                 if (!fetchedPost) {
-                    navigate("/");
+                    navigate("/all-posts", { replace: true });
+                    return;
+                }
+
+                if (fetchedPost.status !== "active" && fetchedPost.userId !== userData?.$id) {
+                    navigate("/all-posts", { replace: true });
                     return;
                 }
 
@@ -179,7 +186,7 @@ export default function Post() {
     // COMMENTS
     // ==========================================
 
-    const fetchComments = async () => {
+    const fetchComments = useCallback(async () => {
         if (!post?.$id) return;
 
         try {
@@ -199,13 +206,13 @@ export default function Post() {
 
             setComments([]);
         }
-    };
+    }, [post]);
 
     // ==========================================
     // FETCH LIKES
     // ==========================================
 
-    const fetchLikes = async () => {
+    const fetchLikes = useCallback(async () => {
         if (!post?.$id) return;
 
         try {
@@ -240,13 +247,13 @@ export default function Post() {
                 error
             );
         }
-    };
+    }, [post, userData]);
 
     // ==========================================
     // FETCH BOOKMARK
     // ==========================================
 
-    const fetchBookmark = async () => {
+    const fetchBookmark = useCallback(async () => {
         if (!post?.$id) return;
 
         if (!userData) {
@@ -270,7 +277,7 @@ export default function Post() {
                 error
             );
         }
-    };
+    }, [post, userData]);
 
     // ==========================================
     // LOAD COMMENTS + LIKES + BOOKMARK
@@ -286,7 +293,7 @@ export default function Post() {
         };
 
         loadData();
-    }, [post?.$id, userData?.$id]);
+    }, [post?.$id, userData?.$id, fetchBookmark, fetchComments, fetchLikes]);
 
     // ==========================================
     // LIKE
@@ -294,9 +301,7 @@ export default function Post() {
 
     const handleLike = async () => {
         if (!userData) {
-            toast.error(
-                "Please login first."
-            );
+            setSignInOpen(true);
             return;
         }
 
@@ -506,9 +511,7 @@ export default function Post() {
 
     const handleBookmark = async () => {
         if (!userData) {
-            toast.error(
-                "Please login first."
-            );
+            setSignInOpen(true);
             return;
         }
 
@@ -650,12 +653,12 @@ export default function Post() {
     // ==========================================
 
     useEffect(() => {
-        if (!post?.$id) return;
+        if (!post?.$id || !userData?.$id) return;
 
         viewService
             .addView(
                 post.$id,
-                userData?.$id || null
+                userData.$id
             )
             .catch((error) => {
                 console.error(
@@ -663,13 +666,14 @@ export default function Post() {
                     error
                 );
             });
-    }, [post?.$id]);
+    }, [post?.$id, userData?.$id]);
 
     // ==========================================
     // UI
     // ==========================================
 
     return post ? (
+        <>
         <div className="page-shell transition-colors">
             <Container>
                 <div className="mx-auto max-w-4xl">
@@ -972,5 +976,7 @@ export default function Post() {
 
             </Container>
         </div>
+        <SignInPrompt open={signInOpen} onClose={() => setSignInOpen(false)} returnTo={`/post/${slug}`} action="like or save this story" />
+        </>
     ) : null;
 }

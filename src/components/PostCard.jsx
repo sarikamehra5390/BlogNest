@@ -1,6 +1,6 @@
 import appwriteService from "../appwrite/config";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Clock3 } from "lucide-react";
+import { ArrowUpRight, BookOpen, Clock3 } from "lucide-react";
 import { calculateReadingTime } from "../utils/readingTime";
 
 function PostCard({ $id, title, content, featuredImage, category, tags, $createdAt, userId, authorName }) {
@@ -22,9 +22,9 @@ function PostCard({ $id, title, content, featuredImage, category, tags, $created
 
   return (
     <article className="group flex h-full flex-col border-t border-slate-300 pt-4 dark:border-slate-700">
-      {featuredImage && <Link to={`/post/${$id}`} className="mb-4 block aspect-[16/10] overflow-hidden bg-slate-200 dark:bg-slate-800" aria-label={`Read ${title}`}>
-        <img src={appwriteService.getFilePreview(featuredImage)} alt={title ? `Cover image for ${title}` : "Article cover"} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.025]" />
-      </Link>}
+      <Link to={`/post/${$id}`} className="mb-4 block aspect-[16/10] overflow-hidden bg-parchment" aria-label={`Read ${title}`}>
+        {featuredImage ? <img src={appwriteService.getFilePreview(featuredImage)} alt={title ? `Cover image for ${title}` : "Article cover"} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.025]" /> : <span aria-hidden="true" className="grid h-full place-items-center text-indigo-700 dark:text-indigo-300"><BookOpen size={42} strokeWidth={1.2} /></span>}
+      </Link>
       <div className="flex flex-1 flex-col">
         <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-slate-500 dark:text-slate-400">
           {category && <span className="font-semibold uppercase tracking-[.12em] text-indigo-700 dark:text-indigo-300">{category}</span>}

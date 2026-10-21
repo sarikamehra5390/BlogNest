@@ -1,5 +1,6 @@
 import conf from "../conf/conf";
-import { Client, TablesDB, ID, Query } from "appwrite";
+import { TablesDB, ID, Query } from "appwrite";
+import appwriteClient from "./client";
 import notificationService from "./notificationService";
 
 export const BADGE_DEFINITIONS = {
@@ -66,14 +67,10 @@ const _badgeCheckDebounce = new Map();
 
 export class BadgeService {
 
-    client = new Client();
+    client = appwriteClient;
     databases;
 
     constructor() {
-        this.client
-            .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId);
-
         this.databases = new TablesDB(this.client);
     }
 

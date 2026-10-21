@@ -1,16 +1,13 @@
 import conf from "../conf/conf";
-import { Client, ID, Query, TablesDB } from "appwrite";
+import { ID, Query, TablesDB } from "appwrite";
+import appwriteClient from "./client";
 
 export class ViewService {
 
-    client = new Client();
+    client = appwriteClient;
     databases;
 
     constructor() {
-
-        this.client
-            .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId);
 
         this.databases = new TablesDB(this.client);
 

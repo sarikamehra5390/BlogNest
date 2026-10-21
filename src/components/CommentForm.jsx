@@ -5,16 +5,18 @@ import toast from "react-hot-toast";
 
 import commentService from "../appwrite/commentService";
 import notificationService from "../appwrite/notificationService";
+import SignInPrompt from "./SignInPrompt";
 
 function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
   const { register, handleSubmit, reset } = useForm();
 
   const userData = useSelector((state) => state.auth.userData);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [signInOpen, setSignInOpen] = useState(false);
 
   const submit = async (data) => {
     if (!userData) {
-      toast.error("Please login to comment");
+      setSignInOpen(true);
       return;
     }
 
@@ -73,18 +75,21 @@ function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
   };
 
   return (
+    <>
     <div className="surface-card mt-8 p-5 sm:p-6">
 
       <h2 className="text-xl font-bold tracking-tight mb-1 dark:text-white">
         Leave a Comment
       </h2>
 
-      <p className="mb-5 text-sm text-slate-500 dark:text-slate-400">Join the conversation with a useful, respectful response.</p><form onSubmit={handleSubmit(submit)}>
+      <p className="mb-5 text-sm text-slate-500 dark:text-slate-400">Join the conversation with a useful, respectful response.</p>{!userData && <button type="button" onClick={() => setSignInOpen(true)} className="mb-4 text-sm font-semibold text-indigo-700 underline underline-offset-4 dark:text-indigo-300">Sign in to leave a comment</button>}<form onSubmit={handleSubmit(submit)}>
 
         <textarea
           {...register("content", {
             required: true,
           })}
+          disabled={!userData}
+          onFocus={() => { if (!userData) setSignInOpen(true); }}
           rows={5}
           placeholder="Share your thoughts..."
           aria-label="Write a comment"
@@ -102,6 +107,8 @@ function CommentForm({ postId, postAuthorId, postTitle, onCommentAdded }) {
       </form>
 
     </div>
+    <SignInPrompt open={signInOpen} onClose={() => setSignInOpen(false)} returnTo={`/post/${postId}`} action="join the conversation" />
+    </>
   );
 }
 

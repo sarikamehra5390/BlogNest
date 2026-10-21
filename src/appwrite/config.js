@@ -1,16 +1,13 @@
 import conf from "../conf/conf.js";
-import { Client, ID, TablesDB, Query, Storage} from "appwrite";
+import { ID, TablesDB, Query, Storage} from "appwrite";
+import appwriteClient from "./client";
 
 export class Service{
-    client = new Client()
+    client = appwriteClient
     databases;
     bucket; // storage
    
     constructor(){
-         this.client
-              .setEndpoint(conf.appwriteUrl)
-              .setProject(conf.appwriteProjectId);
-
         this.databases = new TablesDB(this.client);
         this.bucket = new Storage(this.client);
     }
@@ -108,6 +105,24 @@ export class Service{
              if (import.meta.env.DEV) { console.log("Appwrite service :: getPosts :: error", error) }
              return false
         }
+   }
+
+   // Public feed reads always filter to published rows and let callers handle
+   // Appwrite errors so they can show a real retry state and diagnostics.
+   async getPublishedPosts({ offset = 0, limit = 24 } = {}) {
+        if (!conf.appwriteDatabaseId || !conf.appwriteCollectionId) {
+            throw new Error("Published stories are not configured. Check VITE_APPWRITE_DATABASE_ID and VITE_APPWRITE_COLLECTION_ID.");
+        }
+        return await this.databases.listRows({
+            databaseId: conf.appwriteDatabaseId,
+            tableId: conf.appwriteCollectionId,
+            queries: [
+                Query.equal("status", "active"),
+                Query.orderDesc("$createdAt"),
+                Query.limit(limit),
+                ...(offset > 0 ? [Query.offset(offset)] : []),
+            ],
+        });
    }
 
    // file upload method/service

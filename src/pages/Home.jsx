@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen, PenLine } from "lucide-react";
 import appwriteService from "../appwrite/config";
@@ -29,34 +29,37 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const response = await appwriteService.getPosts();
-        if (!active) return;
-        const rows = response?.rows || response?.documents || (Array.isArray(response) ? response : []);
-        setPosts(rows);
-        setLoadError(response === false);
-      } catch (error) {
-        if (import.meta.env.DEV) console.error("Home stories failed to load", error);
-        if (active) setLoadError(true);
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => { active = false; };
+  const loadPosts = useCallback(async () => {
+    try {
+      const response = await appwriteService.getPublishedPosts({ limit: 25 });
+      const rows = response?.rows || response?.documents || (Array.isArray(response) ? response : []);
+      setPosts(rows);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error("Home stories failed to load", error);
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    // Network-driven state updates happen after the request resolves.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadPosts();
+  }, [loadPosts]);
+
   const filteredPosts = posts.filter((post) =>
-    !search || `${post.title || ""} ${post.category || ""} ${post.tags || ""}`.toLowerCase().includes(search.toLowerCase())
+    !search || `${post.title || ""} ${post.content || ""} ${post.category || ""} ${post.tags || ""} ${post.authorName || ""}`.toLowerCase().includes(search.toLowerCase())
   );
   const featured = filteredPosts[0];
   const moreStories = featured ? filteredPosts.slice(1) : [];
 
   return <div className="page-shell pb-16 pt-7 sm:pt-10">
     <Container>
-      <section className="border-b border-slate-300 pb-10 pt-4 text-center sm:pb-14 sm:pt-8">
+      <section className="home-hero relative isolate overflow-hidden border border-slate-300 bg-parchment px-5 py-12 text-center sm:px-10 sm:py-16 lg:py-20 dark:border-slate-700">
+        <div aria-hidden="true" className="home-hero__image absolute inset-0 z-0" />
+        <div aria-hidden="true" className="absolute inset-0 z-10 bg-gradient-to-r from-[#f7f2e9]/95 via-[#f7f2e9]/85 to-[#f7f2e9]/45 dark:from-[#1c1a18]/95 dark:via-[#1c1a18]/80 dark:to-[#1c1a18]/50" />
+        <div className="relative z-20">
         <p className="page-kicker">A home for ideas worth sharing</p>
         <h1 className="font-editorial mx-auto mt-4 max-w-5xl text-5xl font-medium leading-[1.02] tracking-[-0.045em] text-slate-950 sm:text-6xl lg:text-7xl dark:text-white">
           Read deeply.<br className="hidden sm:block" /> <span className="text-indigo-700 dark:text-indigo-300">Write bravely.</span>
@@ -72,6 +75,7 @@ function Home() {
             <PenLine size={17} /> {userData ? "Write a story" : "Start writing"}
           </Link>
         </div>
+        </div>
       </section>
 
       <section className="mt-10 sm:mt-14" aria-labelledby="featured-heading">
@@ -84,9 +88,10 @@ function Home() {
         </div>
 
         {loading ? <div className="grid gap-6 lg:grid-cols-2"><SkeletonCard /><div className="hidden lg:block"><SkeletonCard /></div></div> : loadError ? (
-          <div role="status" className="border border-slate-300 bg-white px-6 py-10 text-center dark:border-slate-700 dark:bg-slate-900">
+          <div role="alert" className="border border-slate-300 bg-white px-6 py-10 text-center dark:border-slate-700 dark:bg-slate-900">
             <h3 className="font-editorial text-2xl font-semibold text-slate-900 dark:text-white">Stories are taking a moment</h3>
-            <p className="mt-2 text-slate-600 dark:text-slate-300">Please refresh the page to try loading the community feed again.</p>
+            <p className="mt-2 text-slate-600 dark:text-slate-300">The published story feed could not be reached. You can retry without refreshing the page.</p>
+            <button onClick={() => { setLoading(true); setLoadError(false); loadPosts(); }} className="mt-5 inline-flex min-h-11 items-center gap-2 bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"><ArrowRight size={16} /> Try again</button>
           </div>
         ) : featured ? (
           <article className="grid overflow-hidden border border-slate-300 bg-white md:grid-cols-[1.1fr_.9fr] dark:border-slate-700 dark:bg-slate-900">
@@ -98,7 +103,7 @@ function Home() {
               </div>
               <h3 className="font-editorial mt-4 text-3xl font-semibold leading-tight tracking-tight text-slate-950 group-hover:text-indigo-700 sm:text-4xl lg:text-5xl dark:text-white dark:group-hover:text-indigo-300">{featured.title}</h3>
               <p className="mt-4 line-clamp-4 text-base leading-7 text-slate-600 dark:text-slate-300">{excerptFor(featured.content) || "Open this story from the BlogNest community."}</p>
-              {featured.authorName && <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">By <span className="font-semibold text-slate-800 dark:text-slate-100">{featured.authorName}</span></p>}
+              {featured.authorName && <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">By {featured.userId ? <Link to={`/author/${featured.userId}`} onClick={(event) => event.stopPropagation()} className="font-semibold text-slate-800 hover:text-indigo-700 dark:text-slate-100 dark:hover:text-indigo-300">{featured.authorName}</Link> : <span className="font-semibold text-slate-800 dark:text-slate-100">{featured.authorName}</span>}</p>}
               <span className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-indigo-700 dark:text-indigo-300">Read the story <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" /></span>
             </Link>
             <Link to={`/post/${featured.$id}`} className="order-1 min-h-60 bg-slate-200 md:order-2 md:min-h-[25rem]" aria-label={`Read ${featured.title}`}>

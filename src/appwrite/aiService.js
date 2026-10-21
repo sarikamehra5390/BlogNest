@@ -1,5 +1,6 @@
-import { Client, Functions} from "appwrite";
+import { Functions} from "appwrite";
 import conf from "../conf/conf";
+import appwriteClient from "./client";
 
 class AIService {
 
@@ -8,9 +9,7 @@ class AIService {
 
     constructor() {
 
-        this.client = new Client()
-            .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId);
+        this.client = appwriteClient;
 
         this.functions = new Functions(this.client);
 

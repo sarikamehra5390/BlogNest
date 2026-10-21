@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import profileService from "../appwrite/profileService";
 import { Link } from "react-router-dom";
 import { Container, PostCard, BadgesList } from "../components";
@@ -11,6 +11,7 @@ import notificationService from "../appwrite/notificationService";
 import badgeService from "../appwrite/badgeService";
 import { getAppwriteErrorMessage } from "../utils/appwriteError";
 import { ArrowLeft, PenLine } from "lucide-react";
+import SignInPrompt from "../components/SignInPrompt";
 
 async function fetchFollowData(userId, currentUserId) {
     if (!userId) return null;
@@ -32,8 +33,6 @@ async function fetchFollowData(userId, currentUserId) {
 
 function AuthorProfile() {
     const { userId } = useParams();
-    const navigate = useNavigate();
-
     const [profile, setProfile] = useState(null);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -44,6 +43,7 @@ function AuthorProfile() {
     const [followId, setFollowId] = useState(null);
     const [followLoading, setFollowLoading] = useState(false);
     const [error, setError] = useState("");
+    const [signInOpen, setSignInOpen] = useState(false);
 
     useEffect(() => {
         let active = true;
@@ -90,8 +90,7 @@ function AuthorProfile() {
 
     const handleFollow = async() => {
         if(!userData){
-            toast.error("Please log in to follow authors.");
-            navigate("/login");
+            setSignInOpen(true);
             return
         }
         if (userData.$id === userId) return;
@@ -216,6 +215,7 @@ if (!profile) {
 }
 
 return (
+    <>
     <div className="page-shell"><Container>
     {/*Back Button*/}
     <Link
@@ -352,6 +352,8 @@ return (
 )}
 
 </Container></div>
+<SignInPrompt open={signInOpen} onClose={() => setSignInOpen(false)} returnTo={`/author/${userId}`} action="follow this author" />
+</>
     );
 }
 

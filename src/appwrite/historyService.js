@@ -1,17 +1,14 @@
 import conf from "../conf/conf";
-import { Client, TablesDB, ID, Query } from "appwrite";
+import { TablesDB, ID, Query } from "appwrite";
+import appwriteClient from "./client";
 
 export class HistoryService {
 
-    client = new Client();
+    client = appwriteClient;
 
     databases;
 
     constructor() {
-
-        this.client
-            .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId);
 
         this.databases = new TablesDB(this.client);
 

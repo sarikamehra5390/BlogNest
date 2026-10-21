@@ -1,6 +1,6 @@
 import { useState } from "react";
 import authService from "../appwrite/auth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { login } from "../store/authSlice";
 import { Button, Input, Logo } from "./index";
 import { useDispatch } from "react-redux";
@@ -11,6 +11,7 @@ import { getAppwriteErrorMessage } from "../utils/appwriteError";
 
 function Signup() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,7 +45,7 @@ function Signup() {
 
                 toast.success("Account created successfully! 🎉");
 
-                navigate("/");
+                navigate(location.state?.from || "/", { replace: true });
             }
         } catch (error) {
             console.error("Signup failed", error);
@@ -101,6 +102,7 @@ function Signup() {
 
                     <Link
                         to="/login"
+                        state={{ from: location.state?.from || "/" }}
                         className="
                             text-indigo-700
                             dark:text-indigo-300

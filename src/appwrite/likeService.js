@@ -1,6 +1,7 @@
 import conf from "../conf/conf";
-import { Client, Permission, Role, TablesDB, Query } from "appwrite";
+import { Permission, Role, TablesDB, Query } from "appwrite";
 import { createInteractionId } from "../utils/interactionId";
+import appwriteClient from "./client";
 
 const assertConfigured = () => {
     if (
@@ -14,14 +15,10 @@ const assertConfigured = () => {
 };
 
 export class LikeService {
-    client = new Client();
+    client = appwriteClient;
     databases;
 
     constructor() {
-        this.client
-            .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId);
-
         this.databases = new TablesDB(this.client);
     }
 

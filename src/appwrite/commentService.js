@@ -1,17 +1,14 @@
 //  Keeping the comment logic completely separate from your post logic. This is a good practice because it makes your code easier to maintain and scale.
 
 import conf from "../conf/conf";
-import {  Client, ID, TablesDB, Query} from "appwrite";
+import { ID, TablesDB, Query} from "appwrite";
+import appwriteClient from "./client";
 
 export class CommentService {
-    client = new Client();
+    client = appwriteClient;
     databases;
 
     constructor(){
-        this.client
-            .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId)
-
         this.databases = new TablesDB(this.client);
     }
 
