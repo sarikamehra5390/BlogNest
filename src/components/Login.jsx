@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authSlice";
-import { Button, Input, Logo } from "./index";
+import { Button, Input } from "./index";
 import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
@@ -54,7 +54,7 @@ function Login() {
     p-7 sm:p-10">
         <div className="mb-2 flex justify-center">
         <span className="mb-4 inline-block w-full max-w-[230px]">
-            <Logo width="100%" />
+            <img src="/images/blognest-logo-auth.png" alt="BlogNest — Write, Share, Inspire" width="2752" height="1536" className="block h-auto w-full object-contain" decoding="async" />
           </span>
         </div>
         <h2 className="font-editorial mt-4 text-center text-4xl font-semibold text-slate-800 dark:text-white">

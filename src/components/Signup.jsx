@@ -2,7 +2,7 @@ import { useState } from "react";
 import authService from "../appwrite/auth";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { login } from "../store/authSlice";
-import { Button, Input, Logo } from "./index";
+import { Button, Input } from "./index";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -87,7 +87,7 @@ function Signup() {
 
                 <div className="mb-2 flex justify-center">
                     <span className="mb-4 inline-block w-full max-w-[230px]">
-                        <Logo width="100%" />
+                        <img src="/images/blognest-logo-auth.png" alt="BlogNest — Write, Share, Inspire" width="2752" height="1536" className="block h-auto w-full object-contain" decoding="async" />
                     </span>
                 </div>
 
