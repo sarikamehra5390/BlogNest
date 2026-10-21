@@ -94,10 +94,27 @@ function Home() {
         </div>
 
         {loading ? <div className="grid gap-6 lg:grid-cols-2"><SkeletonCard /><div className="hidden lg:block"><SkeletonCard /></div></div> : loadError ? (
-          <div role="alert" className="border border-slate-300 bg-white px-6 py-10 text-center dark:border-slate-700 dark:bg-slate-900">
-            <h3 className="font-editorial text-2xl font-semibold text-slate-900 dark:text-white">Stories are taking a moment</h3>
-            <p className="mt-2 text-slate-600 dark:text-slate-300">{loadError} You can retry without refreshing the page.</p>
-            <button onClick={loadPosts} className="mt-5 inline-flex min-h-11 items-center gap-2 bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"><ArrowRight size={16} /> Try again</button>
+          <div className="overflow-hidden border border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900">
+            <div className="grid md:grid-cols-[.9fr_1.1fr]">
+              <div className="relative min-h-56 overflow-hidden bg-parchment sm:min-h-72 md:min-h-full">
+                <img src="/images/blognest-editorial-hero.svg" alt="An open journal and books on a sunlit writing desk" className="absolute inset-0 h-full w-full object-cover object-[62%_center]" />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#25231f]/35 via-transparent to-transparent" />
+                <p className="absolute bottom-4 left-5 text-xs font-semibold uppercase tracking-[.18em] text-white drop-shadow sm:bottom-6 sm:left-7">Make room for a new idea</p>
+              </div>
+              <div className="flex flex-col justify-center px-5 py-7 sm:px-8 sm:py-9 lg:px-10">
+                <p className="page-kicker">A note from BlogNest</p>
+                <h3 className="font-editorial mt-2 text-3xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-4xl dark:text-white">Every great story starts somewhere.</h3>
+                <p className="mt-4 max-w-xl leading-7 text-slate-600 dark:text-slate-300">BlogNest is a place to discover new perspectives, share the experiences that shaped you, and turn a small idea into a story worth passing along.</p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Link to="/all-posts" className="inline-flex min-h-11 items-center gap-2 bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400"><BookOpen size={16} /> Explore stories</Link>
+                  <Link to="/add-post" className="inline-flex min-h-11 items-center gap-2 border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition hover:border-indigo-400 hover:text-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:text-indigo-200"><PenLine size={16} /> Start writing</Link>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-3 border-t border-slate-200 px-5 py-3 text-sm dark:border-slate-700 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+              <p className="text-slate-500 dark:text-slate-400" role="status">Community stories are temporarily unavailable. {loadError}</p>
+              <button type="button" onClick={loadPosts} className="inline-flex min-h-9 items-center gap-2 self-start font-semibold text-indigo-800 underline decoration-indigo-300 underline-offset-4 hover:text-indigo-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:text-indigo-200 dark:hover:text-white sm:self-auto"><ArrowRight size={15} /> Retry feed</button>
+            </div>
           </div>
         ) : featured ? (
           <article className="grid overflow-hidden border border-slate-300 bg-white md:grid-cols-[1.1fr_.9fr] dark:border-slate-700 dark:bg-slate-900">

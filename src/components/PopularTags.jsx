@@ -1,212 +1,33 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-
-import service from "../appwrite/config";
-
-function PopularTags() {
-
-    const [tags, setTags] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-
-        const loadTags = async () => {
-
-            try {
-
-                setLoading(true);
-
-                // ==========================
-                // Fetch all posts
-                // ==========================
-
-                const response = await service.getPublishedPosts({ limit: 100 });
-
-                const allPosts =
-                    response?.rows ||
-                    response?.documents ||
-                    response ||
-                    [];
-
-                // ==========================
-                // Frequency Map
-                // ==========================
-
-                const frequency = {};
-
-                allPosts.forEach((post) => {
-
-                    if (!post.tags) return;
-
-                    const tagList = post.tags
-                        .split(",")
-                        .map((tag) => tag.trim())
-                        .filter((tag) => tag.length > 0);
-
-                    tagList.forEach((tag) => {
-
-                        const key = tag.toLowerCase();
-
-                        if (!frequency[key]) {
-
-                            frequency[key] = {
-
-                                name: tag,
-
-                                count: 0,
-
-                            };
-
-                        }
-
-                        frequency[key].count++;
-
-                    });
-
-                });
-
-                // ==========================
-                // Convert to Array
-                // ==========================
-
-                const sortedTags = Object.values(frequency)
-
-                    .sort((a, b) => b.count - a.count)
-
-                    .slice(0, 10);
-
-                setTags(sortedTags);
-
-            } catch (error) {
-
-                if (import.meta.env.DEV) {
-                    console.log(
-                        "Popular Tags Error:",
-                        error
-                    );
-                }
-
-            } finally {
-
-                setLoading(false);
-
-            }
-
-        };
-
-        loadTags();
-
-    }, []);
-
-    if (loading) {
-
-        return (
-
-            <div className="mt-12 text-center">
-
-                Loading Popular Tags...
-
-            </div>
-
-        );
-
-    }
-
-    return (
-
-        <div className="mt-12">
-
-            <h2
-                className="
-                    text-3xl
-                    font-bold
-                    mb-8
-                    dark:text-white
-                "
-            >
-                🏷 Popular Tags
-            </h2>
-
-            {tags.length === 0 ? (
-
-                <div
-                    className="
-                        bg-white
-                        dark:bg-slate-900
-                        rounded-2xl
-                        shadow-lg
-                        p-8
-                        text-center
-                    "
-                >
-
-                    No Tags Found
-
-                </div>
-
-            ) : (
-
-                <div
-                    className="
-                        flex
-                        flex-wrap
-                        gap-4
-                    "
-                >
-
-                    {tags.map((tag) => (
-
-                        <Link
-                            key={tag.name}
-                            to={`/tag/${encodeURIComponent(tag.name)}`}
-                            className="
-                                bg-white
-                                dark:bg-slate-900
-                                rounded-xl
-                                shadow-md
-                                px-5
-                                py-4
-                                hover:shadow-xl
-                                hover:-translate-y-1
-                                transition
-                                border
-                                dark:border-slate-700
-                            "
-                        >
-
-                            <div
-                                className="
-                                    text-lg
-                                    font-bold
-                                    text-blue-600
-                                    dark:text-blue-400
-                                "
-                            >
-                                #{tag.name}
-                            </div>
-
-                            <div
-                                className="
-                                    text-sm
-                                    text-gray-500
-                                    mt-2
-                                "
-                            >
-                                {tag.count} Posts
-                            </div>
-
-                        </Link>
-
-                    ))}
-
-                </div>
-
-            )}
-
-        </div>
-
-    );
-
+import { useMemo } from "react";
+import { TopicDiscovery } from "./ExploreDiscovery";
+
+function PopularTags({ posts = [], unavailable = false, selectedTopic, onSelectTopic }) {
+  const tags = useMemo(() => {
+    const frequency = new Map();
+    posts.forEach((post) => {
+      const values = Array.isArray(post.tags) ? post.tags : String(post.tags || "").split(",");
+      values.map((tag) => String(tag).trim()).filter(Boolean).forEach((name) => {
+        const key = name.toLowerCase();
+        const current = frequency.get(key);
+        frequency.set(key, { name: current?.name || name, count: (current?.count || 0) + 1 });
+      });
+    });
+    return [...frequency.values()].sort((a, b) => b.count - a.count).slice(0, 10);
+  }, [posts]);
+
+  return (
+    <div className="mt-9">
+      <TopicDiscovery
+        tags={tags}
+        unavailable={unavailable}
+        selectedTopic={selectedTopic}
+        onSelectTopic={onSelectTopic}
+      />
+      {!unavailable && tags.length > 0 && (
+        <p className="sr-only">{tags.map((tag) => `${tag.name}: ${tag.count} loaded stories`).join(". ")}</p>
+      )}
+    </div>
+  );
 }
 
 export default PopularTags;

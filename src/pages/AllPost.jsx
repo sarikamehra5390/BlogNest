@@ -1,14 +1,16 @@
-import { useState, useEffect, useMemo, useContext, useCallback, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useMemo, useContext, useCallback, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import appwriteService from "../appwrite/config";
 import { Container, PostCard, PopularTags, SkeletonCard } from "../components";
+import { DiscoveryActivities, ExploreHero, FeedUnavailable } from "../components/ExploreDiscovery";
 import SearchContext from "../context/SearchContext";
-import { RefreshCw } from "lucide-react";
 import { getPublicFeedErrorMessage } from "../utils/appwriteError";
 
 
 function AllPost() {
     const [posts, setPosts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("All");
+    const [selectedTopic, setSelectedTopic] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [hasMore, setHasMore] = useState(false);
@@ -16,12 +18,22 @@ function AllPost() {
     const [moreError, setMoreError] = useState(false);
     const requestId = useRef(0);
     const moreRequestId = useRef(0);
-    const { search } = useContext(SearchContext);
+    const { search, setSearch } = useContext(SearchContext);
+    const location = useLocation();
+
+    useLayoutEffect(() => {
+        if (location.hash) {
+            document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({ block: "start" });
+        } else {
+            window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+        }
+    }, [location.pathname, location.hash]);
 
     const loadPosts = useCallback(async () => {
         const currentRequest = ++requestId.current;
         setLoading(true);
         setError(null);
+        setSelectedTopic("");
         try {
             // Never omit the public status filter: an empty query would include drafts.
             const response = await appwriteService.getPublishedPosts({ limit: 24 });
@@ -94,104 +106,51 @@ function AllPost() {
         return filteredPosts.filter((post) => `${post.title || ""} ${post.content || ""} ${post.category || ""} ${post.tags || ""} ${post.authorName || ""}`.toLowerCase().includes(term));
     }, [filteredPosts, search]);
 
-    if (loading) {
-        return (
-            <div className="page-shell"><Container><div className="mb-10"><p className="page-kicker">Explore</p><h1 className="page-heading mt-2">The latest from BlogNest</h1></div><div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}</div></Container></div>
-        );
-    }
-
     return (
-        <div className="page-shell"><Container>
+        <div className="page-shell pt-5 sm:pt-8"><Container>
             <div className="w-full">
+                <ExploreHero search={search} onSearchChange={(value) => { setSearch(value); setSelectedTopic(""); }} />
+                {error && <FeedUnavailable message={error} onRetry={loadPosts} retrying={loading} />}
 
-                
-
-                {/* Heading */}
-                <div className="mb-10 max-w-3xl">
-
-                    <p className="page-kicker">Explore the library</p>
-                    <h1 className="page-heading mt-2 text-4xl sm:text-5xl">
-                        Stories worth your time
-                    </h1>
-
-                    <p className="page-subtitle">
-                        A growing collection of ideas, experiences, and perspectives from BlogNest writers.
-                    </p>
-
-                       <PopularTags />
-
-                    {/* Categories */}
-                    <div className="flex flex-wrap gap-2 mt-8">
-
-                        {categories.map((category) => (
-
-                            <button
-                                key={category}
-                                onClick={() =>
-                                    setSelectedCategory(category)
-                                }
-                            aria-pressed={selectedCategory === category}
-                            className={`
-                                    min-h-11 px-4 py-2 rounded-md text-sm font-semibold
-                                    transition-all
-                                    duration-300
-                                    ${
-                                        selectedCategory === category
-                                            ? "bg-indigo-600 text-white"
-                                            : "border border-slate-200 bg-white text-slate-700 hover:border-indigo-200 hover:bg-indigo-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
-                                    }
-                                `}
-                            >
-                                {category}
-                            </button>
-
-                        ))}
-
+                {loading ? (
+                    <div className="mt-10" aria-label="Loading topics">
+                        <div className="h-8 w-56 animate-pulse bg-slate-200 dark:bg-slate-800" />
+                        <div className="mt-5 flex gap-2">{[0, 1, 2, 3].map((item) => <span key={item} className="h-10 w-28 animate-pulse bg-slate-200 dark:bg-slate-800" />)}</div>
                     </div>
-
-                </div>
-
-                {/* No Posts */}
-                {error ? (
-                    <div role="alert" className="empty-state py-14">
-                        <h2 className="font-editorial text-2xl font-semibold text-slate-900 dark:text-white">Explore could not load right now</h2>
-                        <p className="mt-2 text-slate-600 dark:text-slate-300">{error}</p>
-                        <button onClick={loadPosts} className="mt-5 inline-flex min-h-11 items-center gap-2 bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"><RefreshCw size={16} /> Retry</button>
-                    </div>
-                ) : searchedPosts.length === 0 ? (
-
-                    <div className="empty-state py-16">
-
-                        <div className="text-6xl mb-4" aria-hidden="true">
-                            📝
-                        </div>
-
-                        <h2 className="font-editorial text-3xl font-semibold text-slate-700 dark:text-white">
-                            {search ? "No stories match your search" : posts.length === 0 ? "No published stories yet" : "No stories in this topic"}
-                        </h2>
-
-                    </div>
-
                 ) : (
-
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-
-                        {searchedPosts.map((post) => (
-
-                            <PostCard
-                                key={post.$id}
-                                {...post}
-                            />
-
-                        ))}
-
-                    </div>
-
+                    <PopularTags posts={posts} unavailable={Boolean(error)} selectedTopic={selectedTopic} onSelectTopic={setSelectedTopic} />
                 )}
 
-                {moreError && <p role="alert" className="mt-5 text-center text-sm text-red-700 dark:text-red-300">More stories could not load. Please try again. <button onClick={loadMore} className="font-semibold underline">Retry</button></p>}
-                {!error && hasMore && <div className="mt-10 text-center"><button onClick={loadMore} disabled={loadingMore} className="inline-flex min-h-11 items-center justify-center border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 hover:border-indigo-400 hover:text-indigo-700 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">{loadingMore ? "Loading stories…" : "Load more stories"}</button></div>}
+                {error ? (
+                    <>
+                        {search.trim() && <p className="mt-8 border-l-2 border-indigo-600 bg-white/70 px-4 py-3 text-sm leading-6 text-slate-600 dark:bg-slate-900/70 dark:text-slate-300" role="status">Live story search is temporarily unavailable, so we can’t tell whether any published stories match “{search.trim()}”.</p>}
+                        <DiscoveryActivities />
+                    </>
+                ) : loading ? (
+                    <section id="story-feed" className="mt-10 scroll-mt-36" aria-label="Loading published stories">
+                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{[...Array(6)].map((_, index) => <SkeletonCard key={index} />)}</div>
+                    </section>
+                ) : (
+                    <section id="story-feed" className="mt-10 scroll-mt-36" aria-label="Published stories">
+                        {categories.length > 1 && <div className="mb-7 flex flex-wrap gap-2" aria-label="Filter stories by category">
+                            {categories.map((category) => <button key={category} type="button" onClick={() => setSelectedCategory(category)} aria-pressed={selectedCategory === category} className={`min-h-10 border px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${selectedCategory === category ? "border-indigo-700 bg-indigo-700 text-white dark:border-indigo-400 dark:bg-indigo-500" : "border-slate-300 bg-white text-slate-700 hover:border-indigo-300 hover:text-indigo-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:text-indigo-200"}`}>{category}</button>)}
+                        </div>}
+                        {searchedPosts.length === 0 ? (
+                            <div className="border border-dashed border-slate-300 bg-white/70 px-6 py-12 text-center dark:border-slate-700 dark:bg-slate-900/70">
+                                <p className="page-kicker">Published stories</p>
+                                <h2 className="font-editorial mt-2 text-2xl font-semibold text-slate-800 dark:text-white">{search ? "No stories match your search" : posts.length === 0 ? "No published stories yet" : "No stories in this topic"}</h2>
+                                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{search ? "Try another phrase, title, or tag." : "Check back soon for new perspectives from BlogNest writers."}</p>
+                            </div>
+                        ) : (
+                            <div className="grid gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
+                                {searchedPosts.map((post) => <PostCard key={post.$id} {...post} />)}
+                            </div>
+                        )}
 
+                        {moreError && <p role="alert" className="mt-5 text-center text-sm text-red-800 dark:text-red-200">More stories could not load. <button onClick={loadMore} className="font-semibold underline underline-offset-4">Retry</button></p>}
+                        {!error && hasMore && <div className="mt-10 text-center"><button onClick={loadMore} disabled={loadingMore} className="inline-flex min-h-11 items-center justify-center border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 hover:border-indigo-400 hover:text-indigo-800 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">{loadingMore ? "Loading stories…" : "Load more stories"}</button></div>}
+                    </section>
+                )}
             </div>
         </Container></div>
     );
