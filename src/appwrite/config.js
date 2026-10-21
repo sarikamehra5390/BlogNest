@@ -12,6 +12,18 @@ export class Service{
         this.bucket = new Storage(this.client);
     }
 
+    assertPostsConfigured() {
+        const missing = [
+            !conf.appwriteUrl && "VITE_APPWRITE_URL",
+            !conf.appwriteProjectId && "VITE_APPWRITE_PROJECT_ID",
+            !conf.appwriteDatabaseId && "VITE_APPWRITE_DATABASE_ID",
+            !conf.appwriteCollectionId && "VITE_APPWRITE_COLLECTION_ID",
+        ].filter(Boolean);
+        if (missing.length) {
+            throw new Error(`Published stories are not configured. Missing ${missing.join(" and ")}.`);
+        }
+    }
+
     // all the post related services are defined here 
 
     async createPost({title, slug, content,category, tags, featuredImage, status, userId}){
@@ -94,25 +106,18 @@ export class Service{
    // to get all the post which has active status
 
    async getPosts(queries = [Query.equal("status", "active")]){
-        try {
-          return await this.databases.listRows({
+        this.assertPostsConfigured();
+        return await this.databases.listRows({
             databaseId: conf.appwriteDatabaseId,
             tableId: conf.appwriteCollectionId,
              queries,
-              
-          })
-        } catch (error) {
-             if (import.meta.env.DEV) { console.log("Appwrite service :: getPosts :: error", error) }
-             return false
-        }
+        });
    }
 
    // Public feed reads always filter to published rows and let callers handle
    // Appwrite errors so they can show a real retry state and diagnostics.
    async getPublishedPosts({ offset = 0, limit = 24 } = {}) {
-        if (!conf.appwriteDatabaseId || !conf.appwriteCollectionId) {
-            throw new Error("Published stories are not configured. Check VITE_APPWRITE_DATABASE_ID and VITE_APPWRITE_COLLECTION_ID.");
-        }
+        this.assertPostsConfigured();
         return await this.databases.listRows({
             databaseId: conf.appwriteDatabaseId,
             tableId: conf.appwriteCollectionId,
@@ -166,9 +171,8 @@ export class Service{
 }
    // Get all posts by a specific author
 async getPostsByUser(userId) {
-    try {
-        if (import.meta.env.DEV) { console.log("Searching for userId:", userId); }
-
+        this.assertPostsConfigured();
+        if (!userId) return [];
         const response = await this.databases.listRows({
             databaseId: conf.appwriteDatabaseId,
             tableId: conf.appwriteCollectionId,
@@ -178,14 +182,7 @@ async getPostsByUser(userId) {
             ],
         });
 
-        if (import.meta.env.DEV) { console.log("Response:", response); }
-        if (import.meta.env.DEV) { console.log("Rows:", response.rows); }
-
         return response.rows;
-    } catch (error) {
-        if (import.meta.env.DEV) { console.log(error); }
-        return [];
-    }
 }
 
 }

@@ -27,3 +27,19 @@ export function getAppwriteErrorMessage(error, context = "request") {
   if (context === "bookmark") return "Unable to update your saved post. Please try again.";
   return "Something went wrong. Please try again.";
 }
+
+export function getPublicFeedErrorMessage(error) {
+  const type = String(error?.type || "").toLowerCase();
+  const code = error?.code || error?.response?.status;
+
+  if (error?.message?.includes("not configured")) {
+    return "The story feed is not configured yet. Please contact the site administrator.";
+  }
+  if (type.includes("unauthorized_scope") || type.includes("not_authorized") || code === 401 || code === 403) {
+    return "The story feed is not available to public visitors right now. Please try again later.";
+  }
+  if (!error?.response && !error?.code && typeof navigator !== "undefined" && !navigator.onLine) {
+    return "You appear to be offline. Check your connection and try again.";
+  }
+  return "The story service could not be reached. Please try again.";
+}

@@ -1,49 +1,61 @@
-import { useState, useEffect, useMemo, useContext, useCallback } from "react";
+import { useState, useEffect, useMemo, useContext, useCallback, useRef } from "react";
 import appwriteService from "../appwrite/config";
 import { Container, PostCard, PopularTags, SkeletonCard } from "../components";
 import SearchContext from "../context/SearchContext";
 import { RefreshCw } from "lucide-react";
+import { getPublicFeedErrorMessage } from "../utils/appwriteError";
 
 
 function AllPost() {
     const [posts, setPosts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+    const [error, setError] = useState(null);
     const [hasMore, setHasMore] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
     const [moreError, setMoreError] = useState(false);
+    const requestId = useRef(0);
+    const moreRequestId = useRef(0);
     const { search } = useContext(SearchContext);
 
     const loadPosts = useCallback(async () => {
+        const currentRequest = ++requestId.current;
+        setLoading(true);
+        setError(null);
         try {
             // Never omit the public status filter: an empty query would include drafts.
             const response = await appwriteService.getPublishedPosts({ limit: 24 });
 
-            setPosts(response?.rows || []);
-            setHasMore((response?.rows?.length || 0) < (response?.total || 0));
+            const rows = response?.rows || [];
+            if (currentRequest === requestId.current) {
+                setPosts(rows);
+                setHasMore(rows.length < (response?.total || 0));
+            }
         } catch (loadError) {
-            setError(true);
+            if (currentRequest === requestId.current) setError(getPublicFeedErrorMessage(loadError));
             if (import.meta.env.DEV) console.error("Explore stories failed to load", loadError);
         } finally {
-            setLoading(false);
+            if (currentRequest === requestId.current) setLoading(false);
         }
     }, []);
 
     const loadMore = async () => {
         if (loadingMore) return;
+        const currentRequest = ++moreRequestId.current;
         setLoadingMore(true);
         setMoreError(false);
         try {
             const response = await appwriteService.getPublishedPosts({ offset: posts.length, limit: 24 });
             const rows = response?.rows || [];
-            setPosts((existing) => [...existing, ...rows]);
-            setHasMore(posts.length + rows.length < (response?.total || 0));
+            if (currentRequest === moreRequestId.current) {
+                setPosts((existing) => [...existing, ...rows]);
+                setHasMore(posts.length + rows.length < (response?.total || 0));
+            }
         } catch (loadError) {
             if (import.meta.env.DEV) console.error("More Explore stories failed to load", loadError);
-            setMoreError(true);
+            if (currentRequest === moreRequestId.current) setMoreError(true);
         } finally {
-            setLoadingMore(false);
+            if (currentRequest === moreRequestId.current) setLoadingMore(false);
         }
     };
 
@@ -51,6 +63,7 @@ function AllPost() {
         // Network-driven state updates happen after the request resolves.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         loadPosts();
+        return () => { requestId.current += 1; moreRequestId.current += 1; };
     }, [loadPosts]);
 
     // Generate categories dynamically
@@ -142,8 +155,8 @@ function AllPost() {
                 {error ? (
                     <div role="alert" className="empty-state py-14">
                         <h2 className="font-editorial text-2xl font-semibold text-slate-900 dark:text-white">Explore could not load right now</h2>
-                        <p className="mt-2 text-slate-600 dark:text-slate-300">The story service did not return a list. Please try again.</p>
-                        <button onClick={() => { setLoading(true); setError(false); loadPosts(); }} className="mt-5 inline-flex min-h-11 items-center gap-2 bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"><RefreshCw size={16} /> Retry</button>
+                        <p className="mt-2 text-slate-600 dark:text-slate-300">{error}</p>
+                        <button onClick={loadPosts} className="mt-5 inline-flex min-h-11 items-center gap-2 bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"><RefreshCw size={16} /> Retry</button>
                     </div>
                 ) : searchedPosts.length === 0 ? (
 

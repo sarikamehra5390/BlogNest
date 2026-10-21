@@ -3,17 +3,21 @@ import { Link, useParams } from "react-router-dom";
 
 import appwriteService from "../appwrite/config";
 import { Container, PostCard, SkeletonCard } from "../components";
+import { getPublicFeedErrorMessage } from "../utils/appwriteError";
 
 function TagPosts() {
 
     const { tagName } = useParams();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [retryKey, setRetryKey] = useState(0);
 
     const decodedTag = decodeURIComponent(tagName || "");
 
     useEffect(() => {
 
+        let current = true;
         const loadTagPosts = async () => {
 
             if (!decodedTag) {
@@ -24,8 +28,9 @@ function TagPosts() {
             try {
 
                 setLoading(true);
+                setError(null);
 
-                const response = await appwriteService.getPosts();
+                const response = await appwriteService.getPublishedPosts({ limit: 100 });
 
                 const allPosts =
                     response?.rows ||
@@ -45,24 +50,25 @@ function TagPosts() {
                     return postTags.includes(decodedTag.toLowerCase());
                 });
 
-                setPosts(filtered);
+                if (current) setPosts(filtered);
 
             } catch (error) {
 
-                if (import.meta.env.DEV) { console.log("Tag Posts Error:", error); }
-                setPosts([]);
+                if (import.meta.env.DEV) { console.error("Tag Posts Error:", error); }
+                if (current) setError(getPublicFeedErrorMessage(error));
 
             } finally {
 
-                setLoading(false);
+                if (current) setLoading(false);
 
             }
 
         };
 
         loadTagPosts();
+        return () => { current = false; };
 
-    }, [decodedTag]);
+    }, [decodedTag, retryKey]);
 
     if (loading) {
 
@@ -140,7 +146,13 @@ function TagPosts() {
 
                 </div>
 
-                {posts.length === 0 ? (
+                {error ? (
+                    <div role="alert" className="py-16 text-center">
+                        <h2 className="text-2xl font-semibold text-slate-800 dark:text-white">Unable to load this tag</h2>
+                        <p className="mt-3 text-slate-500 dark:text-slate-400">{error}</p>
+                        <button type="button" onClick={() => setRetryKey((key) => key + 1)} className="mt-5 inline-flex min-h-11 items-center rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700">Try again</button>
+                    </div>
+                ) : posts.length === 0 ? (
 
                     <div className="text-center py-16">
 

@@ -20,7 +20,7 @@ function PopularTags() {
                 // Fetch all posts
                 // ==========================
 
-                const response = await service.getPosts();
+                const response = await service.getPublishedPosts({ limit: 100 });
 
                 const allPosts =
                     response?.rows ||

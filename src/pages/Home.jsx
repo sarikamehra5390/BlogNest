@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen, PenLine } from "lucide-react";
 import appwriteService from "../appwrite/config";
@@ -6,6 +6,7 @@ import { Container, DashboardSummary, PostCard, SkeletonCard } from "../componen
 import SearchContext from "../context/SearchContext";
 import { useSelector } from "react-redux";
 import { calculateReadingTime } from "../utils/readingTime";
+import { getPublicFeedErrorMessage } from "../utils/appwriteError";
 
 const excerptFor = (content = "") => content
   .replace(/<[^>]*>/g, " ")
@@ -27,18 +28,22 @@ function Home() {
   const { search } = useContext(SearchContext);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
+  const [loadError, setLoadError] = useState(null);
+  const requestId = useRef(0);
 
   const loadPosts = useCallback(async () => {
+    const currentRequest = ++requestId.current;
+    setLoading(true);
+    setLoadError(null);
     try {
       const response = await appwriteService.getPublishedPosts({ limit: 25 });
       const rows = response?.rows || response?.documents || (Array.isArray(response) ? response : []);
-      setPosts(rows);
+      if (currentRequest === requestId.current) setPosts(rows);
     } catch (error) {
       if (import.meta.env.DEV) console.error("Home stories failed to load", error);
-      setLoadError(true);
+      if (currentRequest === requestId.current) setLoadError(getPublicFeedErrorMessage(error));
     } finally {
-      setLoading(false);
+      if (currentRequest === requestId.current) setLoading(false);
     }
   }, []);
 
@@ -46,6 +51,7 @@ function Home() {
     // Network-driven state updates happen after the request resolves.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadPosts();
+    return () => { requestId.current += 1; };
   }, [loadPosts]);
 
   const filteredPosts = posts.filter((post) =>
@@ -90,8 +96,8 @@ function Home() {
         {loading ? <div className="grid gap-6 lg:grid-cols-2"><SkeletonCard /><div className="hidden lg:block"><SkeletonCard /></div></div> : loadError ? (
           <div role="alert" className="border border-slate-300 bg-white px-6 py-10 text-center dark:border-slate-700 dark:bg-slate-900">
             <h3 className="font-editorial text-2xl font-semibold text-slate-900 dark:text-white">Stories are taking a moment</h3>
-            <p className="mt-2 text-slate-600 dark:text-slate-300">The published story feed could not be reached. You can retry without refreshing the page.</p>
-            <button onClick={() => { setLoading(true); setLoadError(false); loadPosts(); }} className="mt-5 inline-flex min-h-11 items-center gap-2 bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"><ArrowRight size={16} /> Try again</button>
+            <p className="mt-2 text-slate-600 dark:text-slate-300">{loadError} You can retry without refreshing the page.</p>
+            <button onClick={loadPosts} className="mt-5 inline-flex min-h-11 items-center gap-2 bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"><ArrowRight size={16} /> Try again</button>
           </div>
         ) : featured ? (
           <article className="grid overflow-hidden border border-slate-300 bg-white md:grid-cols-[1.1fr_.9fr] dark:border-slate-700 dark:bg-slate-900">
