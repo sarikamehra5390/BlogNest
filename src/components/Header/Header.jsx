@@ -26,10 +26,7 @@ function Header() {
       <Container>
         <nav className="flex min-h-18 items-center justify-between gap-3 py-3" aria-label="Main navigation">
           <Link to="/" className="flex shrink-0 items-center gap-2.5 rounded-lg focus:outline-none" aria-label="BlogNest home">
-            <span className="flex items-center gap-2 lg:hidden">
-              <Logo iconOnly width="36px" />
-              <span className="font-editorial text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">BlogNest</span>
-            </span>
+            <span className="lg:hidden"><Logo width="120px" /></span>
             <span className="hidden lg:block"><Logo width="148px" /></span>
           </Link>
 

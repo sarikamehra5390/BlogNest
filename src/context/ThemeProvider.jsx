@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import ThemeContext from "./ThemeContext";
 
 export default function ThemeProvider({ children }) {
 
     const [dark,setDark]=useState(false);
 
-    useEffect(()=>{
+    useLayoutEffect(()=>{
 
         if(dark){
 
