@@ -7,10 +7,12 @@ function Footer() {
       <Container>
         <div className="py-10 sm:py-12">
 
-          {/* Logo & Description */}
+          {/* Brand & Description */}
           <div className="mb-10 flex flex-col items-center text-center">
             <Link to="/" aria-label="BlogNest home" className="inline-flex rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-600">
-              <img src="/images/blognest-logo.png" alt="BlogNest — Write, Share, Inspire" width="2752" height="1536" className="h-auto w-full max-w-[260px] object-contain" loading="lazy" decoding="async" />
+              <h2 className="font-editorial text-[1.625rem] font-semibold tracking-tight text-slate-900 dark:text-white">
+                BlogNest
+              </h2>
             </Link>
 
             <p className="mt-3 text-slate-500 dark:text-slate-400">
