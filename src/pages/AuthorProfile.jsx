@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import profileService from "../appwrite/profileService";
 import { Link } from "react-router-dom";
 import { Container, PostCard, BadgesList } from "../components";
@@ -9,9 +9,29 @@ import followService from "../appwrite/followService";
 import toast from "react-hot-toast";
 import notificationService from "../appwrite/notificationService";
 import badgeService from "../appwrite/badgeService";
+import { getAppwriteErrorMessage } from "../utils/appwriteError";
+
+async function fetchFollowData(userId, currentUserId) {
+    if (!userId) return null;
+    const [followerData, followingData] = await Promise.all([
+        followService.getFollowers(userId),
+        followService.getFollowing(userId),
+    ]);
+    const follow = currentUserId && currentUserId !== userId
+        ? await followService.getFollow(currentUserId, userId)
+        : null;
+    const row = follow?.rows?.[0];
+    return {
+        followers: followerData?.total ?? followerData?.rows?.length ?? 0,
+        following: followingData?.total ?? followingData?.rows?.length ?? 0,
+        followId: row?.$id || null,
+        isFollowing: Boolean(row),
+    };
+}
 
 function AuthorProfile() {
     const { userId } = useParams();
+    const navigate = useNavigate();
 
     const [profile, setProfile] = useState(null);
     const [posts, setPosts] = useState([]);
@@ -22,55 +42,58 @@ function AuthorProfile() {
     const[isFollowing, setIsFollowing] = useState(false);
     const [followId, setFollowId] = useState(null);
     const [followLoading, setFollowLoading] = useState(false);
-
-     const loadFollowData = async() => {
-            if(!userId) return 
-
-            const followerData = await followService.getFollowers(userId)
-            setFollowers(followerData?.rows?.length || 0)
-
-            const followingData = await followService.getFollowing(userId)
-            setFollowing(followingData?.rows?.length || 0)
-
-            if(userData && userData.$id !== userId){
-                const follow = await followService.getFollow(
-                    userData.$id,
-                    userId
-                )
-
-                if(follow?.rows?.length > 0){
-                    setIsFollowing(true)
-                    setFollowId(follow.rows[0].$id)
-                }else{
-                    setIsFollowing(false)
-                    setFollowId(null)
-                }
-            }
-        }
+    const [error, setError] = useState("");
 
     useEffect(() => {
+        let active = true;
         const fetchData = async () => {
             setLoading(true);
-
-            const profileData = await profileService.getProfile(userId);
-            setProfile(profileData);
-
-            const postData = await appwriteService.getPostsByUser(userId);
-            setPosts(postData);
-            await loadFollowData();
-
-            setLoading(false);
+            setProfile(null);
+            setPosts([]);
+            setError("");
+            setFollowers(0);
+            setFollowing(0);
+            setIsFollowing(false);
+            setFollowId(null);
+            try {
+                if (!userId) throw new Error("This author link is missing a user ID.");
+                const [profileData, postData] = await Promise.all([
+                    profileService.getProfile(userId),
+                    appwriteService.getPostsByUser(userId),
+                ]);
+                if (!active) return;
+                setProfile(profileData);
+                setPosts(postData || []);
+                try {
+                    const followData = await fetchFollowData(userId, userData?.$id);
+                    if (active && followData) {
+                        setFollowers(followData.followers);
+                        setFollowing(followData.following);
+                        setIsFollowing(followData.isFollowing);
+                        setFollowId(followData.followId);
+                    }
+                } catch (followError) {
+                    if (active) toast.error(getAppwriteErrorMessage(followError));
+                    if (import.meta.env.DEV) console.error("Author follow data failed", followError);
+                }
+            } catch (fetchError) {
+                if (active) setError(getAppwriteErrorMessage(fetchError, "author profile"));
+                if (import.meta.env.DEV) console.error("Author profile failed", fetchError);
+            } finally {
+                if (active) setLoading(false);
+            }
         };
-
         fetchData();
-
-    }, [userId, userData]);
+        return () => { active = false; };
+    }, [userId, userData?.$id]);
 
     const handleFollow = async() => {
         if(!userData){
-            toast.error("Please login first")
+            toast.error("Please log in to follow authors.");
+            navigate("/login");
             return
         }
+        if (userData.$id === userId) return;
 
         if(followLoading) return 
         setFollowLoading(true)
@@ -81,6 +104,9 @@ function AuthorProfile() {
 
                 if(success){
                     toast.success("Unfollowed")
+                    setIsFollowing(false);
+                    setFollowId(null);
+                    setFollowers((count) => Math.max(0, count - 1));
                 }
             }else{
 
@@ -91,7 +117,11 @@ function AuthorProfile() {
 
                 if (existing?.rows?.length > 0) {
                 toast("You're already following this author.");
-                await loadFollowData();
+                 const followData = await fetchFollowData(userId, userData.$id);
+                 setFollowers(followData.followers);
+                 setFollowing(followData.following);
+                 setIsFollowing(followData.isFollowing);
+                 setFollowId(followData.followId);
                  return;
                 }
 
@@ -100,6 +130,8 @@ function AuthorProfile() {
                     userId
                 )
                 if(success){
+                setIsFollowing(true);
+                setFollowers((count) => count + 1);
 
                 if (profile?.name) {
 
@@ -125,7 +157,13 @@ function AuthorProfile() {
                 }
             }
 
-            await loadFollowData()
+            const followData = await fetchFollowData(userId, userData.$id);
+            if (followData) {
+                setFollowers(followData.followers);
+                setFollowing(followData.following);
+                setIsFollowing(followData.isFollowing);
+                setFollowId(followData.followId);
+            }
 
             try {
                 const followerBadges =
@@ -149,7 +187,8 @@ function AuthorProfile() {
             }
             
         } catch (error) {
-            if (import.meta.env.DEV) { console.log(error); }
+            toast.error(getAppwriteErrorMessage(error, "follow"));
+            if (import.meta.env.DEV) console.error("Follow action failed", error);
         }finally{
             setFollowLoading(false)
         }
@@ -169,7 +208,7 @@ if (!profile) {
     return (
         <Container>
             <h1 className="text-center text-2xl mt-20 dark:text-white">
-                Author not found
+                {error || "Author not found"}
             </h1>
         </Container>
     );
@@ -251,7 +290,7 @@ return (
 </div>
 
 
-{userData && userData.$id !== userId && (
+{userData?.$id !== userId && (
     <div className="flex justify-center mt-8">
         <button
             onClick={handleFollow}

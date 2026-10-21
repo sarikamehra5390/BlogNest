@@ -1,5 +1,5 @@
 import conf from "../conf/conf";
-import { Client, TablesDB, ID, Query } from "appwrite";
+import { Client, TablesDB, Query } from "appwrite";
 
 export class FollowService {
     client = new Client();
@@ -36,17 +36,36 @@ export class FollowService {
                 return existing.rows[0];
             }
 
-            const follow = await this.databases.createRow({
+            // A deterministic row ID makes concurrent/repeated requests for the same
+            // relationship collide safely instead of creating duplicate rows.
+            const pair = `${followerId}:${followingId}`;
+            const digest = await globalThis.crypto.subtle.digest(
+                "SHA-256",
+                new TextEncoder().encode(pair)
+            );
+            const rowId = Array.from(new Uint8Array(digest))
+                .slice(0, 16)
+                .map((byte) => byte.toString(16).padStart(2, "0"))
+                .join("");
+
+            try {
+                return await this.databases.createRow({
                 databaseId: conf.appwriteDatabaseId,
                 tableId: conf.appwriteFollowTableId,
-                rowId: ID.unique(),
+                rowId,
                 data: {
                     followerId,
                     followingId,
                 },
             });
-
-            return follow;
+            } catch (error) {
+                // A concurrent request may have created this deterministic row.
+                if (error?.code === 409) {
+                    const raced = await this.getFollow(followerId, followingId);
+                    if (raced?.rows?.length) return raced.rows[0];
+                }
+                throw error;
+            }
 
         } catch (error) {
             console.error("Follow author failed:", error);

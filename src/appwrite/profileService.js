@@ -46,6 +46,7 @@ export class ProfileService {
 
     // Get profile by userId
     async getProfile(userId) {
+        if (!userId) return null;
         try {
             const response = await this.databases.listRows({
                 databaseId: conf.appwriteDatabaseId,
@@ -55,7 +56,20 @@ export class ProfileService {
                 ],
             });
 
-            return response.rows.length ? response.rows[0] : null;
+            if (response.rows.length) return response.rows[0];
+
+            // Profiles created by this app use the Appwrite user ID as their row ID.
+            // Older rows may not have a populated userId column, so try that stable ID.
+            try {
+                return await this.databases.getRow({
+                    databaseId: conf.appwriteDatabaseId,
+                    tableId: conf.appwriteProfilesTableId,
+                    rowId: userId,
+                });
+            } catch (rowError) {
+                if (rowError?.code === 404) return null;
+                throw rowError;
+            }
         } catch (error) {
             if (import.meta.env.DEV) console.error("ProfileService :: getProfile", error);
             throw error;
