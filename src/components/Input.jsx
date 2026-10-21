@@ -18,7 +18,7 @@ const Input = React.forwardRef(function Input(
     px-4
     py-3
     mt-1
-    rounded-xl
+    rounded-md
     border
     border-slate-200
     bg-white
@@ -27,9 +27,7 @@ const Input = React.forwardRef(function Input(
     dark:text-white
     placeholder:text-slate-400
     dark: placeholder:text-slate-500
-    shadow-sm shadow-slate-200/50
-    transition-all
-    duration-300
+    transition-colors
     focus:border-indigo-500
     focus:ring-4
     focus:ring-indigo-500/15

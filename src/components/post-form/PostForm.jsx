@@ -186,8 +186,8 @@ function PostForm({ post }) {
 
   return (
     <>
-    <div className="mb-8">
-    <p className="page-kicker">Writer studio</p><h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
+    <div className="mx-auto mb-8 max-w-5xl">
+    <p className="page-kicker">Writer studio</p><h1 className="font-editorial mt-2 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl dark:text-white">
       {post ? "Edit Article" : "Create New Article"}
     </h1>
 
@@ -195,23 +195,12 @@ function PostForm({ post }) {
       Share your knowledge with the BlogNest community.
     </p>
   </div>
-  <form onSubmit={handleSubmit(submit)} className="
-bg-white
-dark:bg-slate-900
-rounded-3xl
-shadow-xl shadow-slate-200/50 dark:shadow-none
-border
-border-slate-200
-dark:border-slate-700
-p-5 sm:p-8
-flex
-flex-wrap
-gap-8">
-    <div className="w-full max-w-4xl space-y-7">
+  <form onSubmit={handleSubmit(submit)} className="mx-auto flex w-full max-w-5xl flex-wrap gap-8 border border-slate-300 bg-white p-5 sm:p-9 dark:border-slate-700 dark:bg-slate-900">
+    <div className="w-full space-y-7">
     <Input 
        label = "Title: "
        placeholder = "Title"
-       className= "mb-4"
+       className= "font-editorial mb-4 text-2xl sm:text-3xl"
        {...register("title", {required : true})}
     />
 
@@ -258,7 +247,7 @@ gap-8">
        }}
     />
 
-    <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm">
+    <div className="overflow-hidden border border-slate-300 dark:border-slate-700">
     <RTE
         label="Content:"
         name="content"

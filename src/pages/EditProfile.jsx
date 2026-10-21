@@ -97,11 +97,11 @@ const update = async (data) => {
 
 return (
 
-   <Container>
+   <div className="page-shell"><Container>
 
-       <div className="max-w-2xl mx-auto bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8">
+       <div className="mx-auto max-w-2xl border border-slate-300 bg-white p-6 sm:p-9 dark:border-slate-700 dark:bg-slate-900">
 
-        <h1 className="text-3xl font-bold mb-8 dark:text-white">
+        <h1 className="font-editorial mb-8 text-4xl font-semibold dark:text-white">
 
            Edit Profile
 
@@ -143,7 +143,7 @@ return (
 
     </div>
 
-  </Container>
+  </Container></div>
 
   );
 }

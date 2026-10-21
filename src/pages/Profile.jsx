@@ -171,15 +171,15 @@ export default function Profile() {
     return (
         <div className="page-shell">
             <Container>
-                <div className="mx-auto max-w-3xl overflow-hidden surface-card">
-                    <div className="h-28 bg-[radial-gradient(circle_at_80%_20%,rgba(129,140,248,.75),transparent_18rem),linear-gradient(120deg,#312e81,#4f46e5)]" />
+                <div className="mx-auto max-w-3xl overflow-hidden border border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900">
+                    <div className="h-3 bg-indigo-600" />
 
                     <div className="relative flex flex-col items-center px-7 pb-8 sm:px-10">
                         <Link to={`/author/${profile.userId}`}>
                             <img
                                 src={avatarUrl}
                                 alt={profile.name || "Profile avatar"}
-                                className="-mt-14 h-28 w-28 cursor-pointer rounded-full border-4 border-white object-cover shadow-lg ring-4 ring-indigo-500/20 transition-transform hover:scale-105 dark:border-slate-900"
+                                className="h-28 w-28 cursor-pointer rounded-full border border-slate-300 object-cover transition-transform hover:scale-[1.02] dark:border-slate-700"
                             />
                         </Link>
 
@@ -187,12 +187,12 @@ export default function Profile() {
                             to={`/author/${profile.userId}`}
                             className="block text-center"
                         >
-                            <h1 className="mt-5 cursor-pointer text-3xl font-bold tracking-tight transition-colors hover:text-indigo-600 dark:text-white">
+                            <h1 className="font-editorial mt-5 cursor-pointer text-4xl font-semibold tracking-tight transition-colors hover:text-indigo-700 dark:text-white">
                                 {profile.name || userData.name}
                             </h1>
                         </Link>
 
-                        <p className="mt-2 text-gray-500 dark:text-gray-400">
+                        <p className="mt-2 max-w-xl text-center leading-7 text-slate-600 dark:text-slate-300">
                             {profile.bio || "No bio added yet."}
                         </p>
 
@@ -208,7 +208,7 @@ export default function Profile() {
                         <button
                             type="button"
                             onClick={() => navigate("/edit-profile")}
-                            className="mt-7 rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white shadow-sm shadow-indigo-500/25 transition hover:bg-indigo-700"
+                            className="mt-7 inline-flex min-h-11 items-center rounded-md bg-indigo-600 px-5 py-2.5 font-semibold text-white transition hover:bg-indigo-700"
                         >
                             Edit Profile
                         </button>
@@ -222,9 +222,9 @@ export default function Profile() {
                         ].map(([label, value]) => (
                             <div
                                 key={label}
-                                className="px-3 py-5 text-center"
+                                className="border-t border-slate-200 px-3 py-5 text-center first:border-r dark:border-slate-700"
                             >
-                                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                                <p className="font-editorial text-3xl font-semibold text-slate-900 dark:text-white">
                                     {value}
                                 </p>
 

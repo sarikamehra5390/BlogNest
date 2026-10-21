@@ -164,11 +164,11 @@ function Notifications() {
 
             <div className="max-w-3xl mx-auto py-10">
 
-                <div className="surface-card flex flex-wrap justify-between items-center mb-6 gap-4 p-5 sm:p-6">
+                    <div className="surface-card flex flex-wrap items-center justify-between gap-4 border-x-0 border-t-0 mb-6 p-5 sm:p-6">
 
                     <div className="flex items-center gap-3">
 
-                        <h1 className="text-2xl font-bold tracking-tight dark:text-white">
+                        <h1 className="page-heading text-3xl">
 
                             Notifications
 
@@ -190,7 +190,7 @@ function Notifications() {
                             text-white
                               px-4
                               py-2
-                              rounded-xl font-semibold transition
+                              rounded-md font-semibold transition
                             disabled:bg-gray-400
                               disabled:cursor-not-allowed
                              "
@@ -203,7 +203,7 @@ function Notifications() {
 
                    <div
     className="
-        surface-card rounded-2xl p-10
+        surface-card p-10
         text-center
     "
 >
@@ -234,9 +234,9 @@ function Notifications() {
                         <div
                             key={notification.$id}
                             className={`
-                                mb-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-md
+                                mb-4 transition duration-200
                                 p-5
-                                rounded-2xl shadow-sm
+                                rounded-none border-x-0 border-t-0 shadow-none
                                 border
                                 dark:border-slate-700
                                 ${

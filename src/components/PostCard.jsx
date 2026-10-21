@@ -3,26 +3,44 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight, Clock3 } from "lucide-react";
 import { calculateReadingTime } from "../utils/readingTime";
 
-function PostCard({ $id, title, content, featuredImage, category, tags }) {
-  const imageUrl = appwriteService.getFilePreview(featuredImage);
+function PostCard({ $id, title, content, featuredImage, category, tags, $createdAt, userId, authorName }) {
   const readingTime = calculateReadingTime(content);
   const tagList = tags?.split(",").map((tag) => tag.trim()).filter(Boolean).slice(0, 3) || [];
+  const excerpt = (content || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+  const published = $createdAt
+    ? new Date($createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
+    : null;
+
   return (
-    <article className="group h-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/50 transition duration-300 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-100/70 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none dark:hover:border-indigo-900 dark:hover:shadow-none">
-      <Link to={`/post/${$id}`} className="flex h-full flex-col focus:outline-none" aria-label={`Read ${title}`}>
-        <div className="relative aspect-[16/9] overflow-hidden bg-slate-100 dark:bg-slate-800">
-          <img src={imageUrl} alt={title ? `Cover image for ${title}` : "Article cover"} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-          {category && <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-indigo-700 shadow-sm backdrop-blur dark:bg-slate-950/90 dark:text-indigo-300">{category}</span>}
+    <article className="group flex h-full flex-col border-t border-slate-300 pt-4 dark:border-slate-700">
+      {featuredImage && <Link to={`/post/${$id}`} className="mb-4 block aspect-[16/10] overflow-hidden bg-slate-200 dark:bg-slate-800" aria-label={`Read ${title}`}>
+        <img src={appwriteService.getFilePreview(featuredImage)} alt={title ? `Cover image for ${title}` : "Article cover"} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.025]" />
+      </Link>}
+      <div className="flex flex-1 flex-col">
+        <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-slate-500 dark:text-slate-400">
+          {category && <span className="font-semibold uppercase tracking-[.12em] text-indigo-700 dark:text-indigo-300">{category}</span>}
+          {published && <time dateTime={$createdAt}>{published}</time>}
+          <span className="inline-flex items-center gap-1"><Clock3 size={13} aria-hidden="true" /> {readingTime} min read</span>
         </div>
-        <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <div className="mb-3 flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400"><Clock3 size={15} aria-hidden="true" /> {readingTime} min read</div>
-          <h2 className="line-clamp-2 text-xl font-bold leading-7 tracking-tight text-slate-900 transition group-hover:text-indigo-700 dark:text-white dark:group-hover:text-indigo-300">{title}</h2>
-          <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-400">A thoughtful read from the BlogNest community.</p>
-          {tagList.length > 0 && <div className="mt-5 flex flex-wrap gap-2">{tagList.map((tag) => <span key={tag} className="rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">#{tag}</span>)}</div>}
-          <div className="mt-auto flex items-center gap-1 pt-6 text-sm font-semibold text-indigo-600 dark:text-indigo-400">Read article <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></div>
-        </div>
-      </Link>
+        {authorName && userId && <p className="mb-2 text-sm text-slate-600 dark:text-slate-300">By <Link to={`/author/${userId}`} className="font-semibold text-slate-800 hover:text-indigo-700 dark:text-slate-100 dark:hover:text-indigo-300">{authorName}</Link></p>}
+        <h2 className="font-editorial text-2xl font-semibold leading-tight tracking-tight text-slate-950 group-hover:text-indigo-700 dark:text-white dark:group-hover:text-indigo-300">
+          <Link to={`/post/${$id}`} className="focus:outline-none">{title}</Link>
+        </h2>
+        {excerpt && <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-600 dark:text-slate-300">{excerpt}</p>}
+        {tagList.length > 0 && <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1">{tagList.map((tag) => <Link key={tag} to={`/tag/${encodeURIComponent(tag)}`} className="text-xs font-medium text-slate-500 hover:text-indigo-700 dark:text-slate-400 dark:hover:text-indigo-300">#{tag}</Link>)}</div>}
+        <Link to={`/post/${$id}`} className="mt-auto inline-flex min-h-11 items-center gap-1 pt-3 text-sm font-semibold text-indigo-700 dark:text-indigo-300">Read story <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></Link>
+      </div>
     </article>
   );
 }
+
 export default PostCard;

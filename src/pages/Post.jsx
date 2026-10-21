@@ -22,6 +22,7 @@ import badgeService from "../appwrite/badgeService";
 import SuggestedPosts from "../components/SuggestedPosts";
 import AISummary from "../components/AISummary";
 import { getAppwriteErrorMessage } from "../utils/appwriteError";
+import { calculateReadingTime } from "../utils/readingTime";
 
 export default function Post() {
     const [post, setPost] = useState(null);
@@ -675,13 +676,13 @@ export default function Post() {
 
                     {/* COVER IMAGE */}
 
-                    <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-slate-100 shadow-xl shadow-slate-300/30 mb-10 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+                    <div className="mb-9 overflow-hidden bg-slate-200 dark:bg-slate-800">
                         <img
                             src={appwriteService.getFilePreview(
                                 post.featuredImage
                             )}
                             alt={post.title}
-                            className="h-64 w-full object-cover sm:h-80 lg:h-[430px]"
+                            className="h-60 w-full bg-parchment object-contain sm:h-80 lg:h-[440px]"
                         />
                     </div>
 
@@ -689,7 +690,7 @@ export default function Post() {
 
                     <div className="mb-5 flex flex-wrap gap-2">
                         {post.category && (
-                            <span className="rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300">
+                            <span className="text-xs font-semibold uppercase tracking-[.14em] text-indigo-700 dark:text-indigo-300">
                                 {post.category}
                             </span>
                         )}
@@ -700,7 +701,7 @@ export default function Post() {
                                 .map((tag) => (
                                     <span
                                         key={tag}
-                                        className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                                        className="text-sm font-medium text-slate-500 dark:text-slate-400"
                                     >
                                         #{tag.trim()}
                                     </span>
@@ -709,13 +710,13 @@ export default function Post() {
 
                     {/* TITLE */}
 
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl leading-tight font-bold tracking-tight text-slate-950 dark:text-white mb-4">
+                    <h1 className="font-editorial mb-4 max-w-4xl text-4xl font-semibold leading-[1.08] tracking-[-.035em] text-slate-950 sm:text-5xl lg:text-6xl dark:text-white">
                         {post.title}
                     </h1>
 
                     {/* AUTHOR */}
 
-                    <div className="surface-card flex flex-wrap items-center gap-4 p-4 sm:p-5 mt-6 mb-6">
+                    <div className="mt-6 mb-5 flex flex-wrap items-center gap-4 border-y border-slate-300 py-4 dark:border-slate-700">
 
                         <Link
                             to={`/author/${post.userId}`}
@@ -735,32 +736,29 @@ export default function Post() {
                                     author?.name ||
                                     "User"
                                 }
-                                className="h-12 w-12 rounded-full object-cover ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-slate-900"
+                                className="h-12 w-12 rounded-full object-cover ring-1 ring-slate-300 dark:ring-slate-700"
                             />
                         </Link>
 
                         <div>
                             <Link
                                 to={`/author/${post.userId}`}
-                                className="text-base font-bold text-slate-900 hover:text-indigo-600 transition dark:text-white"
+                                className="text-sm font-semibold text-slate-900 hover:text-indigo-700 dark:text-white"
                             >
                                 {author?.name ||
                                     "Unknown Author"}
                             </Link>
 
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                {author?.bio ||
-                                    "No bio available"}
-                            </p>
+                            <p className="mt-0.5 line-clamp-1 max-w-xl text-sm text-slate-500 dark:text-slate-400">{author?.bio || "BlogNest author"}</p>
                         </div>
                     </div>
 
                     {/* META */}
 
-                    <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
+                    <div className="mb-10 flex flex-wrap items-center justify-between gap-4 border-b border-slate-300 pb-5 dark:border-slate-700">
 
                         <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                            Published article ·{" "}
+                            {calculateReadingTime(post.content)} min read ·{" "}
                             {new Date(
                                 post.$createdAt
                             ).toLocaleDateString(
@@ -799,7 +797,7 @@ export default function Post() {
 
                     {/* CONTENT */}
 
-                    <div className="surface-card article-content rounded-3xl p-6 sm:p-10">
+                    <div className="article-content mx-auto max-w-[46rem]">
                         {parse(
                             DOMPurify.sanitize(
                                 post.content
@@ -919,7 +917,7 @@ export default function Post() {
 
                     <div className="mt-16">
 
-                        <h2 className="text-2xl font-bold tracking-tight mb-6 dark:text-white">
+                        <h2 className="font-editorial mb-6 text-3xl font-semibold tracking-tight dark:text-white">
                             Comments (
                             {comments.length}
                             )

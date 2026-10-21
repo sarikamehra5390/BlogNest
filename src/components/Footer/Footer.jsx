@@ -3,14 +3,14 @@ import { Container } from "../index";
 
 function Footer() {
   return (
-    <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 mt-16">
+    <footer className="mt-16 border-t border-slate-300 bg-slate-100 text-slate-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
       <Container>
         <div className="py-10 sm:py-12">
 
           {/* Logo & Description */}
           <div className="text-center mb-10">
 
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <h2 className="font-editorial text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
               BlogNest
             </h2>
 

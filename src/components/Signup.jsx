@@ -60,9 +60,9 @@ function Signup() {
     };
 
     return (
-        <div className="relative isolate min-h-[80vh] overflow-hidden flex items-center justify-center bg-slate-50 dark:bg-slate-950 transition-colors duration-300 px-4 py-10">
+        <div className="relative isolate min-h-[80vh] overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-950 transition-colors duration-300 px-4 py-10">
 
-            <div className="absolute inset-x-0 top-0 -z-10 h-80 bg-[radial-gradient(circle_at_50%_0,rgba(129,140,248,.25),transparent_55%)]" />
+            <div className="absolute inset-x-0 top-0 -z-10 h-80 bg-[radial-gradient(circle_at_50%_0,rgba(135,60,67,.12),transparent_55%)]" />
 
             <div
                 className="
@@ -71,12 +71,10 @@ function Signup() {
                     max-w-md
                     bg-white
                     dark:bg-slate-900
-                    rounded-3xl
-                    shadow-2xl
+                    rounded-md
                     border
                     border-slate-200
                     dark:border-slate-800
-                    shadow-xl
                     shadow-slate-300/40
                     dark:shadow-none
                     p-7
@@ -94,7 +92,7 @@ function Signup() {
 
                 {/* Heading */}
 
-                <h2 className="text-center text-3xl font-bold text-slate-800 dark:text-white mt-4 transition-colors">
+                <h2 className="font-editorial mt-4 text-center text-4xl font-semibold text-slate-800 dark:text-white">
                     Create your BlogNest account
                 </h2>
 
@@ -104,11 +102,11 @@ function Signup() {
                     <Link
                         to="/login"
                         className="
-                            text-blue-600
-                            dark:text-blue-400
+                            text-indigo-700
+                            dark:text-indigo-300
                             font-semibold
-                            hover:text-blue-700
-                            dark:hover:text-blue-300
+                            hover:text-indigo-800
+                            dark:hover:text-indigo-200
                             transition-colors
                             duration-300
                         "

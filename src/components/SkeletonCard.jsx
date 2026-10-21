@@ -1,5 +1,3 @@
-import React from "react";
-
 function SkeletonCard() {
   return (
     <div
@@ -8,9 +6,8 @@ function SkeletonCard() {
       className="
       bg-white
       dark:bg-slate-900
-      rounded-3xl
+      rounded-none
       overflow-hidden
-      shadow-lg
       border
       border-slate-200
       dark:border-slate-800

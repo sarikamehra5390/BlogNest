@@ -130,7 +130,7 @@ function ReadingHistory() {
 
                 <div className="surface-card flex flex-wrap justify-between items-center gap-4 mb-8 mt-12 p-5 sm:p-6">
 
-                    <div><p className="page-kicker">Your library</p><h1 className="mt-2 text-3xl font-bold tracking-tight dark:text-white">Reading history</h1></div>
+                    <div><p className="page-kicker">Your library</p><h1 className="page-heading mt-2">Reading history</h1></div>
 
                     {
 
@@ -188,7 +188,7 @@ function ReadingHistory() {
                                         key={item.$id}
 
                                         className="
-                                            surface-card p-5 sm:p-6 transition duration-200 hover:-translate-y-0.5 hover:shadow-md
+                                            surface-card border-x-0 border-t-0 p-5 sm:p-6 transition-colors duration-200
                                         "
 
                                     >
@@ -198,11 +198,7 @@ function ReadingHistory() {
                                             <div>
 
                                                 <h2
-                                                    className="
-                                                        text-2xl
-                                                        font-bold
-                                                        dark:text-white
-                                                    "
+                                                    className="font-editorial text-2xl font-semibold dark:text-white"
                                                 >
 
                                                     {

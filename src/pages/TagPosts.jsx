@@ -68,13 +68,13 @@ function TagPosts() {
 
         return (
 
-            <div className="min-h-screen bg-slate-100 dark:bg-slate-950 py-12">
+            <div className="page-shell">
 
                 <Container>
 
                     <div className="text-center mb-10">
 
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-white">
+                        <h1 className="page-heading font-editorial text-4xl sm:text-5xl">
 
                             #{decodedTag}
 
@@ -108,13 +108,13 @@ function TagPosts() {
 
     return (
 
-        <div className="min-h-screen bg-slate-100 dark:bg-slate-950 py-12 transition-colors">
+        <div className="page-shell">
 
             <Container>
 
                 <div className="text-center mb-10">
 
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 dark:text-white">
+                    <h1 className="page-heading font-editorial text-4xl sm:text-5xl">
 
                         #{decodedTag}
 
@@ -131,14 +131,7 @@ function TagPosts() {
 
                     <Link
                         to="/"
-                        className="
-                            inline-block
-                            mt-6
-                            text-blue-600
-                            dark:text-blue-400
-                            font-medium
-                            hover:underline
-                        "
+                        className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-indigo-700 hover:underline dark:text-indigo-300"
                     >
 
                         <span aria-hidden="true">←</span> Back to All Posts

@@ -89,12 +89,12 @@ function AllPost() {
                                     setSelectedCategory(category)
                                 }
                                 className={`
-                                    px-4 py-2 rounded-lg text-sm font-semibold
+                                    min-h-11 px-4 py-2 rounded-md text-sm font-semibold
                                     transition-all
                                     duration-300
                                     ${
                                         selectedCategory === category
-                                            ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/30"
+                                            ? "bg-indigo-600 text-white"
                                             : "border border-slate-200 bg-white text-slate-700 hover:border-indigo-200 hover:bg-indigo-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                                     }
                                 `}
@@ -117,7 +117,7 @@ function AllPost() {
                             📝
                         </div>
 
-                        <h2 className="text-3xl font-bold text-slate-700 dark:text-white">
+                        <h2 className="font-editorial text-3xl font-semibold text-slate-700 dark:text-white">
                             No Posts Available
                         </h2>
 

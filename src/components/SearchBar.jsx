@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import SearchContext from "../context/SearchContext";
 import { Search, X } from "lucide-react";
 
@@ -37,7 +37,7 @@ function SearchBar() {
         pl-12
         pr-12
         py-3
-        rounded-full
+        rounded-md
         border
         border-slate-300
         dark:border-slate-700
@@ -48,9 +48,7 @@ function SearchBar() {
         placeholder:text-slate-400
         focus:outline-none
         focus:ring-4
-        focus:ring-blue-100
-        transition-all
-        duration-300
+        focus:border-indigo-500
         "
       />
 

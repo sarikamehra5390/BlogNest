@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import notificationService from "../appwrite/notificationService";
 import badgeService from "../appwrite/badgeService";
 import { getAppwriteErrorMessage } from "../utils/appwriteError";
+import { ArrowLeft, PenLine } from "lucide-react";
 
 async function fetchFollowData(userId, currentUserId) {
     if (!userId) return null;
@@ -196,36 +197,36 @@ function AuthorProfile() {
 
     if (loading) {
     return (
-        <Container>
+        <div className="page-shell"><Container>
             <h1 className="text-center text-2xl">
                 Loading author...
             </h1>
-        </Container>
+        </Container></div>
     );
 }
 
 if (!profile) {
     return (
-        <Container>
+        <div className="page-shell"><Container>
             <h1 className="text-center text-2xl mt-20 dark:text-white">
                 {error || "Author not found"}
             </h1>
-        </Container>
+        </Container></div>
     );
 }
 
 return (
-    <Container>
+    <div className="page-shell"><Container>
     {/*Back Button*/}
     <Link
     to="/"
-    className="inline-flex items-center mb-8 text-blue-600 hover:text-blue-700"
+    className="mb-7 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-700 dark:text-slate-300"
     >
-    ← Back to Home
+    <ArrowLeft size={16} /> Back to stories
 </Link>
 
   {/*Profile card*/}
-  <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-lg p-8 text-center">
+  <section className="grid gap-7 border-y border-slate-300 bg-white p-6 sm:p-9 md:grid-cols-[auto_1fr] md:items-center dark:border-slate-700 dark:bg-slate-900">
 
     <img
         src={
@@ -234,18 +235,20 @@ return (
                 : `https://ui-avatars.com/api/?name=${profile?.name}`
         }
         alt={profile?.name}
-        className="w-28 h-28 rounded-full object-cover mx-auto border-4 border-blue-500"
+        className="mx-auto h-28 w-28 rounded-full border border-slate-300 object-cover md:mx-0 md:h-36 md:w-36 dark:border-slate-700"
     />
 
-    <h1 className="text-3xl font-bold mt-4 dark:text-white">
+    <div className="text-center md:text-left">
+    <p className="page-kicker">Writer in the community</p>
+    <h1 className="font-editorial mt-2 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl dark:text-white">
         {profile?.name}
     </h1>
 
-    <p className="text-slate-500 dark:text-slate-400 mt-2">
+    <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
         {profile?.bio || "No bio available"}
     </p>
 
-    <p className="text-slate-400 dark:text-gray-400 mt-2">
+    <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
         Joined{" "}
         {new Date(profile.$createdAt).toLocaleDateString("en-US", {
             month: "long",
@@ -253,14 +256,14 @@ return (
         })}
     </p>
 
-    <div className="flex flex-wrap justify-center gap-8 mt-6">
+    <div className="mt-6 flex flex-wrap justify-center gap-x-9 gap-y-3 border-t border-slate-200 pt-4 md:justify-start dark:border-slate-700">
 
     <div className="text-center">
-        <h3 className="font-bold text-2xl">
+        <h3 className="font-editorial text-3xl font-semibold text-slate-900 dark:text-white">
             {followers}
         </h3>
 
-        <p className="text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
             Followers
         </p>
     </div>
@@ -286,19 +289,23 @@ return (
     </div>
 
 </div>
+    </div>
+</section>
 
-</div>
 
-
-{userData?.$id !== userId && (
-    <div className="flex justify-center mt-8">
+{userData?.$id === userId ? (
+    <div className="mt-5 flex justify-end">
+        <Link to="/edit-profile" className="inline-flex min-h-11 items-center gap-2 border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:border-indigo-400 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"><PenLine size={16} /> Edit profile</Link>
+    </div>
+) : (
+    <div className="mt-5 flex justify-center">
         <button
             onClick={handleFollow}
             disabled={followLoading}
-            className={`px-8 py-3 rounded-xl font-semibold transition ${
+            className={`inline-flex min-h-12 items-center rounded-md px-7 py-3 font-semibold transition ${
                 isFollowing
-                    ? "bg-gray-700 text-white"
-                    : "bg-blue-600 text-white hover:bg-blue-700"
+                    ? "border border-slate-400 bg-transparent text-slate-800 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-100 dark:hover:bg-slate-800"
+                    : "bg-indigo-600 text-white hover:bg-indigo-700"
             }`}
         >
             {followLoading
@@ -314,15 +321,15 @@ return (
 
 {/*Publised post heading*/}
 
-<h2 className="text-3xl font-bold mt-12 mb-6 dark:text-white">
+<h2 className="font-editorial mt-12 mb-6 border-b border-slate-300 pb-3 text-3xl font-semibold text-slate-950 dark:border-slate-700 dark:text-white">
     Published Posts
 </h2>
 
           
 {posts.length === 0 ? (
 
-    <div className="text-center py-20">
-        <h2 className="text-2xl font-bold dark:text-white">
+    <div className="border border-dashed border-slate-300 bg-white py-16 text-center dark:border-slate-700 dark:bg-slate-900">
+        <h2 className="font-editorial text-2xl font-semibold dark:text-white">
             No posts yet
         </h2>
 
@@ -344,7 +351,7 @@ return (
 
 )}
 
-</Container>
+</Container></div>
     );
 }
 
