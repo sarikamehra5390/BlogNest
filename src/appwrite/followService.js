@@ -1,15 +1,13 @@
 import conf from "../conf/conf";
-import { Client, TablesDB, Query } from "appwrite";
+import { Permission, Role, TablesDB, Query } from "appwrite";
+import appwriteClient from "./client";
+import authService from "./auth";
 
 export class FollowService {
-    client = new Client();
+    client = appwriteClient;
     databases;
 
     constructor() {
-        this.client
-            .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId);
-
         this.databases = new TablesDB(this.client);
     }
 
@@ -26,6 +24,11 @@ export class FollowService {
         }
 
         try {
+            const currentUser = await authService.getCurrentUser();
+            if (!currentUser || currentUser.$id !== followerId) {
+                throw new Error("Sign in with the account that is creating this follow.");
+            }
+
             // Check if already following
             const existing = await this.getFollow(
                 followerId,
@@ -50,13 +53,17 @@ export class FollowService {
 
             try {
                 return await this.databases.createRow({
-                databaseId: conf.appwriteDatabaseId,
-                tableId: conf.appwriteFollowTableId,
-                rowId,
-                data: {
-                    followerId,
-                    followingId,
-                },
+                    databaseId: conf.appwriteDatabaseId,
+                    tableId: conf.appwriteFollowTableId,
+                    rowId,
+                    data: {
+                        followerId,
+                        followingId,
+                    },
+                    permissions: [
+                        Permission.read(Role.any()),
+                        Permission.delete(Role.user(followerId)),
+                    ],
             });
             } catch (error) {
                 // A concurrent request may have created this deterministic row.

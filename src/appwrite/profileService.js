@@ -1,15 +1,12 @@
 import conf from "../conf/conf";
-import { Client, TablesDB, Query } from "appwrite";
+import { TablesDB, Query } from "appwrite";
+import appwriteClient from "./client";
 
 export class ProfileService {
-    client = new Client();
+    client = appwriteClient;
     databases;
 
     constructor() {
-        this.client
-            .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId);
-
         this.databases = new TablesDB(this.client);
     }
 
