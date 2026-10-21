@@ -53,7 +53,7 @@ function Login() {
    border-slate-200 dark:border-slate-700
     p-7 sm:p-10">
         <div className="mb-2 flex justify-center">
-        <span className="inline-block w-full max-w-[80px] mb-4">
+        <span className="mb-4 inline-block w-full max-w-[230px]">
             <Logo width="100%" />
           </span>
         </div>

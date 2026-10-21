@@ -1,13 +1,14 @@
 
-import React from "react";
-import logo from "../assets/BLOGNEST_logo.png";
-
-function Logo({ width = "100px" }) {
+function Logo({ width = "100px", iconOnly = false, className = "" }) {
   return (
     <img
-      src={logo}
-      alt="BlogNest Logo"
-      style={{ width }}
+      src={iconOnly ? "/favicon.png" : "/images/blognest-logo.png"}
+      alt="BlogNest — Write, Share, Inspire"
+      width={iconOnly ? 790 : 2752}
+      height={iconOnly ? 790 : 1536}
+      style={{ width, height: "auto" }}
+      className={`block shrink-0 object-contain ${className}`}
+      decoding="async"
     />
   );
 }

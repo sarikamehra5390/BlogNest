@@ -86,7 +86,7 @@ function Signup() {
                 {/* Logo */}
 
                 <div className="mb-2 flex justify-center">
-                    <span className="inline-block w-full max-w-[80px] mb-4">
+                    <span className="mb-4 inline-block w-full max-w-[230px]">
                         <Logo width="100%" />
                     </span>
                 </div>
